@@ -7,6 +7,12 @@ import photoReducer from '../slices/photoslice'
 import videoReducer from '../slices/videoslice'
 import likeReducer from '../slices/likeslice'
 import commentReducer from '../slices/commentslice'
+import followerReducer from '../slices/followerslice'
+import postReducer from '../slices/postslice';
+import storyReducer from '../slices/storyslice'
+import followingReducer from '../slices/followingslice'
+import formReducer from '../slices/formslice'
+import authReducer from '../slices/authslice';
 
 const Store = configureStore({
     reducer:{
@@ -17,7 +23,13 @@ const Store = configureStore({
         photo:photoReducer,
         video:videoReducer,
         like:likeReducer,
-        comment:commentReducer
+        comment:commentReducer,
+        follower:followerReducer,
+        post:postReducer,
+        story:storyReducer,
+        following:followingReducer,
+        form:formReducer,
+        auth:authReducer
     }
 })
 
