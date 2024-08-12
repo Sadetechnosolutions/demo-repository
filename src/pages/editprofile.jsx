@@ -8,7 +8,6 @@ import { FaCaretUp } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 
 
-
 const Editprofile = ({close}) => {
     const [value, onChange] = useState((new Date()));
     const [countries,ShowCountries] = useState(false);
@@ -18,22 +17,22 @@ const Editprofile = ({close}) => {
     const handleShowCountry = ()=>{
         ShowCountries(!countries);
     }
-    
+  
     const handleSetCountry = (country)=>{
         SetCountry(country.name)
         SetActive(false);
         ShowCountries(false);
     }
-
     const handleSubmit = ()=>{
 
     }
+
     const data = [{id:'1',name:'india'},{id:'2',name:'Afganisthan'}]
   return (
     <>
-    <div className=' flex flex-col w-full h-auto justify items-center'>
+    <div className=' flex flex-col w-full  h-auto items-center'>
 <form onSubmit={handleSubmit} className="absolute flex flex-col bg-white h-auto mt-16 rounded-md px-10  md:mb-14 md:w-1/2 py-8">
-   <div className='flex items-center justify-end gap-64'> <p className="text-xl font-semibold">Edit Profile</p><div onClick={close} className='cursor-pointer bg-gray-200 p-1 hover:bg-red hover:text-white rounded-full'><IoClose className='h-5 w-5 cursor-pointer'/></div></div>
+   <div className='flex items-center justify-between'> <p className="text-xl font-semibold">Edit Profile</p><div onClick={close} className='cursor-pointer bg-gray-200 p-1 hover:bg-red hover:text-white rounded-full'><IoClose className='h-5 w-5 cursor-pointer'/></div></div>
     <div className='flex flex-col w-full gap-8'>
     <div className='flex flex-col gap-2'>
     <label className="text-md"> Name <span className='text-red'>*</span></label>
@@ -94,7 +93,6 @@ const Editprofile = ({close}) => {
     <label className="text-md"> Email & Website <span className='text-red'>*</span></label>
     <input className="px-3 py-2 w-full text-sm border border-gray-300 rounded-md focus:outline-none focus:border-gray" type="text" required placeholder="Enter your Email & Website" />
     </div>
-  
     </div>
     <div className='w-full mt-8 gap-6 flex justify-center'>
       <button onClick={close} className=' px-4 py-2 bg-gray-200 border rounded-md text-black'>Cancel</button>
@@ -102,9 +100,7 @@ const Editprofile = ({close}) => {
     </div>
     </form>
     
-
-    </div>
-      
+    </div>    
     </>
   )
 }

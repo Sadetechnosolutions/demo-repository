@@ -4,7 +4,6 @@
 @import 'tailwindcss/utilities';
 
 /* styles.css */
-
 @layer utilities {
     .underline-offset {
       text-decoration: underline;
@@ -21,6 +20,13 @@
   .animate-blink {
     animation: blink 1s infinite;
   }
+
+  /* styles.css or in a <style> tag */
+.custom-header .p-datatable-thead > tr > th {
+background: linear-gradient(#5CBE8F,#3AB4BC);
+  color: white; /* Set text color to white for contrast */
+}
+
   
   @keyframes circleAnimation {
     0% {
@@ -34,6 +40,37 @@
       opacity: 0;
     }
   }
+  .custom-date-picker {
+    width: 100%; /* Full width */
+    height: 45px;
+    border-radius: 15px;
+  }
+  
+  .custom-date-picker input {
+    width: 100%; /* Ensure the input inside the date picker takes full width */
+    box-sizing: border-box; /* Include padding and border in width calculation */
+  }
+  
+/* Example with increased specificity */
+body.custom-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+/* In your Message.css or in a <style> block */
+.custom-header .p-datatable-thead > tr > th {
+  padding-left: 16px; /* Adjust as needed */
+  padding-right: 16px; /* Adjust as needed */
+  text-align: left; /* Ensure alignment matches data cells */
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.custom-header .p-datatable-tbody > tr > td {
+  padding-left: 16px; /* Adjust to match header padding */
+  padding-right: 16px; /* Adjust to match header padding */
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 
   @keyframes fadeIn {
     0% { opacity: 0; }
@@ -104,6 +141,7 @@
     opacity: 1;
   }
 }
+
   
   .slide-in-down {
     animation: slideInDown 0.3s ease forwards;
@@ -129,6 +167,15 @@
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+/* Hide the default scrollbar */
+body {
+  scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Webkit (Chrome, Safari, Edge) */
+}
+
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
@@ -155,6 +202,15 @@
   height: 2px; /* Thickness of the underline */
   background-color: #5CBE8F;
 }
+/* Messages.css */
+.message-details-transition {
+  opacity: 1;
+  transition: opacity 0.3s ease; /* Define the transition property */
+}
+
+.message-details-transition.hide {
+  opacity: 0; /* When hiding, set opacity to 0 */
+}
 
 /* Custom CSS */
 .video-react .video-react-big-play-button {
@@ -175,12 +231,87 @@
   padding: 5px; /* Optional: Add padding */
 }
 
+.checkbox:checked + .checkmark {
+  background-color: #4CAF50;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  background-color: #eee;
+  border: 1px solid #ccc;
+}
+
+.checkbox {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.checkbox:checked + .checkmark:before {
+  content: '';
+  position: absolute;
+  height: 0.5rem;
+  width: 1rem;
+  border-bottom: 2px solid #fff;
+  border-right: 2px solid #fff;
+  transform: rotate(120deg);
+  top: 20%;
+  left: 20%;
+  animation: checkmark-animation 0.3s ease;
+}
+
+@keyframes checkmark-animation {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 .carousel .alice-carousel__prev-btn {
   left: 0;
 }
-
 .carousel .alice-carousel__next-btn {
   right: 0;
+}
+.ticky {
+  position: sticky;
+  top: 0;
+}
+.optionicon{
+  width: 1.2rem;
+  height: 1.2rem;
+}
+/* Hide the default input box of react-datepicker */
+.react-datepicker-wrapper {
+  display: inline-block;
+  width: 100%;
+}
+
+.react-datepicker__input-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.react-datepicker-popper {
+  display: none !important; /* Hide the date picker popper */
+}
+
+/* Style the date display */
+.date-display {
+  display: inline-block;
+  padding: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.date-display:hover {
+  background-color: #f0f0f0;
 }
 
 .custom-input-emoji {
@@ -198,8 +329,25 @@
   height:2.5rem;
 }
 
+.contain-r:hover .child-r{
+ opacity:1;
+ transform: translateY(0);
+ background-origin: inherit;
+}
+
+.delete:hover .child-d{
+color: #F85454;
+}
+
+.deactivate:hover .child-dt{
+  color:orange;
+}
+
 .player-container {
   height: 300px;
+}
+.hide-cursor {
+  caret-color: transparent !important;
 }
 .parent:hover .child {
   background-color: #fff;
@@ -213,6 +361,24 @@
   color: #fff;
 }
 
+.weather-bg{
+  backgroundSize: cover;
+  backgroundPosition:center;
+  filter: brightness(100%) sepia(100%) saturate(100%) hue-rotate(60deg);
+}
+
+.sunrot{
+  animation: rotate 10s linear infinite
+}
+
+@keyframes rotate{
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+}
 
 .menu-container {
   max-height: 0;

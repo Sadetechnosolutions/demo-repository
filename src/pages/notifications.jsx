@@ -12,7 +12,7 @@ const Notifications = () => {
     <>
     <div className='flex flex-col items-center justify-center'>
 
-  <div className='flex mt-10 px-6 drop bg-white shadow-lg  rounded-md h-auto w-1/2 flex-col'>
+  <div className='flex mt-10 px-6 drop bg-white shadow-lg  rounded-md h-auto w-5/6 flex-col'>
     <div className='flex gap-2 items-center py-4 border-b border-gray-170 '>
       <Icon icon="ion:notifications-outline" width="1.4em" height="1.4em" />
       <span className='font-semibold'>All Notifications</span>

@@ -9,62 +9,133 @@ import {useDispatch} from 'react-redux';
 import { addFriend } from '../slices/friendlistslice';
 
 const Navbar = () => {
-  const location = useLocation();
-  const {notifications} = useSelector((state)=>state.notification)
-  const {friendrequests} = useSelector((state)=>state.friendrequest)
-  const {messages} = useSelector((state)=>state.message)
-  const {profilepic} = useSelector((state)=>state.photo)
-  const dispatch = useDispatch();
-
+  const [user, setUser] = useState('');
+  const [showAllRequests, setShowAllRequests] = useState(false);
+  const [showAllNotification,setShowAllNotification] = useState(false);
+  const [showAllMessages,setShowAllMessages] = useState(false);
   const iconHome = <Icon className='outline-none rounded-full col-white' icon="mynaui:home" width="1.5em" height="1.5em" />;
   const iconPersonAdd = <Icon className='outline-none rounded-md col-white' icon="akar-icons:person-add" color="red" width="1.3em" height="1.3em" />;
   const iconNotifications = <Icon className='outline-none rounded-md col-white' icon="ion:notifications-outline" width="1.4em" height="1.4em" />;
   const iconMessageText = <Icon className='outline-none rounded-md col-white' icon="iconoir:message-text" width="1.4em" height="1.4em" />;
-  const dropdowns = {
-    submenu: [
-      { id: 1, title: 'Profile', path: '/profile' },
-      { id: 2, title: 'Settings', path: '/settings' },
-      { id: 3, title: 'Profile', path: '/profile' },
-      { id: 4, title: 'Settings', path: '/settings' },
-      { id: 5, title: 'Profile', path: '/profile' },
-      { id: 6, title: 'Settings', path: '/settings' },
-      { id: 7, title: 'Profile', path: '/profile' },
-      { id: 8, title: 'Settings', path: '/settings' },
-],
-  };
+  const token = localStorage.getItem('token');
+  const userId = useSelector((state) => state.auth.userId);
   const headers = [
-    { 
+    {
       id: 1, 
       title: 'Home',
       path:'/newsfeed',
       icon: iconHome, 
       dropdownContent: null
     },
-    { 
+    {
       id: 2, 
       title: 'Friend Request', 
       icon: iconPersonAdd,
     },
-    { 
+    {
       id: 3, 
       title: 'Notifications', 
       icon: iconNotifications, 
     },
-    { 
+    {
       id: 4, 
       title: 'Messages', 
       icon: iconMessageText, 
     },
   ];
-  const [showAllRequests, setShowAllRequests] = useState(false);
   const [activeSection, setActiveSection] = useState(headers.id=1);
+  const location = useLocation()
+  const dropdownRef = useRef(null);
+  const [activeTitle,setActiveTitle] = useState(null);
+  const navigate = useNavigate();
+  const {notifications} = useSelector((state)=>state.notification)
+  const {friendrequests} = useSelector((state)=>state.friendrequest)
+  const {messages} = useSelector((state)=>state.message)
+  const {profilepic} = useSelector((state)=>state.photo)
+  const dispatch = useDispatch();
+
+// Check if the token exists
+if (token) {
+  console.log('Token retrieved:', token);
+} else {
+  console.log('No token found in localStorage.');
+}
+useEffect(() => {
+  const routeName = location.pathname.split('/').pop();
+  const type = parseInt(routeName,10) === Number
+  console.log(routeName)
+    setActiveTitle(routeName.toUpperCase());
+}, [location.pathname]);
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    setActiveSection(null);
+    }
+  };
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
+
+const fetchUserName = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error('No token found in localStorage');
+      return;
+    }
+
+    const response = await fetch(`http://localhost:8080/api/users/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Fetched user data:', data); // Log fetched data
+      setUser(data);
+    } else {
+      console.error('Failed to fetch user data:', response.status);
+      // Optionally handle different status codes (e.g., unauthorized, not found)
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+};
+useEffect(() => {
+  if (userId) {
+    fetchUserName();
+  }
+}, [userId]);
+
+if (!user) {
+  return <p>Loading...</p>; // Show loading state while fetching
+}
+
+  const dropdowns = {
+    submenu: [
+      { id: 1, title: 'General Settings',icon:<Icon className='w-5 h-5'  icon="carbon:settings" />, path: '/settings' },
+      { id: 2, title: 'Edit Profile',icon:<Icon className='w-5 h-5' icon="flowbite:edit-outline" />, path: '/editprofile' },
+      { id: 3, title: 'Notification',icon:<Icon className='w-5 h-5' icon="ic:outline-edit-notifications" />, path: '/notificationsettings' },
+      { id: 4, title: 'Messages',icon:<Icon className='w-5 h-4' icon="bx:message-edit" />, path: '/messagesettings' },
+      { id: 5, title: 'Privacy & data',icon:<Icon className='w-5 h-4' icon="carbon:security" />, path: '/Privacydata' },
+      { id: 6, title: 'Security',icon:<Icon className='w-5 h-4' icon="material-symbols:lock-outline" />, path: '/security' },
+],
+  };
+
   const handleIconClick = (id) => {
     setActiveSection(id === activeSection ? null : id);
   };
 
-  const navigate = useNavigate();
   const showRequest = showAllRequests ? friendrequests.slice().reverse() :  friendrequests.slice(-5);
-  const [activeTitle,setActiveTitle] = useState(null);
+  const showNotifications =   showAllNotification ? notifications.slice().reverse() :  notifications.slice(-5);
+  const showMessages = showAllMessages ? messages.slice().reverse() :  messages.slice(-5);
+
   const openNotifications = ()=>{
     navigate('/notifications')
   }
@@ -79,55 +150,35 @@ const Navbar = () => {
   const handleViewAll = (title)=>{
     setActiveTitle(title);
   }
-
-  useEffect(() => {
-    const routeName = location.pathname.split('/').pop();
-    const type = parseInt(routeName,10) === Number
-    console.log(routeName)
-      if(!isNaN(type)){
-        setActiveTitle('');
-      }
-      else{setActiveTitle(routeName.toUpperCase());
-  }}, [location.pathname]);
-
-  const dropdownRef = useRef(null);
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setActiveSection(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const openMessages = ()=>{
+    navigate('/messages/1')
+  }
   const handleAddfriend =(id)=>{
     dispatch(addFriend(id));
   }
+
   return (
     <>
-    <nav className='flex bg-gradient-to-tr sticky top-0 sm:w-full sm:text-md z-10 from-span-start to-span-end justify-between items-center h-16 px-5 flex-row'>
-          {activeSection === 'dashboard' && dropdowns.submenu && (
-      <div ref={dropdownRef} className="absolute top-16 w-full flex duration-300 slide-in-down z-10 drop justify-center gap-20 bg-white shadow-lg">
+    <nav className='flex bg-gradient-to-tr sticky top-0 w-full sm:text-md z-10 from-span-start to-span-end justify-between items-center h-16 flex-row'>
+    {activeSection === 'dashboard' && dropdowns.submenu && (
+      <div ref={dropdownRef} className="absolute top-16 w-full flex duration-300 slide-in-down z-10 drop justify-center gap-20 bg-white rounded-full shadow-lg">
           {dropdowns.submenu.map((item) =>(
-            <div key={item.id} className="cursor-pointer flex py-2 hover:bg-gray-100">
+            <div key={item.id} className="cursor-pointer flex py-2 text-cta hover:bg-gray-100">
               {item.title}
             </div>
           ))}
       </div>
     )}
       <div className='flex items-center gap-8'>
-        <div className='flex items-center gap-20'>
+        <div className='flex items-center ml-4 gap-20'>
       <div className='flex items-center'>
-        <NavLink to='/newsfeed'><img className='w-19 h-9 ' src='logo.png' alt='logo' /></NavLink>
+        <NavLink to='/newsfeed'><img className='w-19 h-9 ' src={`/${'logo.png'}`} alt='logo' /></NavLink>
       </div>
         </div>
         <div className='flex items-center gap-8'>
           <NavLink to='/profile'><div className='flex items-center gap-4'>
-        <img src={profilepic} data-tooltip-id="my-tooltip" data-tooltip-content="Profile" alt='' className='cursor-pointer rounded-full h-10 w-11 bg-gray-300'/>
-      <p data-tip="Profile" className='text-white w-28 truncate font-semibold'>Peter Parker</p>
+        <img src={user.profileImagePath} data-tooltip-id="my-tooltip" data-tooltip-content="Profile" alt='' className='cursor-pointer rounded-full h-10 w-11 bg-gray-300'/>
+      <p data-tip="Profile" className='text-white w-28 truncate font-semibold'>{user.name}</p> 
       </div></NavLink>
         <div onClick={() => handleIconClick('dashboard')}
                 className={`cursor-pointer hover:bg-transparent px-3 py-3 rounded-full transition-colors duration-500 ease-in-out ${
@@ -147,8 +198,7 @@ const Navbar = () => {
               <div className="relative">
                 <NavLink to={header.path}><button
                   onClick={() => {handleIconClick(header.id)}}
-                  className={`cursor-pointer hover:bg-transparent px-3 py-3 rounded-full transition-colors duration-500 ease-in-out ${activeSection === header.id ? '' : ''}`}
-                >
+                  className={`cursor-pointer hover:bg-transparent px-3 py-3 rounded-full transition-colors duration-500 ease-in-out ${activeSection === header.id ? '' : ''}`}>
                   <span className="">
                     {React.cloneElement(header.icon, {
                       'data-tooltip-content': header.title,
@@ -162,14 +212,14 @@ const Navbar = () => {
                 {activeSection === header.id && header.title==='Friend Request' && (
                   <div ref={dropdownRef} className="absolute top-full overflow-y-auto overflow-x-hidden -right-20 w-[360px] h-[433px] bg-white rounded-md slide-in-down drop shadow-lg z-10 overflow-hidden">
                     <ul className="">
-  <div className='flex justify-between items-center text-sm py-2 px-4'><p>Requests</p></div>
+  <div className='flex absolute sticky top-0 bg-white justify-between items-center text-sm py-2 px-4'><p>Requests</p><p className='text-cta' onClick={()=>{gotoRequestpage()}}>ViewAll</p></div>
   {showRequest.length===0&& (
     <>
     <div className='flex items-center justify-center'>
       <p>No Requests</p></div></>
   )}
 {showRequest.map((item) => (
-                        <div key={item.id} className=" text-sm notification-item transform text-gray-800 flex flex-col hover:bg-gray-50 justify-between cursor-pointer">
+                        <div key={item.id} className=" text-sm notification-item text-gray-800 flex flex-col hover:bg-gray-50 justify-between cursor-pointer">
                           <div className='flex flex-col px-4 border:gray-300 py-4  border-b text-sm '>
                           <div className='flex justify-between items-center justify-center'>
                             <div className='flex gap-2 items-center'>
@@ -192,18 +242,18 @@ const Navbar = () => {
                     <div className='flex  justify-center items-center'>
                     {showRequest.length>=5 && (
   <button className="flex w-full items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4">
-    {showAllRequests ? <p onClick={()=>{gotoRequestpage()}}>ViewAll</p> : <p onClick={() => setShowAllRequests(!showAllRequests)} >Show more</p>}
+     <p onClick={() => setShowAllRequests(true)} >Show more</p>
   </button>
 )}
                     </div>
                   </div>
                 )}
 {activeSection === header.id && header.title === 'Notifications' && (
-                  <div ref={dropdownRef} className="absolute top-full -right-20 h-[470px] w-[360px] bg-white rounded-md slide-in-down drop shadow-lg z-10 overflow-hidden">
+                  <div ref={dropdownRef} className="absolute top-full overflow-y-auto overflow-x-hidden top-full -right-20 h-[470px] w-[360px] bg-white rounded-md slide-in-down drop shadow-lg z-10 overflow-hidden">
                     <ul className="">
-                    <div className='flex justify-between text-sm py-2 px-4'><p>Notifications</p></div>
-{notifications.length<=0 && <div className='flex items-center justify-center'><p>No Notifications</p></div>}
-{notifications.map((item) => (
+                    <div className='flex absolute sticky top-0 bg-white justify-between text-sm py-2 px-4'><p>Notifications</p> <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm px-4' onClick={()=>{openNotifications();handleViewAll('NOTIFICATIONS');closeDropdown()}}><p>Show All</p></div></div>
+{showNotifications.length<=0 && <div className='flex items-center justify-center'><p>No Notifications</p></div>}
+{showNotifications.map((item) => (
                         <div key={item.id} className=" text-sm text-gray-800 flex flex-col  hover:bg-gray-50 justify-between cursor-pointer">
                           <div className='flex flex-col px-4 justify-center border:gray-300 py-2 border-b text-sm '>
                           <div className='flex justify-between items-center'>
@@ -226,16 +276,15 @@ const Navbar = () => {
                         </div>
                       ))}
                     </ul>
-                    {notifications.length>=5&& <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4' onClick={()=>{handleViewAll('NOTIFICATIONS');openNotifications();closeDropdown()}}><p>View All</p></div>}
+                    {showNotifications.length>=5&& <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4' onClick={()=>{ setShowAllNotification(true)}}><p>Show more</p></div>}
                   </div>
                 )}
                 {activeSection === header.id && header.title==='Messages' && (
-                  <div ref={dropdownRef} className="absolute top-full -right-20 h-[430px] w-[360px] bg-white rounded-md slide-in-down drop shadow-lg z-10 overflow-hidden">
-                    <ul className="">
-                    <div className='flex items-center justify-between text-sm py-2 px-4'><p>Messages</p><p className='text-read text-xs hover:underline'>Mark All As Read</p></div>
-{messages.length<=0 && <><div className='flex items-center justify-center'><p>No Messages</p></div></>}
-{messages.map((item) => (
-                        <div key={item.id} className=" text-sm text-gray-800 flex flex-col  hover:bg-gray-50 justify-between cursor-pointer">
+                  <div ref={dropdownRef} className="absolute overflow-y-auto overflow-x-hidden top-full -right-20 h-[355px] w-[360px] bg-white rounded-md slide-in-down drop shadow-lg z-10 overflow-hidden">
+                    <div className='flex absolute sticky top-0 bg-white items-center justify-between text-sm py-2 px-4'><p>Messages</p><p className='text-read text-xs hover:underline'>Mark All As Read</p><div onClick={()=>{openMessages();closeDropdown()}} className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm px-4'><p>View All</p></div></div>
+{showMessages.length<=0 && <><div className='flex items-center justify-center'><p>No Messages</p></div></>}
+{showMessages.map((item) => (
+                        <div key={item.id} className=" text-sm text-gray-800 flex flex-col hover:bg-gray-50 justify-between cursor-pointer">
                           <div className='flex flex-col px-4 justify-center w-full  border:gray-300 py-2 border-b text-sm '>
                           <div className='flex justify-between items-center'>
                             <div className='flex gap-2 w-full items-center'>
@@ -254,8 +303,7 @@ const Navbar = () => {
                           </div>
                         </div>
                       ))}
-                    </ul>
-{messages.length>=5 &&<div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4'><p>View All</p></div>}
+{showMessages.length>=5 &&<p onClick={()=>{ setShowAllMessages(true)}} className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4'>Show more</p>}
                   </div>
                 )}
               </div>
@@ -280,11 +328,11 @@ const Navbar = () => {
         <Icon  icon="carbon:settings" width="1.4em" height="1.4em"  style={{color: 'white'}} />
         </div>
 {activeSection === 'settings' && dropdowns.submenu && (
-  <div ref={dropdownRef} className="absolute duration-500 slide-in-down top-16 right-0 w-44 flex flex-col justify-center bg-white shadow-lg ">
+  <div ref={dropdownRef} className="absolute duration-500 slide-in-down top-16 right-0 w-52 py-2 flex flex-col gap-4 justify-center bg-white shadow-lg ">
     {dropdowns.submenu.map((item) => (
-      <div key={item.id} className="cursor-pointer flex py-2 px-4 hover:bg-gray-100">
-        {item.title}
-      </div>
+      <NavLink to={item.path}><div key={item.id} onClick={closeDropdown} className="cursor-pointer  gap-1 flex items-center py-2 px-4 hover:bg-gray-100">
+      <span className='p-2 rounded-full bg-white'>{item.icon}</span>  <span className='text-sm '>{item.title}</span>
+      </div></NavLink>
     ))}
   </div>
 )}

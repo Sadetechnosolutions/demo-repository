@@ -9,9 +9,15 @@ import { addCommentToImage,deleteComment,editComment } from '../slices/photoslic
 import moment from 'moment';
 
 const Photodisplay = () => {
-  const { postcomments } = useSelector((state) => state.comment);
+  const [localPostComments, setLocalPostComments] = useState([]);
+  const [hover,setHover] = useState(false);
+
   const [postComment, setPostComment] = useState('');
+  const [edit,setEdit] = useState(false);
+  const { postcomments } = useSelector((state) => state.comment);
+
   const { postliked, postlikeCount } = useSelector((state) => state.like);
+  const isClicked = postlikeCount || false
   const { uploaded } = useSelector((state) => state.photo);
   const dispatch = useDispatch();
   const { profilepic } = useSelector((state) => state.photo);
@@ -19,10 +25,24 @@ const Photodisplay = () => {
   const isLiked = postliked[id] || false;
   const image = uploaded.find((img) => String(img.id) === id);
   const likes = postlikeCount[id] || 0;
-  const [localPostComments, setLocalPostComments] = useState([]);
-  const [hover,setHover] = useState(false);
-  const isClicked = postlikeCount || false
-  const [edit,setEdit] = useState(false);
+
+  useEffect(() => {
+    // Update localPostComments with current postcomments from Redux
+    setLocalPostComments([...postcomments]);
+  }, [postcomments]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLocalPostComments((prevComments) =>
+        prevComments.map((comment) => ({
+          ...comment,
+          timestamp: moment(comment.timestamp).add(1, 'minutes').toDate(),
+        }))
+      );
+    }, 60000);
+
+    return () => clearInterval(interval); 
+  }, []);
 
   const showMenu = (id)=>{
     setHover(id);
@@ -72,30 +92,11 @@ const Photodisplay = () => {
   };
   console.log(image)
 
-  useEffect(() => {
-    // Update localPostComments with current postcomments from Redux
-    setLocalPostComments([...postcomments]);
-  }, [postcomments]);
-
-  useEffect(() => {
-    // Update timestamps in localPostComments every minute
-    const interval = setInterval(() => {
-      setLocalPostComments((prevComments) =>
-        prevComments.map((comment) => ({
-          ...comment,
-          timestamp: moment(comment.timestamp).add(1, 'minutes').toDate(),
-        }))
-      );
-    }, 60000);
-
-    return () => clearInterval(interval); // Clean up the interval when the component unmounts
-  }, []);
-
   return (
     <>
       <div className='flex w-full'>
         <div className='w-2/3'>
-          <img src={image.name} alt={image.name} />
+          <img src={`/${image.name}`} alt={image.name} />
         </div>
         <div className='flex p-4 shadow-lg h-[775px] flex-col w-1/3 gap-4'>
           <div className='flex items-center justify-between'>
@@ -110,14 +111,9 @@ const Photodisplay = () => {
           </div>
           <p>{image.desc}</p>
           <div className='flex items-end'>
-            <Icon
-              onClick={handleLike}
-              className={`cursor-pointer h-7 w-7 text-pink`}
-              icon={isLiked ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"}
-              width='1.2em'
-              height='1.2em'
-            />
-            <span>{likes>0 && likes}</span>
+            <Icon onClick={handleLike}
+              className={`cursor-pointer h-7 w-7 text-pink`} icon={isLiked ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"} width='1.2em' height='1.2em'/>
+          <span>{likes>0 && likes}</span>
           </div>
           <div className='flex items-center gap-1'>
           <InputEmoji className='custom-emoji-picker' onChange={(text)=>setPostComment(text)} placeholder='Add a comment' />
@@ -141,9 +137,7 @@ const Photodisplay = () => {
                       )}       
                       </div>          
                       </div>
-                      {edit ===post.commentId ? <div className='flex items-center'><InputEmoji value={post.comment} onChange={(text)=>setPostComment(text)} /><Icon  onClick={() => handleEditComment(image.id, post.commentId, postComment)} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div>
-  : <span>{post.comment}</span>}
-                      
+                      {edit ===post.commentId ? <div className='flex items-center'><InputEmoji value={post.comment} onChange={(text)=>setPostComment(text)} /><Icon  onClick={() => handleEditComment(image.id, post.commentId, postComment)} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div> : <span>{post.comment}</span>}
                       <div className='flex items-end gap-2'>
                       <Icon onClick={handleLike} className={`cursor-pointer h-5 w-5 text-pink`}
               icon={isClicked ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"} width='1.2em' height='1.2em'/> 

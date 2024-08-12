@@ -13,11 +13,12 @@ import { selectVideo } from '../slices/videoslice';
 import { Link } from 'react-router-dom';
 
 const Videos = () => {
-  const dispatch = useDispatch();
   const [uploadVideo, showuploadVideo] = useState(false);
   const [video,showVideo] = useState(false);
   const [Folder,showUploadFolder] = useState(false);
   const [createAlbum,showCreateAlbum] = useState(false);
+  const dispatch = useDispatch();
+
 
   const selectedVideo = (event) => {
     const file = event.target.files[0];
@@ -139,7 +140,7 @@ const Videos = () => {
  isOpen={createAlbum} onRequestClose={closePopups}>
   <Createvideoalbum close={closePopups} />
   </Modal>
-      <div className='w-5/6 p-2 rounded-md shadow-lg'>
+      <div className='w-5/6 p-2 px-6 rounded-md shadow-lg'>
         <div className='p-2'>
         <p className='text-lg font-semibold'>Videos ({videos.length})</p>
         </div>
@@ -155,16 +156,17 @@ const Videos = () => {
               <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em"   />Upload</span>
             </label>
           </div>
-          
            {videos.slice().reverse().map((video)=>(
             <div key={video.id}>
-                <Link to={`/videos/${video.id}`}><div className='w-52 rounded-md'>
+                <Link to={`/videos/${video.id}`}>
+            <div className='w-52 rounded-md'>
             <Player controls>
                 <source src={video.name} />
                 <LoadingSpinner />
                 <BigPlayButton position='center' />
             </Player>
-            </div></Link>
+            </div>
+            </Link>
             </div>
            ))}
            </div>

@@ -10,23 +10,47 @@ import { v4 as uuidv4 } from 'uuid';
 import {addComment,removeComment} from '../slices/videoslice'
 import moment from 'moment';
 
-    const Videodisplay = () => {
-    const[videoComment,setVideoComment] = useState('')
+const Videodisplay = () => {
+  const[key,setKey] = useState(0)
+    const [videoComment,setVideoComment] = useState('')
     const [localVideoComments, setLocalVideoComments] = useState([]);
+    const [hover,setHover] = useState(false);
+    const [showHover,setShowHover] = useState(false);
     const dispatch = useDispatch()
     const {videocomments} = useSelector((state)=>state.comment)
     const { videoliked,videolikeCount } = useSelector((state) => state.like);
-    const[hover,setHover] = useState(false);
-    const[showHover,setShowHover] = useState(false);
     const {videos} = useSelector((state)=>state.video)
     const {id} = useParams()
     const isLiked = videoliked[id] || false; // Check if photo is liked based on ID
     const likes = videolikeCount[id] || 0
+    const vid = videos.find((video)=>String(video.id) === id)
+    useEffect(() => {
+      if(!vid){
+        return<div>...loading</div>
+    }
+    else{
+        console.log(vid.name)
+    }
+      // Update localPostComments with current postcomments from Redux
+      setLocalVideoComments([...videocomments]);
+    }, [vid,videocomments]);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setLocalVideoComments((prevComments) =>
+          prevComments.map((comment) => ({
+            ...comment,
+            timestamp: moment(comment.timestamp).add(1, 'minutes').toDate(),
+          }))
+        );
+      }, 60000);
+
+      return () => clearInterval(interval);
+    }, []);
     const handleLike = () => {
         dispatch(setvideoLike({ id, liked: !isLiked })); // Toggle liked status
       };
-    const vid = videos.find((video)=>String(video.id) === id)
-    const[key,setKey] = useState(0)
+
     const iconSpring = useSpring({
         transform: `scale(${hover ? 1 : 1.2})`,
         from: {transform: `scale(${hover ? 0.2: 1.2})`},
@@ -53,7 +77,6 @@ import moment from 'moment';
         userName:'Peter Parker',
         profilePic:'profile.jpg',
         timestamp: new Date(),
-
     }
 
     const showoption = (id)=>{
@@ -69,9 +92,6 @@ import moment from 'moment';
      dispatch(removeComment({videoId,commentId}))
      console.log(commentId)
     }
-
-
-
     
     const handleVideoComment = ()=>{
         if(videoComment.trim() !== ''){
@@ -85,35 +105,10 @@ import moment from 'moment';
         }
     }
 
-    useEffect(() => {
-      if(!vid){
-        return<div>...loading</div>
-    }
-    else{
-        console.log(vid.name)
-    }
-      // Update localPostComments with current postcomments from Redux
-      setLocalVideoComments([...videocomments]);
-    }, [vid,videocomments]);
-  
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setLocalVideoComments((prevComments) =>
-          prevComments.map((comment) => ({
-            ...comment,
-            timestamp: moment(comment.timestamp).add(1, 'minutes').toDate(),
-          }))
-        );
-      }, 60000);
-  
-      return () => clearInterval(interval);
-    }, []);
-
     return (
         <>
           <div className='flex w-full'>
-            <div className='w-2/3 bg-black h-[775px'>
+            <div className='w-2/3 bg-black'>
             <Player controls>
                     <source src={`/${vid.name}`} />
                     <LoadingSpinner />
@@ -133,10 +128,7 @@ import moment from 'moment';
               </div>
               <p>{vid.desc}</p>
               <div className='flex gap-1 items-center'>
-              <animated.div
-      style={iconSpring}
-      onClick={()=>setHover(true)}
-    >
+              <animated.div style={iconSpring} onClick={()=>setHover(true)}>
                 <Icon
                   onClick={handleClick}
                   className={`cursor-pointer h-7 w-7 ${isLiked ? 'text-pink ' : 'text-gray-500'}`}

@@ -38,7 +38,8 @@ const Personalinfo = ({close}) => {
     <div className='flex items-center gap-4'><input value={interest} onChange={(e)=>{setInterest(e.target.value)}} className='px-3 py-2 w-full text-sm border border-gray-300 rounded-md' type='text' placeholder='What are you interested in' /> <button type='button' className='border rounded-md text-cta hover:bg-cta hover:text-white px-4 py-2 border-cta'   onClick={(e) => {
     e.preventDefault();
     addInterest();
-  }}>Add</button></div>
+  }}>Add</button>
+    </div>
     <div className='flex flex-wrap gap-4 w-full'>
     {interestList.map((interest,index)=>(
       <div className='flex justify-center items-center w-min py-2 px-3 rounded-md gap-2 bg-cta text-white' key={index}>

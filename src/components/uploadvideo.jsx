@@ -7,8 +7,9 @@ import InputEmoji from "react-input-emoji";
 import { v4 as uuidv4 } from 'uuid';
 
 const PostVideo = ({close}) => {
+  const [caption,setCaption] = useState('');
     const dispatch = useDispatch();
-    const [caption,setCaption] = useState('');
+
     const {selected} = useSelector((state)=>state.video)
     const {videos} = useSelector((state)=>state.video)
 

@@ -1,12 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import data from '../photos.json'
+import posts from '../posts.json'
 
 const initialState = {
     uploaded: data,
     selected: null,
     folders: [],
-    profilepic: 'profile.jpg',
-    selectedprofilepic: 'profile.jpg'
+    profilepic: null,
+    selectedprofilepic: null,
+    coverpic:null,
+    selectedcoverpic:null,
+    newsfeed:posts,
+    selectedphotocomment:null,
+    saved:[]
 }
 
 const photoslice = createSlice({
@@ -26,6 +32,27 @@ const photoslice = createSlice({
                 image.comments.push(commentInfo);
             }
         },
+        addCommentnf(state,action){
+            const { imageId, commentInfo } = action.payload;
+            const feed = state.newsfeed.find((img) => img.id === imageId);
+            if(feed) {
+                if (!feed.comments) {
+                    feed.comments = [];
+                }
+                feed.comments.push(commentInfo);
+            }
+        },
+        addToSaved(state, action) {
+            const postId = action.payload.id;
+            const alreadyExists = state.saved.find(item => item.id === postId)
+            if (!alreadyExists) {
+              state.saved.push(action.payload);
+            }
+          },
+
+        removeSaved(state,action){
+           state.saved = state.saved.filter((save)=>save.id !== action.payload)
+        },
         deleteComment(state, action) {
             const { imageId, commentId } = action.payload;
             const image = state.uploaded.find((img) => img.id === imageId);
@@ -33,9 +60,15 @@ const photoslice = createSlice({
                 image.comments = image.comments.filter((image) => image.commentId !== commentId);
             }
         },
+        deleteCommentnf(state, action) {
+            const { imageId, commentId } = action.payload;
+            const post = state.newsfeed.find((post) => post.id === imageId);
+            if (post) {
+              post.comments = post.comments.filter((comment) => comment.commentId !== commentId);
+            }
+          },
         editComment(state, action) {
             const { imageId, commentId, newComment } = action.payload;
-            // Find the image and the comment to edit
             const image = state.uploaded.find((img) => img.id === imageId);
             if (image) {
               const comment = image.comments.find((c) => c.commentId === commentId);
@@ -47,6 +80,19 @@ const photoslice = createSlice({
         selectPhoto(state, action) {
             state.selected = action.payload;
         },
+        selectPhotoComment(state, action) {
+            const { postId, photo } = action.payload || {};
+            if (postId) {
+                state.selectedphotocomment = {
+                    ...state.selectedphotocomment,
+                    [postId]: photo 
+                };
+            }
+        },
+        
+        addPhotoComment(state,action){
+        
+        },
         removeSelected(state) {
             state.selected = null;
         },
@@ -56,14 +102,20 @@ const photoslice = createSlice({
         addFolder(state, action) {
             state.uploaded.push(action.payload);
         },
-        changePhoto(state, action) {
-            state.selectedprofilepic = action.payload;
-        },
+        changePhoto: (state, action) => {
+            state.profilepic = { url: action.payload.url, name: action.payload.name };
+          },
+          changecoverPhoto: (state, action) => {
+            state.coverpic = { url: action.payload.url, name: action.payload.name };
+          },
         updatePhoto(state, action) {
             state.profilepic = action.payload;
+        },
+        updateCover(state,action){
+            state.coverpic = action.payload;
         }
     }
 });
 
-export const { addPhoto, addCommentToImage,deleteComment,editComment, selectPhoto, removePhoto, removeSelected, addFolder, changePhoto, updatePhoto } = photoslice.actions;
+export const { addPhoto,addCommentnf,deleteCommentnf,addToSaved,removeSaved,selectPhotoComment, addCommentToImage,deleteComment,editComment, selectPhoto,updateCover, removePhoto,changecoverPhoto, removeSelected, addFolder, changePhoto, updatePhoto } = photoslice.actions;
 export default photoslice.reducer;

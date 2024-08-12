@@ -21,7 +21,19 @@ const likeslice = createSlice({
         state.postlikeCount[id] = Math.max((state.postlikeCount[id] || 0) - 1, 0);
       }
     },
-
+    setLike(state, action) {
+      const { postId, commentId } = action.payload;
+      if (commentId) {
+        // If commentId exists, update like count for comments
+        if (!state.likeCounts[postId]) {
+          state.likeCounts[postId] = {};
+        }
+        state.likeCounts[postId][commentId] = (state.likeCounts[postId][commentId] || 0) + 1;
+      } else {
+        // Update like count for posts
+        state.likeCounts[postId] = (state.likeCounts[postId] || 0) + 1;
+      }
+    },
         setvideoLike(state, action) {
       const { id, liked } = action.payload;
       state.videoliked[id] = liked;
@@ -32,8 +44,22 @@ const likeslice = createSlice({
         state.videolikeCount[id] = Math.max((state.videolikeCount[id] || 0) - 1, 0);
       }
     },
+    unsetLike(state, action) {
+      const { postId, commentId } = action.payload;
+      if (commentId) {
+        // If commentId exists, decrement like count for comments
+        if (state.likeCounts[postId] && state.likeCounts[postId][commentId]) {
+          state.likeCounts[postId][commentId] = Math.max(0, (state.likeCounts[postId][commentId] || 0) - 1);
+        }
+      } else {
+        // Decrement like count for posts
+        if (state.likeCounts[postId]) {
+          state.likeCounts[postId] = Math.max(0, (state.likeCounts[postId] || 0) - 1);
+        }
+      }
+    },
   },
 });
 
-export const { setpostLike,setvideoLike } = likeslice.actions;
+export const { setpostLike,setLike,unsetLike,setvideoLike } = likeslice.actions;
 export default likeslice.reducer;

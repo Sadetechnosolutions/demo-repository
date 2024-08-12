@@ -10,10 +10,10 @@ const Friendrequest = () => {
     console.log(friendrequests)
   }
   const dispatch = useDispatch();
-    const {friendrequests} = useSelector((state)=>state.friendrequest)
+    const {friendrequests} = useSelector(state=>state.friendrequest)
   return (
 <div className='w-full flex items-center justify-center'>
-      <div className='w-3/5 px-6 drop bg-white shadow-lg  rounded-md h-auto w-3/5 flex-col '>
+      <div className='w-5/6 px-6 drop bg-white shadow-lg  rounded-md h-auto w-3/5 flex-col '>
       <div className="flex items-center p-4 justify-between">
       <span className='text-lg font-semibold'>FriendRequests ({friendrequests.length})</span>
       <div className='flex items-center gap-2'>
@@ -34,9 +34,9 @@ const Friendrequest = () => {
         </div>
         <div className='flex flex-wrap gap-8 items-center p-2'>
             {friendrequests.map((friend)=>(
-            <div key={friend.id} className='flex flex-col border border-gray-200 rounded-md w-64'>
+            <div key={friend.id} className='flex flex-col border border-gray-200 rounded-md w-[22rem] '>
 <div className="relative">
-  <img className="w-full h-24" src={friend.coverimg} alt="" />
+  <img className="w-full h-28" src={friend.coverimg} alt="" />
   <div className="absolute -mt-10 ml-2 flex  items-center">
     <img className="rounded-full w-16 h-16 border-2 border-white" alt="" src={friend.img} />
   </div>

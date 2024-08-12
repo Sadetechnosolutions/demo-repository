@@ -40,11 +40,11 @@ const dispatch = useDispatch();
   return (
 <div className='flex py-4 px-6 drop bg-white shadow-lg gap-3 rounded-md h-auto w-[800px] flex-col'>
   <div className='flex justify-between font-semibold items-center'>
-         <span className='text-lg'>Friends ({Friends.length})</span> <span onClick={seeallFriends} className='cursor-pointer text-sm'>See All</span>
+         <span className='text-lg'>Friends ({Friends.length})</span> <span onClick={seeallFriends} className='text-cta cursor-pointer text-sm'>See All</span>
           </div>
           <div className='flex py-2 items-center'>
           <AliceCarousel responsive={responsive} disableDotsControls renderNextButton={renderNextButton} renderPrevButton={renderBackButton}>
-           {Friends.slice(-4).reverse().map((friend)=>(
+           {Friends.slice(0).reverse().map((friend)=>(
             <div key={friend.id} className='flex ml-10 flex-col border w-44 border-gray-150 rounded-md pb-3 justify-center gap-2 text-center'>
             <div className='flex flex-col justify-center text-center'>
             <img className='w-48 h-40' alt='' src={friend.img} />

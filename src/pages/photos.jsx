@@ -20,13 +20,13 @@ const Photos = () => {
   }
 
   const {uploaded} = useSelector((state)=>state.photo)
-
   const dispatch = useDispatch();
 
   const openPostPhoto = ()=>{
     showPost(true);
     closeuploadPhoto();
   }
+
   const openUploadFolder = ()=>{
     showUploadFolder(true);
     closeuploadPhoto()
@@ -51,7 +51,7 @@ const Photos = () => {
       const fileObject = { name: file.name };
       console.log(fileObject);
      dispatch(selectPhoto(fileObject));
-      openPostPhoto();
+     openPostPhoto();
   };
 
   return (
@@ -138,32 +138,28 @@ const Photos = () => {
           overflowY: 'auto',
           border:'none'
         }}}
- isOpen={createAlbum} onRequestClose={closePopups}>
+ isOpen={createAlbum} onRequestClose={closePopups} >
   <Createalbum close={closePopups} />
   </Modal>
-        <div className='flex flex-col w-5/6 shadow-lg drop'>
+        <div className='flex flex-col w-5/6 px-5 shadow-lg drop'>
         <div className='font-semibold text-lg p-4'>Photos ({uploaded.length})</div>
         <div className='flex flex-wrap p-2 gap-8'>
-          <div onClick={openuploadPhoto} className='w-72 flex bg-gray-50 cursor-pointer items-center justify-center'>
-            <label className='cursor-pointer'>
-              <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em"   />Upload</span>
-            </label>
+          <div onClick={openuploadPhoto} className='w-80 flex bg-gray-50 cursor-pointer items-center justify-center'>
+          <label className='cursor-pointer'>
+          <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em"   />Upload</span>
+          </label>
           </div>
         {uploaded.slice().reverse().map((photo)=>{
           return(
           <div key={photo.id} className='inline-block cursor-pointer relative overflow-hidden'>
-  <NavLink key={photo.id} to={`/photos/${photo.id}`}><div style={{backgroundImage:`url(${photo.name})`}} className='w-72 h-56 rounded-md cursor-pointer bg-cover bg-no-repeat bg-center transition-transform duration-300 hover:scale-110'>
-    {photo.name? null : <p className='bg-black text-semibold'>{photo.desc}</p>}
-  </div></NavLink>
-  <div className='absolute bottom-0 left-0 right-0 bg-gradient-to-b from-transparent to-black opacity-0 hover:opacity-80 transition-opacity duration-300'>
-    <div className='flex items-center bg-black bg-opacity-60  justify-between px-6 py-4 text-lg'>
-      <div className='flex items-center gap-1'>
-        <Icon className='text-cta' icon="ph:heart-fill" width="1.4em" height="1.4em" />
-        <span className='text-sm text-white'>{photo.likes ? photo.likes : 0}</span>
-      </div>
-      <span className='text-sm text-white'>{photo.postedTime}</span>
+<NavLink key={photo.id} to={`/photos/${photo.id}`}>
+  <div className='relative cursor-pointer'>
+    <img className='w-80 md:h-64 rounded-lg' src={photo.name} />
+    <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 hover:opacity-80 rounded-lg flex items-center justify-center">
+    <p className="text-white flex items-center justify-center gap-2 md:w-full i know an assassin when i see one paaka azhaga irukka nu tha mannichu vidren avan varamaatan di enakku therinjavangala achum yarna maati tholaingalen da ithu mattu enga meera ka ku therinjuthu rocket raja oru thirudan ah whats a crocodile doing in perungalathur ethayachum sollu ya w-40 md:text-lg font-semibold"> <Icon className='text-cta' icon="ph:heart-fill" width="1.4em" height="1.4em" />{photo.likes ? photo.likes : 0} </p>
     </div>
-  </div>
+    </div>
+</NavLink>
 </div>
 )})}
         </div>

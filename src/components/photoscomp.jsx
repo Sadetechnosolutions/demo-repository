@@ -34,7 +34,7 @@ const renderBackButton = ({ isDisabled, onClick }) => (
   return (
     <div className='flex py-4 px-6 drop bg-white shadow-lg  rounded-md h-auto w-[800px] gap-3 flex-col'>
     <div className='flex justify-between font-semibold items-center'>
-           <span className='text-lg'>Photos ({uploaded.length})</span> <span onClick={seeallPhotos} className='cursor-pointer text-sm'>See All</span>
+           <span className='text-lg'>Photos ({uploaded.length})</span> <span onClick={seeallPhotos} className='cursor-pointer text-cta text-sm'>See All</span>
             </div>
             <div className='flex  flex-col'>
               <div className='flex gap-2 ml-10 h-auto py-2'>

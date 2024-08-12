@@ -1,9 +1,7 @@
-import React, { useState,useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import ProgressBar from "@ramonak/react-progress-bar";
 import '../progressstyle.css'
-import {useSpring, animated} from 'react-spring'
-import { Circle } from 'rc-progress';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { Chrono } from "react-chrono";
@@ -11,15 +9,19 @@ import '../styles.css'
 
 
 const Photographer = () => {
-    const [menu,setMenu] = useState(false)
-    const [activeSection,setActiveSection] = useState(1);
-    const [activeTitle,setActiveTitle] = useState('Home')
-    const [isVisible, setIsVisible] = React.useState(false);
     const call=<Icon icon="fa6-solid:phone" />
     const address= <Icon icon="mdi:address-marker" width='1.4em' height='1.4em'  />
     const mail = <Icon icon="material-symbols:mail" width='1.4em' height='1.4em' />
     const linkedin = <Icon className='md:w-5 sm:w-4 md:h-5' icon="bi:linkedin"  />
+    useEffect(() => {
+      const handleScroll = () => {
+      };
+      window.addEventListener("scroll", handleScroll);
 
+      return () => {
+          window.removeEventListener("scroll", handleScroll);
+      };
+  }, []);
 
     const footer=[{
       id:1,
@@ -43,6 +45,8 @@ const Photographer = () => {
       value:'@PeterP07'
     }]
 
+
+
     const items=[{
       id: 1,
       cardSubtitle: 'Oxford University',
@@ -60,7 +64,8 @@ const Photographer = () => {
           id: 1,
           cardSubtitle: 'Camera operations for production, shot division decisions and ensuring high quality visuals',
           cardTitle: 'Huemen collar',
-          title: '2019',    },
+          title: '2019',    
+        },
         {
           id: 2,
           cardDetailedText: '',
@@ -74,73 +79,8 @@ const Photographer = () => {
               cardTitle: 'Fero FT',
               cardSubtitle:"Senior Cinematographer worked in the planning of shot divisions and visual aesthetics based on landscape",
               title: '2017',
-                },]
-
-      const timelineData = [
-        {
-          id: 1,
-          group: 'Group 1',
-          title: 'Item 1',
-          start_time: new Date('2022-01-01'),
-          end_time: new Date('2022-01-15'),
-        },
-        // Add more items as needed
-      ];
+                }]
       
-    useEffect(() => {
-      const handleScroll = () => {
-          setIsVisible(window.scrollY > 100); // Example: Starts animation after scrolling 100px
-
-      
-      };
-
-      window.addEventListener("scroll", handleScroll);
-
-      return () => {
-          window.removeEventListener("scroll", handleScroll);
-      };
-  }, []);
-
-    const animationProps = useSpring({
-      marginTop: isVisible ? 50 : -50,
-    });
-
-
-    const handleActive = (id)=>{
-        setActiveSection(id === activeSection ? 'null' : id)
-    }
-
-
-    const handleMenu = ()=>{
-        setMenu(!menu)
-    }
-    const Home = <Icon className='md:w-11 md:h-11 sm:w-7 sm:h-11' icon="mynaui:home" />
-    const Aboutus = <Icon className='md:w-11 md:h-11 sm:w-7 sm:h-11' icon="mdi:about-circle-outline" />
-    const Portfolio = <Icon className='md:w-11 md:h-11 sm:w-7 sm:h-11' icon="ic:outline-dashboard"  />
-    const Help = <Icon className='md:w-11 md:h-11 sm:w-7 sm:h-11' icon="clarity:help-line"  />
-    const fb = <Icon className='md:w-7 sm:w-5 md:h-7' icon="mage:facebook" />
-    const twitter = <Icon className='md:w-5 sm:w-3 md:h-5' icon="prime:twitter" />
-    const options = [{
-            id:1,
-            icon: Home,
-            title:'Home',
-        },
-        {
-            id:2,
-            icon: Aboutus,
-            title:'About us'
-        },
-        {
-            id:3,
-            icon: Portfolio,
-            title:'Portfolio'
-        },
-        {
-            id:4,
-            icon: Help,
-            title:'Help'
-        },
-    ]
 
     const language=[{
       id:1,
@@ -273,7 +213,7 @@ const Photographer = () => {
       <div>
       </div>
         </div> */}
-        <div className='md:min-h-screen sm:h-auto bg-yo bg-ani flex gap-8 flex-col py-2'>
+        <div className='md:h-auto sm:h-auto bg-ani flex gap-8 flex-col py-2'>
         <div className='text-purple ml-28 font-bold text-4xl'>| ABOUT</div>
         <div className=' md:flex px-28 items-start justify-between md:gap-20'>
           <div className='md:w-full md:h-[33rem] sm:w-full inline-block overflow-hidden'>
@@ -346,8 +286,8 @@ const Photographer = () => {
           ))}
         </div>
         <div className='flex flex-col gap-12'>
-        <div className='text-purple ml-28 font-bold text-4xl'>| CONNECT WITH ME</div>
-        <div className='md:flex sm:flex-wrap flex-wrap md:gap-16 sm:gap-8 ml-28'>
+        <div className='text-purple ml-28 font-bold text-4xl'>| CONTACT ME</div>
+        <div className='flex  flex-wrap md:gap-16 sm:gap-8 ml-28'>
         {footer.map((items)=>(
          <div key={items.id} className='w-64 cursor-pointer hover:animate-bounce parent h-52 hover:bg-purple hover:text-white rounded-lg border-4 border-purple flex flex-col gap-2 items-center justify-center'>
          <div className='bg-purple h-11 child w-11 rounded-full flex items-center justify-center text-black'><span className='text-white child-i'>{items.icon}</span></div>
