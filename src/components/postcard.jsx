@@ -40,6 +40,8 @@ const Post = () => {
   const [visibleReplies, setVisibleReplies] = useState({});
   const [replyInputVisible, setReplyInputVisible] = useState({}); 
   const [replyId,setReplyId] = useState('');
+  const [nestedVisibleReplies, setNestedVisibleReplies] = useState({});
+
 
   const openDelete = ()=>{
     setDeletePopup(true)
@@ -56,7 +58,7 @@ const Post = () => {
 
     
   };
-  const renderReplies = (replies, postId) => {
+  const renderReplies = (replies, postId, parentCommentId = null) => {
     return replies.slice().reverse().map(reply => (
       <div key={reply.id} className='flex border py-2 px-4 rounded-3xl flex-col shadow-md w-full gap-2'>
         <div className='flex gap-1'>
@@ -64,23 +66,48 @@ const Post = () => {
           <span>{user?.name}</span>
         </div>
         <span>{reply.textContent}</span>
-        <Icon onClick={() => toggleReplyInput(reply.id, postId)} className="cursor-pointer h-6 w-6 text-gray-600" icon="iconamoon:comment-light" />
-        
+        <div className='flex w-auto justify-between'>
+        <Icon 
+          onClick={() => toggleReplyInput(reply.id, postId)} 
+          className="cursor-pointer h-6 w-6 text-gray-600" 
+          icon="iconamoon:comment-light" 
+        />
+    
         {replyInputVisible[reply.id] && (
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center w-full gap-2 mt-2">
             <InputEmoji
               value={postComment}
               onChange={(text) => setPostComment(text)}
               placeholder="Write a reply..."
             />
-            <Icon onClick={() => handleComment(reply.id, postId)} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' />
+            <Icon 
+              onClick={() => handleComment(reply.id, postId)} 
+              className='text-cta cursor-pointer' 
+              icon="majesticons:send" 
+              width="1.5em" 
+              height="1.6em" 
+              strokeWidth='2' 
+            />
           </div>
         )}
-  
+    
+        {/* Toggle visibility of nested replies */}
+        <span 
+          onClick={() => setNestedVisibleReplies(prev => ({
+            ...prev,
+            [reply.id]: !prev[reply.id]
+          }))}
+          className='cursor-pointer'
+        >
+          {reply.replies && reply.replies.length > 0 && (
+            <span>{nestedVisibleReplies[reply.id] ? 'Hide replies' : 'View replies'} ({reply.replies.length})</span>
+          )}
+        </span>
+        </div>
         {/* Recursively render nested replies */}
-        {reply.replies && reply.replies.length > 0 && (
+        {nestedVisibleReplies[reply.id] && reply.replies && reply.replies.length > 0 && (
           <div className="ml-4">
-            {renderReplies(reply.replies, postId)}
+            {renderReplies(reply.replies, postId, reply.id)}
           </div>
         )}
       </div>

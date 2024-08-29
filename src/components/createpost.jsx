@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { selectPost } from '../slices/postslice';
 import { useDispatch, useSelector } from 'react-redux';
 import InputEmoji from 'react-input-emoji';
 import MapSelector from './mapselector';
 import moment from 'moment';
+import axios from 'axios';
+
 
 const Createpost = () => {
   const dispatch = useDispatch();
   const { selected } = useSelector((state) => state.post);
   const [file, setFile] = useState(null);
+  const [postType, setPostType] = useState('');
   const [showMap, setShowMap] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [postType, setPostType] = useState('');
+  const [user,setUser] = useState()
+
   const [description,setDescription] = useState('')
   const userId = useSelector((state) => state.auth.userId);
   const img = <Icon className='w-6 h-6' icon="ph:image" />;
@@ -135,17 +139,42 @@ const Createpost = () => {
     }
   };
 
+  const fetchUserDetails = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/users/${userId}`, {
+        method: 'GET',
+        headers: {
+    
+        },
+      });
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, [userId]);
+
+  if (!user) {
+    return <p>Loading...</p>; // Show loading state while fetching
+  }
+
   return (
     <form onSubmit={handleSubmit} className='w-full bg-white rounded-md px-6 py-3 flex gap-2 flex-col shadow-lg'>
       <p className='font-semibold py-2'>Create post</p>
+
       <div className='w-full flex gap-2'>
-        <img className='w-9 h-9 rounded-full' src='profile.jpg' alt='' />
-        <InputEmoji
-          value={description}
-          onChange={setDescription} // Update description state
-          placeholder='what’s on your mind'
-        />
-      </div>
+      <img className='w-9 h-9 rounded-full' src={`http://localhost:8082/${user.profileImagePath}`} alt='' />
+      <InputEmoji
+        value={description}
+        onChange={setDescription} // Update description state
+        placeholder='what’s on your mind'
+      />
+    </div>
+
+
       <div>{renderMedia()}</div>
       <div className='flex gap-3'>
         <Icon
