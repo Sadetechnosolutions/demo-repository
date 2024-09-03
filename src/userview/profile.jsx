@@ -1,7 +1,7 @@
 import React ,{useState} from 'react'
 import { Icon } from '@iconify/react';
 import {Tooltip } from 'react-tooltip';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Videocomp from '../components/videocomp';
 import Photoscomp from '../components/photoscomp';
 import Friendscomp from './friends';
@@ -10,9 +10,10 @@ const ProfileView = () => {
   const [editprofile, showEditprofile] = useState(false);
   const [editPersonal,showEditpersonal] = useState(false);
   const navigate = useNavigate()
+  const {userID} = useParams()
 
   const openPhotos = ()=>{
-    navigate('/photos',window.scrollTo(0, 0))
+    navigate(`/photosview/${userID}`,window.scrollTo(0, 0))
   }
   const personal = {
       profile: [
@@ -47,7 +48,7 @@ const ProfileView = () => {
   
   return (
     <>
-    <div className='md:flex sm:flex xs:flex-col gap-4 w-full justify-center'>
+    <div className='md:flex bg-black  sm:flex xs:flex-col gap-4 w-full justify-center'>
   <div className='flex py-4 px-6 drop bg-white shadow-lg  rounded-md h-[860px] sm:w-1/3 flex-col'>
     <div className='flex gap-2 items-center justify-between py-4 border-b border-gray-170 '>
       <span className='font-semibold text-lg'>Personal Info</span>
@@ -159,7 +160,7 @@ const ProfileView = () => {
     </div>
     <div className='flex  py-6 gap-8'>
     {general.profile.map((profile)=>(
-      <div key={profile.id} className='sm:flex xs:flex-col w-[800px'>
+      <div key={profile.id} className='sm:flex xs:flex-col'>
       <div className='flex flex-col gap-8 w-1/2'>
           <div className='flex flex-col gap-2'>
           <div className='flex font-semibold items-center gap-1.5'>
@@ -206,7 +207,7 @@ const ProfileView = () => {
               {profile.Workexperience.map((profession)=>(
 <div key={profession.id} className='flex flex-col'>
 <span className='text-cta cursor-pointer'>{profession.work}</span>
-<span>{profession.experience}</span>
+<span>{profession.experience} of experience</span>
 </div>
 )) 
   }
@@ -214,7 +215,6 @@ const ProfileView = () => {
           </div>
         </div>
         </div>
-        
         </div>
     ))}
     </div>

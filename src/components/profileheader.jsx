@@ -251,8 +251,6 @@ style={{
       </div>
       </div>
       </div>
-      // wouldnt trade it for anything
-      // 09:21 life peaked
                 ))}
     </>
   )

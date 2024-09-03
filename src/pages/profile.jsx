@@ -22,7 +22,6 @@ const Profile = () => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
     const year = date.getFullYear();
-  
     return `${day}-${month}-${year}`;
   };
   
@@ -42,7 +41,6 @@ const Profile = () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-
       if (response.ok) {
         const data = await response.json();
         console.log('Fetched user data:', data); // Log fetched data
@@ -65,8 +63,6 @@ const Profile = () => {
   if (!user) {
     return <p>Loading...</p>; // Show loading state while fetching
   }
-
-  // Fetch user data when the component mounts or when userId changes
 
   const openPhotos = ()=>{
     navigate('/photos',window.scrollTo(0, 0))
@@ -122,8 +118,8 @@ const Profile = () => {
 }]
     }
   return (
-    <>
-    <div className='md:flex sm:flex xs:flex-col gap-4 w-full justify-center'>
+    <div className='flex flex-col items-center'>
+    <div className='md:flex sm:flex xs:flex-col gap-4 w-5/6 items-center justify-center'>
   <div className='flex py-4 px-6 drop bg-white shadow-lg  rounded-md h-[860px] sm:w-1/3 flex-col'>
     <div className='flex gap-2 items-center justify-between py-4 border-b border-gray-170 '>
       <span className='font-semibold text-lg'>Personal Info</span><span data-tooltip-id="my-tooltip" data-tooltip-content="Edit Personal info" className='flex cursor-pointer gap-2'><Icon onClick={openEditprofile} icon="bx:edit" width="1.3em" height="1.3em" style={{color:'gray'}} /></span>
@@ -243,7 +239,7 @@ const Profile = () => {
     </div>
   </div>
   <div style={{ scrollbarWidth: 'none', '-ms-overflow-style': 'none' }} className='flex xs:flex-col text-sm flex-col overflow-auto overflow-x-hidden h-[860px] gap-8'>
-  <div className='flex  px-6 drop py-4  shadow-lg rounded-md h-auto w-[800px] bg-white flex-col'>
+  <div className='flex  px-6 drop py-4  shadow-lg rounded-md h-auto  bg-white flex-col'>
   <div className='flex gap-2 items-center= justify-between py-4 border-b border-gray-170 '>
       <span className='font-semibold  text-lg'>General Info</span> <span data-tooltip-id='my-tooltip' data-tooltip-content='Edit General info' onClick={openEditpersonal} className='flex cursor-pointer gap-2'><Icon icon="bx:edit" width="1.6em" height="1.6em" style={{color:'gray'}} /></span>
     </div>
@@ -355,7 +351,7 @@ const Profile = () => {
   </div>
   <Tooltip id="my-tooltip "  />
 </div>
-</>
+</div>
   )
 }
 

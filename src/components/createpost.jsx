@@ -174,7 +174,6 @@ const Createpost = () => {
       />
     </div>
 
-
       <div>{renderMedia()}</div>
       <div className='flex gap-3'>
         <Icon

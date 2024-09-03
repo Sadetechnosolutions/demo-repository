@@ -466,7 +466,8 @@ const Signin = () => {
     </div>
   </div>
 </Modal>
-          <div className="flex flex-col w-full sm:items-center py-4 sm:gap-2 md:flex-row md:justify-center md:gap-3.5">
+
+<div className="flex flex-col w-full sm:items-center py-4 sm:gap-2 md:flex-row md:justify-center md:gap-3.5">
   {info.map((detail, index) => (
     <React.Fragment key={index}>
       <NavLink to={detail.path}><p className="cursor-pointer hover:text-white">{detail.heading}</p></NavLink>

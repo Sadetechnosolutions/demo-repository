@@ -54,6 +54,10 @@ const Navbar = () => {
   const {profilepic} = useSelector((state)=>state.photo)
   const dispatch = useDispatch();
 
+  const handleFriend = (id) => {
+    // Navigate to user details page with the user ID
+    navigate(`/user/${id}`);
+  };
 // Check if the token exists
 if (token) {
   console.log('Token retrieved:', token);
@@ -137,11 +141,11 @@ if (!user) {
   const showMessages = showAllMessages ? messages.slice().reverse() :  messages.slice(-5);
 
   const openNotifications = ()=>{
-    navigate('/notifications')
+    navigate(`/notifications/${userId}`)
   }
   const gotoRequestpage =()=>{
     closeDropdown();
-    navigate('/friendrequest')
+    navigate(`/friendrequest/${userId}`)
     setShowAllRequests(!showAllRequests)
   }
   const closeDropdown = ()=>{
@@ -176,8 +180,8 @@ if (!user) {
       </div>
         </div>
         <div className='flex items-center gap-8'>
-          <NavLink to='/profile'><div className='flex items-center gap-4'>
-        <img src={user.profileImagePath} data-tooltip-id="my-tooltip" data-tooltip-content="Profile" alt='' className='cursor-pointer rounded-full h-10 w-11 bg-gray-300'/>
+          <NavLink to={`/user/${userId}`}><div className='flex items-center gap-4'>
+        <img src={`http://localhost:8082${user.profileImagePath}`} data-tooltip-id="my-tooltip" data-tooltip-content="Profile" alt='' className='cursor-pointer rounded-full h-10 w-11 bg-gray-300'/>
       <p data-tip="Profile" className='text-white w-28 truncate font-semibold'>{user.name}</p> 
       </div></NavLink>
         <div onClick={() => handleIconClick('dashboard')}

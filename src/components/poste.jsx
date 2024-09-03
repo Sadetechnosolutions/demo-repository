@@ -5,30 +5,21 @@ import InputEmoji from 'react-input-emoji';
 import { addCommentnf, selectPhotoComment, deleteCommentnf, editComment, addToSaved } from "../slices/photoslice";
 import { useDispatch, useSelector } from "react-redux";
 import DropdownMenu from './dropdownmenu';
-import { v4 as uuidv4 } from 'uuid';
-import Heart from 'react-heart';
 import moment from "moment";
 import Modal from 'react-modal';
-import Operation from 'antd/es/transfer/operation';
-import { comment } from 'postcss';
+import axios from 'axios';
+import { useParams } from 'react-router';
 
 const Post = () => {
-  const [filled, setFilled] = useState(false);
+  const userID = useParams()
   const [comment, setComment] = useState(null);
   const [share, showShare] = useState(false);
-  const [shareImage, setShareImage] = useState(null);
-  const [shareVideo, setShareVideo] = useState(null);
   const [edit, setEdit] = useState(false);
-  const [hover, setHover] = useState(null);
   const [saved, setSaved] = useState({});
   const [postComment, setPostComment] = useState('');
   const [liked, setLiked] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null); // Manage dropdown visibility
-  const { newsfeed = [] } = useSelector((state) => state.photo);
-  const { selectedphotocomment } = useSelector((state) => state.photo);
-  const postliked = useSelector((state) => state.like.postliked);
-  const postlikeCount = useSelector((state) => state.like.postlikeCount);
-  const { Saved } = useSelector((state) => state.photo);
+  const [commentdropdown,setCommentDropdown] = useState(null);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
@@ -43,29 +34,34 @@ const Post = () => {
   const [replyId,setReplyId] = useState('');
   const [nestedVisibleReplies, setNestedVisibleReplies] = useState({});
   const [like,setLike] = useState(false);
-  const [postLiked,setPostLiked] = useState({})
   const [likeCount,setLikeCount] = useState({});
   const [postsWithUsernames, setPostsWithUsernames] = useState([]);
+  const [users,setUsers] = useState()
+  const [userDetail,setUserDetail] = useState()
+  const [animationPostId, setAnimationPostId] = useState(null);
+  const [isTooltipVisible, setTooltipVisible] = useState(false);
+  const [likeduser,setLikeduser] = useState();
+  const [userList,setUserList] = useState();
 
-  const toggleFill = () => {
-    setFilled(prev => !prev);
-  };
 
+  const handleHoverlike = (id)=>{
+    setTooltipVisible(id)
+  }
   const openDelete = ()=>{
     setDeletePopup(true)
-  }                   
-
+  }   
+  
   const closeDelete = ()=>{
     setDeletePopup(false)
   }
+  
   const toggleReplies = (commentId) => {
     setVisibleReplies(prev => ({
       ...prev,
       [commentId]: !prev[commentId]
-    }));
-
-    
+    })); 
   };
+  
   const renderReplies = (replies, postId, parentCommentId = null) => {
     return replies.slice().reverse().map(reply => (
       <div key={reply.id} className='flex border py-2 px-4 rounded-3xl flex-col shadow-md w-full gap-2'>
@@ -98,8 +94,7 @@ const Post = () => {
             />
           </div>
         )}
-    
-        {/* Toggle visibility of nested replies */}
+
         <span 
           onClick={() => setNestedVisibleReplies(prev => ({
             ...prev,
@@ -112,7 +107,7 @@ const Post = () => {
           )}
         </span>
         </div>
-        {/* Recursively render nested replies */}
+
         {nestedVisibleReplies[reply.id] && reply.replies && reply.replies.length > 0 && (
           <div className="ml-4">
             {renderReplies(reply.replies, postId, reply.id)}
@@ -121,7 +116,31 @@ const Post = () => {
       </div>
     ));
   };
-  
+
+
+  const fetchUserList = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:8081/api/auth/users/descending', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setUserList(data)
+      } else {
+        console.error('Failed to fetch user data:', response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserList();
+  }, []);
 
   const toggleReplyInput = (commentId,replyid) => {
     setReplyInputVisible(prev => ({
@@ -131,7 +150,7 @@ const Post = () => {
     setReplyId(commentId)
     setSelectedPostId(replyid)
   };
-  
+
   // Fetch user data
   const fetchUserName = async () => {
     try {
@@ -168,7 +187,13 @@ const Post = () => {
       fetchUserName();
     }
   }, [userId]);
+  useEffect(() => {
+    fetchLikedBy();
 
+    // Set up an interval to update likedUser data every second
+    const intervalId = setInterval(fetchLikedBy, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
   // Fetch posts
   const fetchUserData = async () => {
     try {
@@ -202,13 +227,11 @@ const Post = () => {
 
   useEffect(() => {
     if (userData.length && user.length) {
-        // Create a mapping of userId to name
         const userMap = {};
         user.forEach(user => {
             userMap[user.userid] = user.name;
         });
 
-        // Combine posts with user names
         const updatedPosts = userData.map(post => ({
             ...post,
             userName: userMap[post.userId] || 'Unknown User' // Fallback if userId not found
@@ -245,12 +268,10 @@ const Post = () => {
     setShowDropdown(prev => (prev === postId ? null : postId)); // Toggle visibility
   };
 
-  const handleSave = (id) => {
-    setSaved(prevSaved => ({
-      ...prevSaved,
-      [id]: !prevSaved[id]
-    }));
-  };
+  const toggleCommentDropdown = (commentId)=>{
+    setCommentDropdown(prev => (prev === commentId? null : commentId))
+  }
+
 
   const toggleComment = (postId) => {
     setComment(prev => {
@@ -294,35 +315,37 @@ const Post = () => {
     }
   };
 
-  useEffect(() => {
-    if (userData.length > 0) {
-      userData.forEach(post => {
-        if (post.postId) {
-          fetchComments(post.postId); // Fetch comments for each post
-          fetchLikes(post.postId); // Fetch likes for each post
-          likesCount(post.postId); // Fetch like counts for each post
-        }
-      });
-    }
-  }, [userData]);
   
 
-  const handleShowShare = (post) => {
-    showShare(post);
-  };
 
-  const closeShare = () => {
-    showShare(false);
-  };
 
-  const handleSaved = (id) => {
-    console.log(dispatch(addToSaved(id)));
+  const fetchLikedBy = async (postId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        return;
+      }
+      const response = await fetch(`http://localhost:8080/likes/post/${postId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        setLikeduser(data)
+      } else {
+        console.error('Failed to fetch likes:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching likes:', error);
+    }
   };
+  
 
-  const handleEditComment = (imageId, commentId, newComment) => {
-    console.log(dispatch(editComment({ imageId, commentId, newComment })));
-    setEdit(false);
-  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -338,6 +361,28 @@ const Post = () => {
         setShouldRefetch(true);
         closeDelete();
         setDeleteId('');
+      } else {
+        alert('An error occurred. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('An error occurred while attempting to submit.');
+    }
+  };
+
+  const deleteComment = async (deletecommentId) => {
+    // e.preventDefault();
+  
+    try {
+      const response = await fetch(`http://localhost:8085/comments/${deletecommentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      if (response.ok) {
+
       } else {
         alert('An error occurred. Please try again later.');
       }
@@ -384,31 +429,18 @@ const Post = () => {
     }
   };
 
-  const handleLikes = async (postId) => {
-    const jsonData = {
-      postId:postId,
-      userId:userId
-    };
-    try {
-      const response = await fetch(`http://localhost:8080/likes/toggle?postId=${postId}&userId=${userId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(jsonData),
+  useEffect(() => {
+    if (userData.length > 0) {
+      userData.forEach(post => {
+        if (post.postId) {
+          fetchComments(post.postId); // Fetch comments for each post
+          fetchLikes(post.postId); // Fetch likes for each post
+          likesCount(post.postId);
+          fetchLikedBy(post.postId); // Fetch like counts for each post
+        }
       });
-  
-      if (response.ok) {
-        setSelectedPostId('') // Close the reply input
-      } else {
-        console.log('An error occurred. Please try again later.');
-        setSelectedPostId('');
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSelectedPostId('');
     }
-  };
+  }, [userData]);
 
   const fetchComments = async (postId) => {
     try {
@@ -417,7 +449,7 @@ const Post = () => {
         throw new Error('No token found in localStorage');
       }
   
-      const response = await fetch(`http://localhost:8080/comments/post/${postId}`, {
+      const response = await fetch(`http://localhost:8085/comments/post/${postId}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -439,7 +471,52 @@ const Post = () => {
       console.error('Error fetching comments:', error.message);
     }
   };
-  
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('http://localhost:8081/api/auth/users/descending');
+      const usersData = response.data.map(user => ({
+        id: user.id,
+        UserName: user.name,
+      }));
+      setUsers(usersData);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+  const handleLikes = async (postId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/likes/toggle?postId=${postId}&userId=${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        setLiked(prev => ({
+          ...prev,
+          [postId]: !prev[postId]
+        }));
+        setAnimationPostId(postId);
+        // Re-fetch like count or update locally
+        const countResponse = await fetch(`http://localhost:8080/likes/post/${postId}/count`);
+        const countData = await countResponse.json();
+        setLikeCount(prev => ({
+          ...prev,
+          [postId]: countData
+        }));
+        setTimeout(() => setAnimationPostId(null), 300); // Reset animation class
+      } else {
+        console.log('An error occurred. Please try again later.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
+  };
 
   const likesCount = async (postId) => {
     try {
@@ -461,58 +538,88 @@ const Post = () => {
       userData.forEach(post => {
         if (post.postId) {
           fetchComments(post.postId); // Fetch comments for each post
-        }
-      });
-    }
-  }, [userData]);
-
-  useEffect(() => {
-    if (userData.length > 0) {
-      userData.forEach(post => {
-        if (post.postId) {
-          fetchComments(post.postId); // Fetch comments for each post
           likesCount(post.postId); // Fetch like counts for each post
         }
       });
     }
   }, [userData]);
-  
-  
-  console.log(postComment)
   const handleLike = async (postId) => {
     await handleLikes(postId);
     await fetchLikes(postId); // Re-fetch to update like state
-    await likesCount(postId); // Fetch and set like count for the specific post
+    await likesCount(postId);
+    await fetchLikedBy(postId) // Fetch and set like count for the specific post
   };
+
+  useEffect(() => {
+    if (userData) {
+      userData.forEach(post => {
+        if (post.postId) {
+          fetchComments(post.postId); // Fetch comments for each post
+        }
+      });
+    }
+  }, [userData]);
+
   
-  
+
   const isLiked = (postId) => like[postId] || false;
   return (
     <form onSubmit={handleSubmit} className="rounded-md flex flex-col bg-white gap-16 shadow-lg w-full py-2 px-4">
-      {userData?.map((post) => (
-        <div className='w-3/5 flex flex-col gap-4 shadow-lg py-4 px-4 relative' key={post.postId}>
+      {userData?.map((post) =>{ 
+             const calculateTimeDifference = () => {
+              const pastDate = moment(post.createdAt);
+              const now = moment();
+        
+              const diffInDays = now.diff(pastDate, 'days');
+              const diffInHours = now.diff(pastDate, 'hours');
+              const diffInMinutes = now.diff(pastDate, 'minutes');
+        
+              let displayText = '';
+        
+              if (diffInDays > 0) {
+                displayText = `${diffInDays}d${diffInDays > 1 ? ' ago' : ''}`;
+              } else if (diffInHours > 0) {
+                displayText = `${diffInHours}h${diffInHours > 1 ? ' ago' : ''}`;
+              } else if (diffInMinutes > 0) {
+                displayText = `${diffInMinutes}m${diffInMinutes > 1 ? ' ago' : ''}`;
+              } else {
+                displayText = 'Just now';
+              }
+        
+              return displayText;
+            };
+        
+        const timeDifference = calculateTimeDifference();
+        return(
+        <div className='w-5/3 flex flex-col gap-4 shadow-lg py-4 px-4 relative' key={post.postId}>
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
-              <img className="rounded-full w-11 h-11" src={post?.dp} alt="Profile" />
+              <img className="rounded-full w-11 h-11" src={`http://localhost:8082${userDetail?.profileImagePath}`} alt="Profile" />
               <div className="flex flex-col">
-                <span className="font-semibold">{user?.name}</span>
-                <span className="text-sm text-gray-600">just now</span>
+                <span className="font-semibold">{users?.map(user => 
+          user.id === post.userId ? (
+            <span key={user.id} className="font-semibold">{user.UserName}</span>
+          ) : null
+        )}</span>
+                <span className="text-sm text-gray-600">{timeDifference}</span>
               </div>
             </div>
-            <div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}
-              <Icon
-                className="w-6 h-6 cursor-pointer"
-                icon="carbon:overflow-menu-vertical"
-                onClick={() => toggleDropdown(post.postId)} // Toggle dropdown for specific post
-              />
-              {showDropdown === post.postId && (
-                <DropdownMenu
-                  onEdit={() => handleEdit(post.postId)}
-                  onDelete={() => {handleDelete(post.postId);openDelete()}}
-                  onClose={() => setShowDropdown(null)} // Close dropdown
-                />
-              )}
-            </div>
+
+                          <div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}
+                          <Icon
+                            className="w-6 h-6 cursor-pointer"
+                            icon="carbon:overflow-menu-vertical"
+                            onClick={() => toggleDropdown(post.postId)} // Toggle dropdown for specific post
+                          />
+                          {showDropdown === post.postId && (
+                            <DropdownMenu
+                              onEdit={() => handleEdit(post.postId)}
+                              onDelete={() => {handleDelete(post.postId);openDelete()}}
+                              onClose={() => setShowDropdown(null)} // Close dropdown
+                            />
+                          )}
+                        </div>
+
           </div>
           <span>{post.description}</span>
           {post.postType === 'IMAGE' ? (
@@ -523,27 +630,96 @@ const Post = () => {
               Your browser does not support the video tag.
             </video>
           ) : null}
-          <div className='flex gap-4 items-center'>
-          <Icon onClick={()=>{handleLike(post.postId)}}
-              className={`cursor-pointer h-7 w-7 text-pink`} icon={isLiked(post.postId) ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"} width='1.2em' height='1.2em'/> {likeCount[post.postId] || 0}
-          <Icon onClick={() => toggleComment(post.postId)} className="cursor-pointer h-6 w-6 text-gray-600" icon="iconamoon:comment-light" /></div>
-
+          <div className='flex gap-6 items-center'>
+          <div className='relative flex items-center'>
+      <Icon
+        onClick={() => handleLike(post.postId)}
+        className={`cursor-pointer h-7 w-7 ${liked[post.postId] ? 'text-pink' : 'text-gray-700'} ${animationPostId === post.postId ? 'like-animate' : ''}`}
+        icon={liked[post.postId] ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"}
+        width='1.2em'
+        height='1.2em'
+      />
+      
+      <div 
+        className='cursor-pointer tooltip-container' 
+        onMouseEnter={() => handleHoverlike(post.postId)}
+        onMouseLeave={() => handleHoverlike(null)}
+      >
+        {likeCount[post.postId] || 0}
+        {isTooltipVisible === post.postId && likeCount[post.postId] !== 0 && (
+          <div className='absolute ml-2 tooltip w-20  bg-white text-black p-2 border border-gray-300 rounded shadow-lg'>
+            <ul>
+                <li>            {userList
+                .filter((client) => 
+                  likeduser.some((userlikes) => client.id === userlikes.userId)
+                )
+                .map((client) => (
+                  <span key={client.id} style={{ display: 'block' }}>
+                    {client.name}
+                  </span>
+                ))
+              }</li>
+            </ul>
+          </div>
+        )}
+      </div>  
+    </div>
+    <div className='flex items-center gap-1'><Icon onClick={() => toggleComment(post.postId)} className="cursor-pointer h-6 w-6 text-gray-600" icon="iconamoon:comment-light" /> { <span>{displayComments[post.postId]?.length}</span> || 0 }</div>
+          </div>
           {comment === post.postId && (   <div className="flex items-center gap-2"><label className="cursor-pointer"><Icon className="w-7 h-7 text-gray-500" icon="mdi:camera-outline" /><input  className="absolute opacity-0" type="file" /></label><InputEmoji onChange={(text) => setPostComment(text)} placeholder="Add a comment" /><Icon onClick={handleComment} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div>)}
-          {displayComments[post.postId]?(
-  displayComments[post.postId].map((comment) => (
+          {comment === post.postId && displayComments[post.postId]?(
+  displayComments[post.postId].map((comment) => {
+    const commentUser = users.find(user => user.id === comment.userId);
+    const commentTime = () => {
+      const pastDate = moment(comment.createdAt);
+      const now = moment();
+      const diffInDays = now.diff(pastDate, 'days');
+      const diffInHours = now.diff(pastDate, 'hours');
+      const diffInMinutes = now.diff(pastDate, 'minutes');
+      let displayText = '';
+
+      if (diffInDays > 0) {
+        displayText = `${diffInDays}d${diffInDays > 1 ? ' ago' : ''}`;
+      } else if (diffInHours > 0) {
+        displayText = `${diffInHours}h${diffInHours > 1 ? ' ago' : ''}`;
+      } else if (diffInMinutes > 0) {
+        displayText = `${diffInMinutes}m${diffInMinutes > 1 ? ' ago' : ''}`;
+      } else {
+        displayText = 'Just now';
+      }
+
+      return displayText;
+    };
+
+    const commenttime = commentTime();
+    return(
     <div>
 <div key={comment.id} className='flex border py-2 px-4 rounded-3xl flex-col shadow-md w-full gap-2'>
 <div className='flex justify-between'>
-<div className='flex gap-2 items-center'>
+<div className='flex justify-between w-full items-center'>
+  <div className='flex gap-2 items-center' >
 <img className='rounded-full h-9 w-9' src={post.profilepic} alt={post.profilepic} />
 <div className='flex flex-col'>
-<p className='font-semibold'>{user.name}</p>
-<span className='text-sm'>just now</span>
+<p className='font-semibold'>{commentUser?.UserName}</p>
+<span className='text-sm'>{commenttime}</span>
 </div>
 </div>
-<div className='relative'>
-</div>          
+<div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}
+              <Icon
+                className="w-6 h-6 cursor-pointer"
+                icon="carbon:overflow-menu-vertical"
+                onClick={() => toggleCommentDropdown(comment.id)} // Toggle dropdown for specific post
+              />
+              {commentdropdown === comment.id && (
+        <div className="absolute right-0 bg-white border border-gray-300 shadow-lg rounded-md mt-6">
+        <button  className="block flex items-center px-3 w-full py-2 text-gray-700 hover:bg-gray-100"><Icon icon="tdesign:edit" />Edit</button>
+        <button onClick={()=> {deleteComment(comment.id)}}  className="block flex items-center w-full px-3 py-2 text-gray-700 hover:bg-gray-100"><Icon icon="mdi:delete-outline" />Delete</button>
+      </div>
+              )}
+            </div>
+</div>         
 </div>
+
 <span>{comment.textContent}</span>
 {/* {edit ===post.commentId ? <div className='flex items-center'><InputEmoji value={post.comment} onChange={(text)=>setPostComment(text)} /><Icon  onClick={() => handleEditComment(image.id, post.commentId, postComment)} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div> : <span>{post.comment}</span>} */}
 <div className='flex items-end gap-2'>
@@ -569,13 +745,13 @@ icon={isClicked ? "material-symbols-light:favorite" : "material-symbols-light:fa
 </div>
 
 </div>
-  ))
+  )})
 ) : (
-  <div className="text-gray-500">No comments yet</div>
+  <div className="text-gray-500"></div>
 )}
 
         </div>
-      ))}
+      )})}
               <Modal  appElement={document.getElementById('root')}
 style={{
         content: {

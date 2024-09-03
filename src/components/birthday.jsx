@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+
+import React, { useState,useEffect } from 'react';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import DatePicker from 'react-date-picker';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 
-const Birthday = () => {
+  const Birthday = () => {
   const options = { month: 'long', day: 'numeric' };
   const today = new Date();
   const currentDate = today.toLocaleDateString('en-US', options);
 
+  const userId = useSelector((state)=>state.auth.userId);
+
   const [selectedDate, setSelectedDate] = useState(null); // State to hold selected date
   const [showCalendar, setShowCalendar] = useState(false); // State to control calendar visibility
+  const [users,setUsers] = useState();
 
   const responsive = {
     0: { items: 1 },
@@ -39,33 +45,23 @@ const Birthday = () => {
     </button>
   );
 
-  const data = [
-    {
-      id: 1,
-      name: 'Alice',
-      img: 'author.jpg',
-      year: '1999',
-      date: '18',
-      month: 'june',
-    },
-    {
-      id: 2,
-      name: 'Jackson',
-      img: 'author.jpg',
-      year: '1997',
-      date: '18',
-      month: 'june',
-    },
-    {
-      id: 3,
-      name: 'Peter',
-      img: 'author.jpg',
-      year: '2001',
-      date: '18',
-      month: 'june',
-    },
-  ];
+  const fetchUserDetails = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/users', {
+        method: 'GET',
+        headers: {
+    
+        },
+      });
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
 
+  useEffect(() => {
+    fetchUserDetails();
+  }, [userId]);
   const handleDateClick = () => {
     setShowCalendar(!showCalendar); // Toggle calendar visibility
   };
@@ -74,6 +70,12 @@ const Birthday = () => {
     setSelectedDate(date);
     setShowCalendar(false); // Hide calendar after selecting date
   };
+
+  const filteredUsers = users?.filter((user) => {
+    const date = new Date(user.birthday);
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+    return formattedDate === (selectedDate ? selectedDate.toLocaleDateString('en-US', options) : currentDate);
+  });
 
   return (
     <div className="w-full flex flex-col bg-white gap-6 rounded-md shadow-lg">
@@ -92,33 +94,47 @@ const Birthday = () => {
           />
         </div>
       )}
-      <AliceCarousel
-        disableDotsControls
-        responsive={responsive}
-        autoPlay
-        infinite
-        autoPlayInterval={4000}
-        renderNextButton={renderNextButton}
-        renderPrevButton={renderBackButton}
-      >
-        {data.map((friend, index) => (
-          <div key={friend.id} className="flex flex-col gap-2 items-center justify-center">
-            <div className="flex items-center gap-2">
-              <img className="w-16 h-16 rounded-full" src={friend.img} alt="" />
+{filteredUsers?.length > 0 ? (
+        <AliceCarousel
+          disableDotsControls
+          responsive={responsive}
+          autoPlay
+          infinite
+          autoPlayInterval={4000}
+          renderNextButton={renderNextButton}
+          renderPrevButton={renderBackButton}
+        > 
+          {filteredUsers.map((user) => (
+            <div key={user.id} className="flex flex-col gap-2 items-center justify-center">
+              <div className="flex items-center gap-2">
+                <img className="w-16 h-16 rounded-full" src={user.profileImagePath} alt={`http://localhost:8082${user.profileImagePath}`} />
+              </div>
+              <span className="text-lg font-semibold">
+                {user.name} celebrating their birthday today
+              </span>
+              <div>
+
+                <img
+                  className="w-36 h-36"
+                  src="birthday.gif"
+                  alt=""
+                />
+              </div>
             </div>
-            <span className="text-lg font-semibold">
-              {friend.name} celebrating his birthday today
-            </span>
-            <div>
-              <img
-                className="w-36 h-36"
-                src="https://wpkixx.com/html/pitnik-dark/images/resources/dob-cake.gif"
-                alt=""
-              />
-            </div>
-          </div>
-        ))}
-      </AliceCarousel>
+          ))}
+        </AliceCarousel>
+      ) : (
+        <div className="text-center py-4 text-lg font-semibold">
+          <span>No birthdays today</span>
+          <div className='w-full flex justify-center'>
+          <img
+        className="w-36 h-36"
+        src="birthday.gif"
+        alt=""
+      />
+      </div>
+      </div>
+      )}
     </div>
   );
 };

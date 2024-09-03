@@ -442,3 +442,89 @@ color: #F85454;
 .chrono__cardSubtitle {
   color: #495057; /* Your desired subtitle text color */
 }
+
+/* Heart.css */
+.heart {
+  position: relative;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.heart-shape {
+  position: relative;
+  width:25px;
+  height: 25px;
+  background-color: #ccc;
+  transform: rotate(-45deg);
+  margin: 0 auto;
+}
+
+.heart-shape::before,
+.heart-shape::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background-color: #ccc;
+  border-radius: 50%;
+  top: -25px;
+}
+
+.heart-shape::before {
+  left: 0;
+}
+
+.heart-shape::after {
+  left: 25px;
+}
+
+.filled .heart-shape {
+  background-color: red;
+}
+
+.filled .heart-shape::before,
+.filled .heart-shape::after {
+  background-color: red;
+}
+/* Add this to your CSS file */
+@keyframes likeAnimation {
+  0% {
+    transform: scale(1);
+    color: red;
+  }
+  50% {
+    transform: scale(1.1);
+    color: red;
+  }
+  100% {
+    transform: scale(1);
+    color: pink;
+  }
+}
+
+.like-animate {
+  animation: likeAnimation 0.3s ease-in-out;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.tooltip-container .tooltip {
+  position: absolute;
+  bottom: 100%; /* Position it above the parent element */
+  left: 50%; /* Center it horizontally */
+  transform: translateX(-50%) translateY(-5px); /* Center it and adjust vertical positioning */
+  background-color: white;
+  color: black;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  white-space: nowrap;
+  /* Optional: add transition for smooth height adjustment */
+  transition: height 0.2s ease, padding 0.2s ease;
+}

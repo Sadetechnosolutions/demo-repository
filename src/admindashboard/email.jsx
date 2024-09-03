@@ -28,7 +28,7 @@ const Email = () => {
         try {
             const response = await axios.get('http://localhost:8081/api/auth/otps/descending');
             const otpsData = response.data.map(otp => ({
-                id: otp.id, // Ensure this matches the key in the OTP response that links to the user
+                id: otp.id, 
                 Otp:otp.otp,
                 Email: otp.email,
                 Joined: otp.createdAt
@@ -55,7 +55,7 @@ const Email = () => {
 
     return (
         <div className="p-4">
-        <div className="border px-6 border-gray-300 rounded-lg overflow-hidden">
+        <div className="border  border-gray-300 rounded-lg overflow-hidden">
 
                 <DataTable value={otps} paginator rows={19} className="datatable-basic custom-header">
                     <Column field="id" header="ID"  className="border border-gray-300"/>

@@ -64,7 +64,7 @@ const Signup = () => {
       const userdata = { ...user, phoneNumber: formattedPhoneNumber, role: 'USER' ,otp:formattedOTP };
       console.log(formattedOTP)
       console.log('Sending data:', JSON.stringify(userdata));
-      const response = await fetch('http://localhost:8081/api/auth/verifyOtp', {
+      const response = await fetch('http://192.168.1.8:8081/api/auth/verifyOtp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -102,6 +102,7 @@ const Signup = () => {
       setPasswordError('Passwords do not match or do not meet the criteria');
       return;
     } else if (!emailPattern.test(user.email)) {
+      
       toast.error('Invalid email format.');
       return;
     } else {
@@ -111,7 +112,7 @@ const Signup = () => {
       const formattedPhoneNumber = country ? `${country.code}${user.phoneNumber}` : `+91${user.phoneNumber}`;
       const userdata = { ...user, phoneNumber: formattedPhoneNumber, role: 'USER' };
       console.log('Sending data:', JSON.stringify(userdata));
-      const response = await fetch('http://localhost:8081/api/auth/register', {
+      const response = await fetch('http://192.168.1.8:8081/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

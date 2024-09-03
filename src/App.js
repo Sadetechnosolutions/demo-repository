@@ -45,16 +45,17 @@ import Formbar from './userview/formbar';
 import PersonalInfo from './userview/perinfo';
 import Addfriends from './userview/addfriends';
 import Dashboard from './admindashboard/dashboard';
-import PrivateRoute from './pages/privateroute';
+import UserDetails from './pages/userdetails';
 import UserForm from './userview/defaultform';
 import { useDispatch } from 'react-redux';
 import { logout } from './slices/authslice';
+import Post from './userview/timeline';
 
 Modal.setAppElement('#root');
 
 function App() {
-  const dispatch = useDispatch();
 
+  const dispatch = useDispatch();
   useEffect(() => {
       // On app initialization, check if token exists
       const token = localStorage.getItem('token');
@@ -64,6 +65,7 @@ function App() {
           dispatch(logout());
       }
   }, [dispatch]);
+
   return(
     <>
     <Router>
@@ -75,20 +77,21 @@ function App() {
         <Route path='/gw' element={<Formbar />} />
         <Route path='/userform' element={<UserForm />} />
         <Route path='/pw' element={<PersonalInfo />} />
+        <Route path="/user/:userID" element={<DefaultWithNavbar><DefaultWithHeaderUser><UserDetails /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/forgotpassword2' element={<Forgotpassword2 />} />
         <Route path="/newsfeed" element={<DefaultWithNavbar><Home /></DefaultWithNavbar>} />
         <Route path='/messages' element={<Messages />} />
         <Route path='messages/:messagesId' element={<MessageDetails data={data} />} />
-        <Route path='/notifications' element={<DefaultWithNavbar><DefaultWithHeader><Notifications /></DefaultWithHeader></DefaultWithNavbar>} />
+        <Route path='/notifications/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Notifications /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/profile' element={<DefaultWithNavbar><DefaultWithHeader><Profile /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/friends' element={<DefaultWithNavbar><DefaultWithHeader><Friendlist /></DefaultWithHeader></DefaultWithNavbar>} />
-        <Route path='/photos'  exact element={<DefaultWithNavbar><DefaultWithHeader><Photos /></DefaultWithHeader></DefaultWithNavbar>} />
+        <Route path='/photos'  exact element={<DefaultWithNavbar><DefaultWithHeaderUser><Photos /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/videos' element={<DefaultWithNavbar><DefaultWithHeader><Videos /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/followers' element={<DefaultWithNavbar><DefaultWithHeader><Followers /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/following' element={<DefaultWithNavbar><DefaultWithHeader><Following /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/timeline' element={<Timeline />} />
         <Route path='/editpersonal' element={<DefaultWithNavbar><Personalinfo /></DefaultWithNavbar>} />
-        <Route path='/friendrequest' element={<DefaultWithNavbar><DefaultWithHeader><Friendrequest /></DefaultWithHeader></DefaultWithNavbar>} />
+        <Route path='/friendrequest/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Friendrequest /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/editprofile' element={<DefaultWithNavbar><DefaultWithHeader><SetEditprofile /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/photos/:id' element={<DefaultWithNavbar><Photodisplay /></DefaultWithNavbar>}/>
         <Route path='/videos/:id' element={<Videodisplay />} />
@@ -99,13 +102,14 @@ function App() {
         <Route path='/notificationsettings' element={<DefaultWithNavbar><DefaultWithHeader><Notificationsettings /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/messagesettings' element={<DefaultWithNavbar><DefaultWithHeader><MessageSettings /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/storypage' element={<StoryPage />}/>
-        <Route path='/photosview' element={<DefaultWithNavbar><DefaultWithHeaderUser><PhotosUser /></DefaultWithHeaderUser></DefaultWithNavbar>}/>
+        <Route path='/timelineview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Post /></DefaultWithHeaderUser></DefaultWithNavbar>}/>
+        <Route path='/photosview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><PhotosUser /></DefaultWithHeaderUser></DefaultWithNavbar>}/>
         <Route path='/profilehead' element={<ProfileheaderUser />}/>
         <Route path='/addfriends' element={<Addfriends />}/>
         <Route path='/dashboard' element={<Dashboard />}/>
-        <Route path='/videosview' element={<DefaultWithNavbar><DefaultWithHeaderUser><VideosUser /></DefaultWithHeaderUser></DefaultWithNavbar>} />
+        <Route path='/videosview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><VideosUser /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/profileview' element={<DefaultWithNavbar><DefaultWithHeaderUser><ProfileView /></DefaultWithHeaderUser></DefaultWithNavbar>}/>
-        <Route path='/friendsview' element={<DefaultWithNavbar><DefaultWithHeaderUser><Friendview /></DefaultWithHeaderUser></DefaultWithNavbar>} />
+        <Route path='/friendsview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Friendview /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='followersview' element={<DefaultWithNavbar><DefaultWithHeaderUser><FollowersView /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='followingview' element={<DefaultWithNavbar><DefaultWithHeaderUser><FollowingView /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='*' element={<ErrorPage />} />
