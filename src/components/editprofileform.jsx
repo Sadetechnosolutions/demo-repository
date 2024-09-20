@@ -6,7 +6,6 @@ const Editformprofile = ()=>{
     const [countries,ShowCountries] = useState(false);
     const [country,SetCountry] = useState('');
     const [active,SetActive] = useState(false);
-
   
     const handleShowCountry = ()=>{
         ShowCountries(!countries);
@@ -53,7 +52,6 @@ const Editformprofile = ()=>{
     </div>
     </div>
     </div>
-
     <div className='flex flex-col gap-2'>
     <label className="text-md"> Country </label>
     <div className='flex items-center'><input className='w-72 px-3 py-2 border border-gray-300' value={country} type="text" required placeholder="Select your Country" /><div className='absolute ml-64'>{active ? <FaCaretUp onClick={()=>{SetActive(false);handleShowCountry()}} /> :<FaCaretDown onClick={()=>{SetActive(true);handleShowCountry()}} />}</div></div>

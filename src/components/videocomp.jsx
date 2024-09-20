@@ -13,7 +13,7 @@ const Videocomp = () => {
   const navigate = useNavigate();
   const { userID } = useParams();
   const seeAllVideos = () => {
-    navigate('/videos');
+    navigate(`/videosview/${userID}`);
     window.scrollTo(0, 0);
   }
 

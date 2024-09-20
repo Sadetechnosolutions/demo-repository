@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Icon } from '@iconify/react';
 import { useSelector,useDispatch } from 'react-redux';
 import { removeFriend } from '../slices/friendlistslice';
 import {Tooltip } from 'react-tooltip';
+import { useParams } from 'react-router';
 
 const Friendlist = () => {
   const [activeId, setActiveId] = useState(null);
@@ -11,7 +12,9 @@ const Friendlist = () => {
   const [activeDropdown,setActiveDropdown] = useState('public');
   const {Friends} = useSelector((state)=>state.friend)
   const dispatch = useDispatch();
-
+  const [friends,setFriends] = useState()
+  const userId = useSelector((state)=>state.auth.userId)
+  const userID = useParams()
 
   const removefromlist = (id)=>{
     dispatch(removeFriend(id))
@@ -42,6 +45,8 @@ const Friendlist = () => {
   }
 ]
 
+const isCurrentUser = parseInt(userID) === userId;
+
   const handleprivacyDropdown = ()=>{
     setDropdown(!dropdown)
   }
@@ -53,12 +58,43 @@ const Friendlist = () => {
   const handleclosePrivacydropdown = ()=>{
     setDropdown(false)
   }
+
+  const fetchfriends = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        return;
+      }
+      const response = await fetch(`http://localhost:8080/friend-requests/${isCurrentUser ? userId:userID}/friends`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    
+      if (response.ok) {
+        const data = await response.json();
+        setFriends(data);
+        // Check if the user is followed
+        // setIsRequested(data.sentRequests.find((follower) => follower.recipientId === parseInt(userID)));
+      } else {
+        console.error('Failed to fetch user data:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+    };
+  
+    useEffect(()=>{
+      fetchfriends()
+    },[])
  return (
     <div className=' flex w-full items-center justify-center'>
       <div className='w-5/6 drop bg-white shadow-lg h-auto px-6 flex-col '>
       <div className="flex items-center p-4 justify-between">
         <div className='flex gap-2 items-center'>
-      <span className='text-lg font-semibold'>Friends ({Friends.length})</span>
+      <span className='text-lg font-semibold'>Friends ({friends.friendCount})</span>
       <Icon icon="fluent:edit-12-regular" data-tooltip-id="my-tooltip" data-tooltip-content="Edit privacy" className='cursor-pointer focus:outline-none text-gray-600' onClick={handleprivacyDropdown} width="1.2em" height="1.2em" />
           {dropdown &&(
             <div className='absolute flex w-24 shadow-lg flex-col bg-white border'>
@@ -91,7 +127,7 @@ const Friendlist = () => {
           </div>
         </div>
         <div className='flex mt-6 flex-wrap gap-6 items-center p-2'>
-            {Friends.slice().reverse().map((friend)=>(
+            {friends?.friends.map((friend)=>(
                 <div key={friend.id}>
             <div className='flex flex-col rounded-md border border-gray-200 rounded-md w-[17.6rem]'>
 <div className="relative">
@@ -103,7 +139,7 @@ const Friendlist = () => {
       <div className='flex  px-4 flex-col mt-5 gap-3 py-4'>
             <div className='flex justify-between items-start'>
             <div className='flex items-start w-full flex-col'>
-            <span className='text-md font-semibold'>{friend.name} <span className='text-xs font-normal px-2 py-0.5 rounded-lg bg-yoi'>Since March 2021</span></span>
+            <span className='text-md font-semibold'>{friend.name} <span className='text-xs font-normal px-2 py-0.5 rounded-lg bg-yoi'>Since 2021</span></span>
               <div className=' w-full items-center justify-between'>
                 <span className='text-xs'>{friend.place}</span>
                 <span> </span>
@@ -120,6 +156,9 @@ const Friendlist = () => {
                     </div>
                   )}
             </div>
+            <div>
+              <span className='fuck me elakkiya'></span>
+              </div>
                 <div className='flex flex-col gap-1.5'>
 
                   <div className='flex justify-between'>

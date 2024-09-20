@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Icon } from '@iconify/react';
 import { useSelector,useDispatch } from 'react-redux';
 import { removeFriend } from '../slices/friendlistslice';
@@ -14,6 +14,10 @@ const Friendview = () => {
   const dispatch = useDispatch();
   const userId = useSelector((state)=>state.auth.userId)
   const {userID} = useParams()
+  const [friends,setFriends] = useState();
+  const [isFriends,setIsFriends] = useState();
+  const [myFriends,setMyFriends] = useState();
+  const [isRequested,setIsRequested] = useState();
 
   const removefromlist = (id)=>{
     dispatch(removeFriend(id))
@@ -43,7 +47,7 @@ const Friendview = () => {
     name:'Hide'
   }
 ]
-
+const isCurrentUser = parseInt(userID) === userId;
   const handleprivacyDropdown = ()=>{
     setDropdown(!dropdown)
   }
@@ -55,12 +59,72 @@ const Friendview = () => {
   const handleclosePrivacydropdown = ()=>{
     setDropdown(false)
   }
+
+  const fetchMyfriends = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        return;
+      }
+      const response = await fetch(`http://localhost:8080/friend-requests/${userId}/friends`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    
+      if (response.ok) {
+        const data = await response.json();
+        setMyFriends(data);
+        // Check if the user is followed
+      } else {
+        console.error('Failed to fetch user data:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+    };
+
+  const fetchfriends = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        return;
+      }
+      const response = await fetch(`http://localhost:8080/friend-requests/${isCurrentUser ? userId:userID}/friends`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    
+      if (response.ok) {
+        const data = await response.json();
+        setFriends(data);
+        // Check if the user is followed
+        setIsFriends(
+          myFriends.friends.some(friend => friend.id === friends.friends.some((follower)=>follower.id))
+        );
+        
+      } else {
+        console.error('Failed to fetch user data:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+    };
+  
+    useEffect(()=>{
+      fetchfriends()
+    },[])
  return (
     <div className=' flex w-full items-center justify-center'>
       <div className='w-5/6 drop bg-white shadow-lg h-auto px-6 flex-col '>
       <div className="flex items-center p-4 justify-between">
         <div className='flex gap-2 items-center'>
-      <span className='text-lg font-semibold'>Friends ({Friends.length})</span>
+      <span className='text-lg font-semibold'>Friends ({friends?.friendCount})</span>
       {parseInt(userID)===userId && <div>
       <Icon icon="fluent:edit-12-regular" data-tooltip-id="my-tooltip" data-tooltip-content="Edit privacy" className='cursor-pointer focus:outline-none text-gray-600' onClick={handleprivacyDropdown} width="1.2em" height="1.2em" />
           {dropdown &&(
@@ -81,10 +145,11 @@ const Friendview = () => {
               placeholder="Search"
               className=" w-[24rem] h-11 px-3 py-1 rounded-md border border-gray-300 focus:outline-none focus:border-green"/>
             <button type="submit" className=" right-0 top-0 bottom-0 px-2 text-gray-400 rounded-r-md focus:outline-none">
-              <Icon icon="ooui:search" width="1.2em" height="1.2em"  className='text-gray-400' />
+              <Icon icon="ooui:search" width="1.2em" height="1.2em" className='text-gray-400' />
             </button>
           </div>
-          {/* <div className='flex flex-col justify-start '>
+          {/* 
+          <div className='flex flex-col justify-start '>
           <Icon icon="ion:settings-outline" className='cursor-pointer' onClick={handleprivacyDropdown} width="1.2em" height="1.2em" />
           {dropdown &&(
             <div className='absolute flex w-24 shadow-lg flex-col bg-white border'>
@@ -96,19 +161,23 @@ const Friendview = () => {
           </div>
         </div>
         <div className='flex mt-6 flex-wrap gap-6 items-center p-2'>
-            {Friends.slice().reverse().map((friend)=>(
+            {friends?.friends.map((friend)=>{
+            const date = new Date(friend.requestTime);  
+            const options = { year: 'numeric', month: 'long' };
+const formattedDate = date.toLocaleDateString('en-US', options);
+              return(
                 <div key={friend.id}>
-            <div className='flex flex-col rounded-md border border-gray-200 rounded-md w-[17.6rem]'>
+            <div className='flex flex-col h-72 rounded-md border border-gray-200 rounded-md w-[17.6rem]'>
 <div className="relative">
-  <img className="w-full h-28" src={friend.coverimg} alt="" />
-  <div className="absolute -mt-10 ml-2 flex  items-center">
-    <img className="rounded-full w-16 h-16 border-2 border-white" alt="" src={friend.img} />
+  <img className="w-full h-28" src={`http://localhost:8086${friend.bannerImagePath}`} alt="" />
+  <div className="absolute -mt-10 ml-2 flex items-center">
+    <img className="rounded-full w-16 h-16 border-2 border-white" alt="" src={`http://localhost:8086${friend.profileImagePath}`} />
   </div>
 </div>
       <div className='flex  px-4 flex-col mt-5 gap-3 py-4'>
             <div className='flex justify-between items-start'>
             <div className='flex items-start w-full flex-col'>
-            <span className='text-md font-semibold'>{friend.name} <span className='text-xs font-normal px-2 py-0.5 rounded-lg bg-yoi'>Since March 2021</span></span>
+            <span className='text-md font-semibold'>{friend.name} <span className='text-xs font-normal  py-0.5 rounded-lg '>Since <span className='px-1 bg-yoi'> {formattedDate}</span> </span></span>
               <div className=' w-full items-center justify-between'>
                 <span className='text-xs'>{friend.place}</span>
                 <span> </span>
@@ -117,7 +186,7 @@ const Friendview = () => {
             {parseInt(userID)===userId &&<div>
             <Icon className='cursor-pointer' onClick={()=>handleDropdown(friend.id)} icon="carbon:overflow-menu-vertical" width="1.2em" height="1.2em" />
             {activeId === friend.id && (
-                    <div className="absolute  slide-in-down flex flex-col bg-white items-center mt-6 w-28 ml-36  h-auto">
+                    <div className="absolute  slide-in-down flex flex-col bg-white items-center mt-6 w-28   h-auto">
                       {options.map((option) => (
                         <div onClick={()=>option.task(friend.id)} className='flex hover:bg-gray-100 hover:text-red justify-start right-0 p-1 text-sm w-full cursor-pointer' key={option.id}>
                           {option.name}
@@ -126,11 +195,9 @@ const Friendview = () => {
                     </div>
                   )}
                   </div>}
- 
             </div>
                 <div className='flex flex-col gap-1.5'>
-
-                  <div className='flex justify-between'>
+                <div className='flex justify-between'>
                 <div className='flex flex-col'>
                 <span className=''>Friends: {friend.friends}</span>
                 <span><span className='inline-block w-14'>Posts:</span> {friend.post}</span>
@@ -141,12 +208,12 @@ const Friendview = () => {
                 </div>
                 </div>
                 </div>
-            <div className='px-2 py-1 text-cta border hover:bg-cta hover:text-white flex justify-center rounded-md cursor-pointer border-cta'>{parseInt(userID)===userId ?(<span className=''>Message</span>) : (<span className=''>Add Friend</span>)} 
-            </div>
+           {friend.id === userId ? "" : <div className='px-2 py-1 text-cta border hover:bg-cta hover:text-white flex justify-center rounded-md cursor-pointer border-cta'>{parseInt(userID)===userId ?(<span className=''>Message</span>) : isFriends?(<span className=''>Friends</span>):(<span className=''>Add Friend</span>)} 
+            </div> }
          </div>
          </div>
                 </div>
-            ))}
+            )})}
         </div>
       </div>
       <Tooltip id="mytooltip" />

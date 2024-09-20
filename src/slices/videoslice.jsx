@@ -5,7 +5,8 @@ import data from '../videos.json'
 
 const initialState ={
     videos: data,
-    selected:null
+    selected:null,
+    reels:null
 }
 
 const videoSlice = createSlice({
@@ -17,6 +18,9 @@ const videoSlice = createSlice({
         },
         selectVideo(state,action){
             state.selected = action.payload;
+        },
+        addReels(state,action){
+            state.reels = action.payload;
         },
         addComment(state,action){
             const{videoId,commentInfo} = action.payload;
@@ -38,5 +42,5 @@ const videoSlice = createSlice({
     }
 })
 
-export const{addVideo,selectVideo,addComment,removeComment} = videoSlice.actions;
+export const{addVideo,selectVideo,addComment,addReels,removeComment} = videoSlice.actions;
 export default videoSlice.reducer;

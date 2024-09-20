@@ -1,9 +1,42 @@
 import React,{useEffect,useState} from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import data from '../followers.json'
+import { useParams } from "react-router";
+import { useSelector } from "react-redux";
 
 const Followers = ()=>{
+  const {userID} = useParams()
+  const userId = useSelector((state)=>state.auth.userId)
     const [loaded, setLoaded] = useState(false);
+    const [followers,setFollowers] = useState()
+    
+    const fetchFollowers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found in localStorage');
+          return;
+        }
+        const response = await fetch(`http://localhost:8080/follows/api/followers/${userID}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setFollowers(data);
+        } else {
+          console.error('Failed to fetch user data:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+useEffect(()=>{
+fetchFollowers()
+},[userID,userId])
 
     useEffect(() => {
       // Simulate loading delay
@@ -22,19 +55,18 @@ const Followers = ()=>{
         <div className={`w-full flex items-center justify-center `}>
             <div className="w-5/6 shadow-lg flex p-2 flex-col gap-4">
             <div className="flex gap-2 text-lg font-semibold px-8">
-            <p>Followers</p><span>(51)</span>
+            <p>Followers</p><span>{followers?.count}</span>
             </div>
             <div className="flex flex-wrap gap-2">
-                {data.map((followers)=>(
+                {followers?.users.map((followers)=>(
             <div key={followers.id} className="flex w-[48rem] shadow-md justify-between py-2 px-8 items-center">
             <div className="flex items-center gap-2">
-            <img className="w-16 h-16 rounded-full" src={followers.img}/>
+            <img className="w-16 h-16 bg-gray-300 rounded-full" src={`http://localhost:8086${followers.profileImagePath}`}/>
             <p className="text-lg w-24 truncate">{followers.name}</p>
-            <span></span>
             </div>
             <span> {followers.work} </span>
-            <span>{followers.mutual} Mutuals</span>
-            <button className="p-2 flex ga hover:bg-cta hover:text-white items-center border rounded-md border-cta text-cta font-semibold"><Icon icon="ic:baseline-add" />Follow</button>
+            {followers.id !== userId ? <span>{followers.mutual} Mutuals</span> : null}
+          {followers.id !== userId ?  <button className="p-2 flex ga hover:bg-cta hover:text-white items-center border rounded-md border-cta text-cta font-semibold"><Icon icon="ic:baseline-add" />Follow</button> : null}
             </div>
                 ))}
             </div>

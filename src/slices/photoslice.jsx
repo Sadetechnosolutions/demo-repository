@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import data from '../photos.json'
 import posts from '../posts.json'
+import { update } from "react-spring";
 
 const initialState = {
     uploaded: data,
@@ -9,6 +10,7 @@ const initialState = {
     profilepic: null,
     selectedprofilepic: null,
     coverpic:null,
+    story:null,
     selectedcoverpic:null,
     newsfeed:posts,
     selectedphotocomment:null,
@@ -81,13 +83,7 @@ const photoslice = createSlice({
             state.selected = action.payload;
         },
         selectPhotoComment(state, action) {
-            const { postId, photo } = action.payload || {};
-            if (postId) {
-                state.selectedphotocomment = {
-                    ...state.selectedphotocomment,
-                    [postId]: photo 
-                };
-            }
+            state.selectedphotocomment = action.payload;
         },
         
         addPhotoComment(state,action){
@@ -113,9 +109,12 @@ const photoslice = createSlice({
         },
         updateCover(state,action){
             state.coverpic = action.payload;
+        },
+        updateStory(state,action){
+            state.story = action.payload;
         }
     }
 });
 
-export const { addPhoto,addCommentnf,deleteCommentnf,addToSaved,removeSaved,selectPhotoComment, addCommentToImage,deleteComment,editComment, selectPhoto,updateCover, removePhoto,changecoverPhoto, removeSelected, addFolder, changePhoto, updatePhoto } = photoslice.actions;
+export const { addPhoto,addCommentnf,deleteCommentnf,updateStory,addToSaved,removeSaved,selectPhotoComment, addCommentToImage,deleteComment,editComment, selectPhoto,updateCover, removePhoto,changecoverPhoto, removeSelected, addFolder, changePhoto, updatePhoto } = photoslice.actions;
 export default photoslice.reducer;

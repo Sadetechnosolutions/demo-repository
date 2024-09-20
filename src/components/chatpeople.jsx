@@ -30,7 +30,8 @@ const Messagelist = ({messages,handleSelectMessage})=>{
                                 <span className="md:w-40 w-full block truncate">{message.message}</span>
                                 </div>
                             </div>
-                        </div>
+                        </div> 
+                        
                         </Link>
                     ))}
                 </div>

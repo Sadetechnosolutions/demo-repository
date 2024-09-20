@@ -14,7 +14,7 @@ import { fetchUserProfile } from '../admindashboard/fetchuser';
 
 
 const Signin = () => {
-    const [user,setUser] = useState({ email: '', password:''});
+    const [user,setUser] = useState({ email: '', password:'',loginmail:''});
     const [details,setDetails] = useState();
     const dispatch = useDispatch();
     const [otp, setOtp] = useState(Array(6).fill(''));
@@ -124,7 +124,7 @@ const Signin = () => {
         
         // Construct the payload
         const payload = {
-          email: user.email
+          email: user.loginmail
         };
 
         try {
@@ -158,7 +158,7 @@ const Signin = () => {
           }
         } catch (error) {
           console.error('Error sending OTP:', error);
-          toast.error('An error occurred while sending OTP. Please try again.');
+          toast.error('An error occurred while sending OTP.');
         }
       };
       
@@ -204,12 +204,14 @@ const Signin = () => {
                 setTimeout(() => navigate('/newsfeed'), 5000);
                 toast.success(`Welcome ${userProfile.name}`);
                 console.log(userProfile.id);
+                setError('');
               } else if (userProfile) {
                 dispatch(setAuth({ userId: userProfile.id, token: data.token }));
                 console.log('Navigating to /gw');
                 toast.success(`Welcome ${userProfile.name}`);
                 setTimeout(() => navigate('/gw'), 5000);
                 console.log(userProfile.id);
+                setError('');
               }
             } else {
               toast.error('Invalid credentials. Please try again.');
@@ -217,10 +219,11 @@ const Signin = () => {
           } else {
             const errorText = await response.text();
             toast.error(`Invalid Email/Password`);
+            setError('Incorrect Username/Password');
           }
         } catch (error) {
           console.error('Error submitting form:', error);
-          toast.error('An error occurred while attempting to log in. Please try again.');
+          toast.error('An error occurred while fetching data');
         }
       };
       
@@ -244,7 +247,7 @@ const Signin = () => {
       return;
     }
     const payload = {
-        email: user.email,
+        email: user.loginmail,
         otp: otp.join('')  // Assuming OTP is an array of strings
       };
     try {
@@ -266,11 +269,13 @@ const Signin = () => {
         console.log('Form data submitted successfully');
         handleCloseOTP()
         handlecloseotpPage()
+        setError('');
         const userProfile = await fetchUserProfile(token);
         if (userProfile) {
           toast.success(`Welcome ${userProfile.name}`);
           dispatch(setAuth({ userId: userProfile.userId, }));
           setTimeout(() => navigate('/gw'), 5000);
+    
         }
         else {
           toast.error('Failed to fetch user profile');
@@ -283,7 +288,7 @@ const Signin = () => {
       }
     } catch (error){
       console.error('Error submitting data:', error);
-      setError('Incorrect Username/Password');
+
     }
   };
   const handleKeyDown = (e, index) => {
@@ -340,7 +345,8 @@ const Signin = () => {
           <label className='text-md'>Password <span className='text-red'>*</span></label>
           <input id='password' name='password' onChange={handleChange} value={user.password} className=" px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-gray" type='password' required placeholder='Enter your password' />
           </div>
-          <NavLink to='/forgotpassword'><p className='mb-5 text-sm hover:underline'>Forgot your password?</p></NavLink>
+          <NavLink to='/forgotpassword'><p className=' text-sm hover:underline'>Forgot your password?</p></NavLink>
+          <span className='text-red'>{error}</span>
           <div className='cursor-pointer' onClick={handleShowOTP}>
             Login with OTP
           </div>
@@ -348,7 +354,7 @@ const Signin = () => {
           <button type='submit' className="px-4 py-2 items-center border border-gray-300 bg-gradient-to-tr from-span-start w-full to-span-end text-white-800 hover:bg-custom-hover text-white font-semibold rounded-md">Log In</button>
           <p>I am a new member <NavLink to='/signup'><span className='text-highlight font-semibold hover:text-button cursor-pointer'>Sign Up Here</span></NavLink></p>
           </div>
-          {error}
+          <span className=''>{error}</span>
           </div>
           <Modal style={{}} >
           <div className='shadow-lg bg-white '>
@@ -385,8 +391,8 @@ const Signin = () => {
     <div className='flex flex-col items-center justify-center h-full pt-12'>
       <div className='flex flex-col items-center gap-4'>
     <div className='rounded-full w-10 h-10 flex items-center justify-center bg-gray-200'><Icon className='w-6 h-6' icon="et:phone" /></div>
-          <input id='email' name='email'
-            onChange={handleChange} value={user.email}
+          <input id='loginmail' name='loginmail'
+            onChange={handleChange} value={user.loginmail}
             className='w-80 h-10 px-2 border border-gray-300'
             placeholder='Enter you email'
           />
@@ -429,11 +435,11 @@ const Signin = () => {
     <div className='rounded-full w-10 h-10 flex items-center justify-center bg-gray-200'><Icon icon="material-symbols:mail-outline" /></div>
         <div>
           <input name='email' id='email'
-            value={user.email}
+            value={user.loginmail}
             className='w-80 h-10 px-2 border border-gray-300'
             readOnly
           />
-          <p className='text-sm text-gray-500'>OTP has been sent to {user.email}</p>
+          <p className='text-sm text-gray-500'>OTP has been sent to {user.loginmail}</p>
         </div>
         <div className='flex gap-2'>
           {otp.map((value, index) => (

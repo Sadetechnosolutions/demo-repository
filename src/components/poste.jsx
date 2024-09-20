@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useCallback } from 'react';
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { setpostLike } from '../slices/likeslice';
 import InputEmoji from 'react-input-emoji';
@@ -9,6 +9,8 @@ import moment from "moment";
 import Modal from 'react-modal';
 import axios from 'axios';
 import { useParams } from 'react-router';
+import { NavLink } from 'react-router-dom';
+import Swiper from '../pages/uploadreels.';
 
 const Post = () => {
   const userID = useParams()
@@ -39,14 +41,26 @@ const Post = () => {
   const [users,setUsers] = useState()
   const [userDetail,setUserDetail] = useState()
   const [animationPostId, setAnimationPostId] = useState(null);
-  const [isTooltipVisible, setTooltipVisible] = useState(false);
+  const [isTooltipVisible, setTooltipVisible] = useState(null);
   const [likeduser,setLikeduser] = useState();
   const [userList,setUserList] = useState();
+  const [likedBy,setLikedBy] = useState(null);
+  const [file,setFile] = useState()
+  const {selectedphotocomment} = useSelector((state)=>state.photo)
 
-
-  const handleHoverlike = (id)=>{
-    setTooltipVisible(id)
+  const showLikedBy = (id)=>{
+    setLikedBy(id)
+    setTooltipVisible(null)
   }
+
+  const closeLikedBy = ()=>{
+    setLikedBy(false)
+  }
+
+  const handleHoverlike = useCallback((id)=>{
+    setTooltipVisible(id)
+    fetchLikedBy(id)
+  },[])
   const openDelete = ()=>{
     setDeletePopup(true)
   }   
@@ -187,13 +201,6 @@ const Post = () => {
       fetchUserName();
     }
   }, [userId]);
-  useEffect(() => {
-    fetchLikedBy();
-
-    // Set up an interval to update likedUser data every second
-    const intervalId = setInterval(fetchLikedBy, 1000);
-    return () => clearInterval(intervalId);
-  }, []);
   // Fetch posts
   const fetchUserData = async () => {
     try {
@@ -374,15 +381,16 @@ const Post = () => {
     // e.preventDefault();
   
     try {
-      const response = await fetch(`http://localhost:8085/comments/${deletecommentId}`, {
+      const response = await fetch(`http://localhost:8085/comments/${deletecommentId}?userId=${userId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userId}`
         },
       });
   
       if (response.ok) {
-
+      closeDelete()
       } else {
         alert('An error occurred. Please try again later.');
       }
@@ -392,8 +400,20 @@ const Post = () => {
     }
   };
 
+  const handleImageChange = (event,type) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) { 
+        const fileObject = { name: selectedFile };
+            setFile(fileObject.name.name); 
+            dispatch(selectPhotoComment(fileObject))
+            console.log(fileObject)
+    }
+};
+
   const handleComment = async (e) => {
     const parentComment = displayComments[selectedPostId]?.find(comment => comment.id === replyId);
+    const formdata = new FormData();
+    formdata.append('file',selectedphotocomment?.name)
     const jsonData = {
       postId: selectedPostId,
       parentId: replyId,
@@ -401,31 +421,33 @@ const Post = () => {
       userId: userId,
       textContent: postComment
     };
+    formdata.append('request', JSON.stringify(jsonData));
     try {
       const response = await fetch('http://localhost:8080/comments', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(jsonData),
+        body:formdata,
       });
   
       if (response.ok) {
         setPostComment('');
         setSelectedPostId('');
         setReplyId('');
-        toggleReplies(replyId);  // Close the reply input
+        toggleReplies(replyId); 
+        fetchComments() // Close the reply input
+        dispatch(selectPhotoComment(null))
       } else {
         console.log('An error occurred. Please try again later.');
         setPostComment('');
         setSelectedPostId('');
         setReplyId('');
+        dispatch(selectPhotoComment(null))
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       setPostComment('');
       setSelectedPostId('');
       setReplyId('');
+      dispatch(selectPhotoComment(null))
     }
   };
 
@@ -518,6 +540,7 @@ const Post = () => {
     }
   };
 
+
   const likesCount = async (postId) => {
     try {
       const response = await fetch(`http://localhost:8080/likes/post/${postId}/count`);
@@ -604,21 +627,21 @@ const Post = () => {
                 <span className="text-sm text-gray-600">{timeDifference}</span>
               </div>
             </div>
-
-                          <div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}
+{/* 
+                          <div className="flex flex-col items-center relative">
                           <Icon
                             className="w-6 h-6 cursor-pointer"
                             icon="carbon:overflow-menu-vertical"
-                            onClick={() => toggleDropdown(post.postId)} // Toggle dropdown for specific post
+                            onClick={() => toggleDropdown(post.postId)} 
                           />
                           {showDropdown === post.postId && (
                             <DropdownMenu
                               onEdit={() => handleEdit(post.postId)}
                               onDelete={() => {handleDelete(post.postId);openDelete()}}
-                              onClose={() => setShowDropdown(null)} // Close dropdown
+                              onClose={() => setShowDropdown(null)} 
                             />
                           )}
-                        </div>
+                        </div> */}
 
           </div>
           <span>{post.description}</span>
@@ -634,7 +657,7 @@ const Post = () => {
           <div className='relative flex items-center'>
       <Icon
         onClick={() => handleLike(post.postId)}
-        className={`cursor-pointer h-7 w-7 ${liked[post.postId] ? 'text-pink' : 'text-gray-700'} ${animationPostId === post.postId ? 'like-animate' : ''}`}
+        className={`cursor-pointer h-7 w-7 ${liked[post.postId] ? 'text-red' : 'text-gray-700'} ${animationPostId === post.postId ? 'like-animate' : ''}`}
         icon={liked[post.postId] ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"}
         width='1.2em'
         height='1.2em'
@@ -645,12 +668,53 @@ const Post = () => {
         onMouseEnter={() => handleHoverlike(post.postId)}
         onMouseLeave={() => handleHoverlike(null)}
       >
-        {likeCount[post.postId] || 0}
+       <span onClick={()=>showLikedBy(post.postId)}>{likeCount[post.postId] || 0}</span> 
+       <Modal appElement={document.getElementById('root')}
+style={{
+        content: {
+          top: '50%',
+          left: '50%',
+          right: 'auto',
+          bottom: 'auto',
+          marginRight: '-50%',
+          backgroundColor:'white',
+          transform: 'translate(-50%, -40%)',
+          width: '30%',
+          height: '40%',
+          overflowY: 'auto',
+          border:'none'
+        },}}
+        isOpen={likedBy === post.postId} >
+          <div className='relative'>
+          <div className=' ml-2 tooltip  bg-white text-black p-2  rounded'>
+            <ul>
+                <li>            {userList
+                ?.filter((client) => 
+                  likeduser?.some((userlikes) => client.id === userlikes.userId)
+                )
+                .map((client) => (
+                  <div className='flex items-center justify-between'>
+                  <span className='flex items-center gap-4 mb-4' key={client.id}>
+                    <div className='relative p-1'><img className='w-9 h-9 rounded-full' src={client.profileImagePath} alt={client.profileImagePath}  />      <Icon   className='text-red absolute bottom-0' 
+        icon="material-symbols-light:favorite"
+        width='1.2em'
+        height='1.2em'
+      /></div><span>{client.name} </span>
+                  </span>
+                  <NavLink to={`/user/${client.id}`}><span className='p-2 bg-cta text-white font-semibold rounded-md cursor-pointer'>View Profile</span></NavLink>
+                  </div>
+                ))
+              }</li>
+            </ul>
+          </div>
+          <Icon onClick={closeLikedBy} className='absolute  cursor-pointer top-0 right-2' icon="mdi:remove" />
+          </div>
+       </Modal>
         {isTooltipVisible === post.postId && likeCount[post.postId] !== 0 && (
           <div className='absolute ml-2 tooltip w-20  bg-white text-black p-2 border border-gray-300 rounded shadow-lg'>
             <ul>
-                <li>            {userList
-                .filter((client) => 
+                <li>{userList
+                ?.filter((client) => 
                   likeduser.some((userlikes) => client.id === userlikes.userId)
                 )
                 .map((client) => (
@@ -666,7 +730,8 @@ const Post = () => {
     </div>
     <div className='flex items-center gap-1'><Icon onClick={() => toggleComment(post.postId)} className="cursor-pointer h-6 w-6 text-gray-600" icon="iconamoon:comment-light" /> { <span>{displayComments[post.postId]?.length}</span> || 0 }</div>
           </div>
-          {comment === post.postId && (   <div className="flex items-center gap-2"><label className="cursor-pointer"><Icon className="w-7 h-7 text-gray-500" icon="mdi:camera-outline" /><input  className="absolute opacity-0" type="file" /></label><InputEmoji onChange={(text) => setPostComment(text)} placeholder="Add a comment" /><Icon onClick={handleComment} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div>)}
+          {comment === post.postId && (   <div className="flex items-center gap-2"><label className="cursor-pointer"><Icon className="w-7 h-7 text-gray-500" icon="mdi:camera-outline" /><input onChange={(e)=>{handleImageChange(e)}}  className="absolute opacity-0" type="file" /></label><InputEmoji onChange={(text) => setPostComment(text)} placeholder="Add a comment" /><Icon onClick={handleComment} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div>)}
+{selectedphotocomment && <img className='w-28 h-28' src={selectedphotocomment?.name.name} />}
           {comment === post.postId && displayComments[post.postId]?(
   displayComments[post.postId].map((comment) => {
     const commentUser = users.find(user => user.id === comment.userId);
@@ -687,7 +752,6 @@ const Post = () => {
       } else {
         displayText = 'Just now';
       }
-
       return displayText;
     };
 
@@ -702,11 +766,11 @@ const Post = () => {
 <div className='flex flex-col'>
 <p className='font-semibold'>{commentUser?.UserName}</p>
 <span className='text-sm'>{commenttime}</span>
+{comment.imagePath && <img className='w-52 h-44' src={`http://localhost:8086${comment.imagePath}`} />}
 </div>
 </div>
 <div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}
-              <Icon
-                className="w-6 h-6 cursor-pointer"
+              <Icon className="w-6 h-6 cursor-pointer"
                 icon="carbon:overflow-menu-vertical"
                 onClick={() => toggleCommentDropdown(comment.id)} // Toggle dropdown for specific post
               />
@@ -774,6 +838,7 @@ style={{
       <Icon onClick={closeDelete} className='absolute cursor-pointer top-2 right-2' icon="mdi:remove" />
     </div>
  </Modal>
+
     </form>
   );
 };

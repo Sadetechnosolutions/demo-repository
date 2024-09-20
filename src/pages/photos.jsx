@@ -18,7 +18,7 @@ const Photos = () => {
     showCreateAlbum(true);
     closeuploadPhoto()
   }
-
+ 
   const {uploaded} = useSelector((state)=>state.photo)
   const dispatch = useDispatch();
 
@@ -146,7 +146,7 @@ const Photos = () => {
         <div className='flex flex-wrap p-2 gap-8'>
           <div onClick={openuploadPhoto} className='w-80 flex bg-gray-50 cursor-pointer items-center justify-center'>
           <label className='cursor-pointer'>
-          <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em"   />Upload</span>
+          <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em"   />Uploa</span>
           </label>
           </div>
         {uploaded.slice().reverse().map((photo)=>{

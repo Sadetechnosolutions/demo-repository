@@ -71,7 +71,7 @@ const Weather = () => {
   return (
       <div style={{  backgroundImage:"url('weatherb.png')"}} className='w-full flex flex-col justify-between border bg-cover rounded-lg md:h-72'>
         <div className='flex items-center justify-between'>
-        <div className='w-20 bg-cta text-white flex font-semibold h-11 text-center items-center justify-center'><span>{filterdate}</span></div><span className='px-3 flex items-end text-white font-semibold'><span>San Francisco </span><Icon className='w-5 h-5' icon="uil:angle-down" /></span>
+        <div className='p-2 bg-cta text-white flex font-semibold h-11 text-center items-center justify-center'><span>{filterdate}</span></div><span className='px-3 flex items-end text-white font-semibold'><span>San Francisco </span><Icon className='w-5 h-5' icon="uil:angle-down" /></span>
         </div>
         <div className='w-full flex flex-col items-center justify-center h-36'>
             <div className='flex flex-col'>

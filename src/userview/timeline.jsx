@@ -48,8 +48,7 @@ const Post = () => {
   const [users, setUsers] = useState([]);
   const [timeDifference, setTimeDifference] = useState('');
   const [animationPostId, setAnimationPostId] = useState(null);
-
-
+  const [likedBy,setLikedBy] = useState(null);
 
 
   const openDelete = ()=>{
@@ -58,6 +57,10 @@ const Post = () => {
 
   const closeDelete = ()=>{
     setDeletePopup(false)
+  }
+
+  const showLikedBy = (id)=>{
+    setLikedBy(id)
   }
 
   const toggleReplies = (commentId) => {

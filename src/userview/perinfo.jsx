@@ -5,8 +5,6 @@ import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import { FaCaretDown } from "react-icons/fa";
 import { FaCaretUp } from "react-icons/fa";
-import Formbar from "./formbar";
-import GeneralInfo from "./geninfo";
 import { useNavigate } from "react-router";
 import { useSelector,useDispatch } from "react-redux";
 import { Icon } from "@iconify/react/dist/iconify.js";
@@ -17,21 +15,14 @@ import Phonecode from "../components/phonecode";
 const PersonalInfo = ({ GetInfo, formData, updateFormData,onNext   })=>{
     const dispatch = useDispatch()
     const [file, setFile] = useState(null);
-    const [value, onChange] = useState((new Date()));
+
     const [phoneCode,showPhoneCode] = useState(false)
     const [countryCode,setCountryCode] = useState('');
     const [countries,ShowCountries] = useState(false);
-    const [country,SetCountry] = useState('');
-    const [displayName,setDisplayName] = useState('');
-    const [aboutYourself,setAboutYourself] = useState('');
-    const [bloodGroup,setBloodGroup] = useState('');
-    const [gender,setGender] = useState('');
-    const [profession,setProfession] = useState('');
-    const [website,setWebsite] = useState('');
     const [active,SetActive] = useState(false);
-    const {selectedprofilepic} = useSelector((state)=>state.photo)
+
     const {profilepic} = useSelector((state)=>state.photo)
-    const {selectedcoverpic} = useSelector((state)=>state.photo)
+
     const {coverpic} = useSelector((state)=>state.photo)
     const Navigate = useNavigate()
     const handleShowCountry = ()=>{
@@ -47,9 +38,7 @@ const PersonalInfo = ({ GetInfo, formData, updateFormData,onNext   })=>{
         dispatch(setFormData({ countryCode: code.code }));
         showPhoneCode(false);
     };
-    const open = ()=>(
-        Navigate('/')
-    )
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         updateFormData({ [name]: value });

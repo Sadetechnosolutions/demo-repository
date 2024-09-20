@@ -136,9 +136,11 @@ const handleSubmit = async (event) => {
             const errorText = await response.text();
             console.error('Error:', response.status, errorText);
             return null;
+            navigate('/newsfeed')
         }
     } catch (error) {
         console.error('Error:', error);
+        navigate('/newsfeed')
         return null;
     }
 };

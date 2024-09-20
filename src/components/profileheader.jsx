@@ -55,7 +55,6 @@ const Profileheader = () => {
   if (!user) {
     return <p>Loading...</p>; // Show loading state while fetching
   }
-
   const openImageForm = ()=>{
     setImageForm(true);
   }
@@ -71,7 +70,8 @@ const Profileheader = () => {
   const closeCoverForm =()=>{
     setCoverForm(false)
   }
-  
+
+
   const handleImageChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -102,6 +102,7 @@ const Profileheader = () => {
     console.log(coverpic)
   }
 
+
     const isActive = (path) => {
       return location.pathname === path;
     };
@@ -128,7 +129,7 @@ const Profileheader = () => {
         name:'Videos',
         path:'/videos'},
         ]
-        
+
         const handlechangeCover = (event)=>{
           const selectedFile = event.target.files[0];
           if (selectedFile) {
@@ -157,7 +158,7 @@ style={{
           height: '60%',
           overflowY: 'auto',
           border:'none'
-        },}}
+        },}}                                                                                                                                                                                                                                                                                                                                                         
         isOpen={imageForm} onRequestClose={closeImageForm}>
       <div className='bg-white h-96 ml-72 w-1/2 flex rounded-lg shadow-lg flex-col items-center gap-4'>
       <div className='flex mt-4 px-4 w-full items-center justify-between'><p className='text-lg font-semibold'>Change Profile picture</p><div onClick={closeImageForm} className='p-1 cursor-pointer hover:bg-red hover:text-white rounded-full bg-gray-100'><IoClose className='w-5 h-5' /></div></div>
@@ -247,6 +248,7 @@ style={{
             <span>{profile.followers}</span>
             </div></Link>
             </div>
+            
         </div>
       </div>
       </div>

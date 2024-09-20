@@ -24,7 +24,14 @@ const ProfileheaderUser = () => {
   const userId = useSelector((state) => state.auth.userId);
   const { userID } = useParams(); // Get userId from URL params
   const [user, setUser] = useState(null);
-
+  const [isFollowed,setIsFollowed] = useState(false);
+  const [followers,setFollowers] = useState();
+  const [following,setFollowing] = useState();
+  const [isFollowing,setisFollowing] = useState()
+  const [sentrequest,setSentRequest] = useState()
+  const [isRequested,setIsRequested] = useState()
+  const [friends,setFriends] = useState()
+  const [isFriends,setIsFriends] = useState()
 
   const handleRequest = ()=>{
     sentRequest(!request)
@@ -90,7 +97,7 @@ const ProfileheaderUser = () => {
           { id: 1,name:'Peter Parker',img:'profile.jpg',posts:64,following:44,followers:51,photos:4,videos:3,aboutme:`Hi, I’m Peter Parker, I’m 36 and I work as a Professional Cinematographer from Ontario, Canada, my proclaimed works are “dewwater” and "Sunbeast"`,birthday:'December 17, 1985', phno: '+1-989-232435234', bloodgroup: 'B+',gender:'Male',country:'San Francisco, US',occupation:'Cinematographer',joined:'December 20,2021', email:'peterparker07@design.com' },
         ]
       }
-
+      const isCurrentUser = parseInt(userID) === userId;
     const menu = [
         {id:1,
         name:'Profile',
@@ -134,14 +141,237 @@ const ProfileheaderUser = () => {
           }
         };
 
+        const handleFollowStatus = (data) => {
+          // Assuming data has a list of followers
+          setIsFollowed(data.users.some((follower) => follower.id === userId));
+        };
+        
+
+        const fetchFollowers = async () => {
+          try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+              console.error('No token found in localStorage');
+              return;
+            }
+            const response = await fetch(`http://localhost:8080/follows/api/followers/${userID}`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+    
+            if (response.ok) {
+              const data = await response.json();
+              setFollowers(data);
+              // Check if the user is followed
+              handleFollowStatus(data); 
+            } else {
+              console.error('Failed to fetch user data:', response.status);
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+          }
+        };
+useEffect(()=>{
+fetchFollowers()
+fetchFollowing()
+fetchRequest()
+fetchfriends()
+},[userID,userId])
+
+const fetchFollowing = async () => {
+try {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    console.error('No token found in localStorage');
+    return;
+  }
+  const response = await fetch(`http://localhost:8080/follows/api/following/${userID}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (response.ok) {
+    const data = await response.json();
+    setFollowing(data);
+    // Check if the user is followed
+    setisFollowing(data.users.some((follower) => follower.id === userId));
+  } else {
+    console.error('Failed to fetch user data:', response.status);
+  }
+} catch (error) {
+  console.error('Error fetching user data:', error);
+}
+};
+
+const fetchRequest = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found in localStorage');
+      return;
+    }
+    const response = await fetch(`http://localhost:8080/friend-requests/${userId}/sent-requests`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  
+    if (response.ok) {
+      const data = await response.json();
+      setSentRequest(data);
+      // Check if the user is followed
+      setIsRequested(data.sentRequests.find((follower) => follower.recipientId === parseInt(userID)));
+    } else {
+      console.error('Failed to fetch user data:', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+  };
+
+  const fetchfriends = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found in localStorage');
+        return;
+      }
+      const response = await fetch(`http://localhost:8080/friend-requests/${isCurrentUser ? userId:userID}/friends`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    
+      if (response.ok) {
+        const data = await response.json();
+        setFriends(data);
+        // Check if the user is followed
+        setIsFriends(data.friends.find((follower) => follower.id === userId));
+      } else {
+        console.error('Failed to fetch user data:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+    };
+
+        const followUser = async ()=>{
+          const token = localStorage.getItem('token')
+          try{
+            const response = await fetch(`http://localhost:8080/follows/follow/${userId}/${userID}`,{
+              method:'POST',
+              headers:{
+                'Authorization':`bearer${token}`
+              }
+            })
+            if(response.ok){
+              console.log('')
+              fetchFollowers()
+              fetchFollowing()
+            }
+            else{
+              console.log('error in posting data')
+            }
+          }
+          catch(error){
+            console.error(error)
+          }
+        }
+
+        
+        const sendRequest = async ()=>{
+          const token = localStorage.getItem('token')
+          const payload={
+            senderId:userId,
+            recipientId:userID
+          }
+          try{
+            const response = await fetch(`http://localhost:8080/friend-requests/send?senderId=${userId}&recipientId=${userID}`,{
+              method:'POST',
+              headers:{
+                'Authorization':`bearer${token}`
+              },
+              body:JSON.stringify(payload)
+            })
+            if(response.ok){
+              console.log('')
+              fetchRequest()
+            }
+            else{
+              console.log('error in posting data')
+            }
+          }
+          catch(error){
+            console.error(error)
+          }
+        }
+
+        const cancelRequest = async ()=>{
+          const token = localStorage.getItem('token')
+          const payload={
+            senderId:userId,
+            recipientId:userID
+          }
+          try{
+            const response = await fetch(`http://localhost:8080/friend-requests/decline?senderId=${userId}&recipientId=${userID}`,{
+              method:'POST',
+              headers:{
+                'Authorization':`bearer${token}`
+              },
+              body:JSON.stringify(payload)
+            })
+            if(response.ok){
+              console.log('')
+              fetchRequest()
+            }
+            else{
+              console.log('error in posting data')
+            }
+          }
+          catch(error){
+            console.error(error)
+          }
+        }
+
+        const unfollowUser = async ()=>{
+          const token = localStorage.getItem('token')
+          try{
+            const response = await fetch(`http://localhost:8080/follows/unfollow/${userId}/${userID}`,{
+              method:'DELETE',
+              headers:{
+                'Authorization':`bearer${token}`
+              }
+            })
+            if(response.ok){
+              console.log('')
+              fetchFollowers()
+              fetchFollowing()
+            }
+            else{
+              console.log('error in posting data')
+            }
+          }
+          catch(error){
+            console.error(error)
+          }
+        }
+
         useEffect(() => {
           fetchUserDetails();
-        }, [userId]);
+        }, [userID]);
 
         if (!user) {
           return <p>Loading...</p>;
         }
-
+    console.log(isFollowed);
+    console.log(isRequested);
+    
   return (
     <div>
     <Modal  appElement={document.getElementById('root')}
@@ -209,14 +439,14 @@ style={{
 {personal.profile.map((profile)=>(
 <div className='w-full flex items-center justify-center' key={profile.id}>
 <div className='flex w-5/6 flex items-center justify-center'>
-  <div style={{backgroundImage:`url('http://localhost:8082/${user.bannerImagePath}')`}} alt={user.bannerImagePath} className='flex flex-col relative border w-full h-96 mt-4 bg-cover bg-center  bg-no-repeat gap-4 justify-end'>
+  <div style={{backgroundImage:`url('http://localhost:8086${user.bannerImagePath}')`}} alt={user.bannerImagePath} className='flex flex-col relative border w-full h-96 mt-4 bg-cover bg-center  bg-no-repeat gap-4 justify-end'>
     {parseInt(userID) === userId && ( <div onClick={openCoverForm} className='absolute right-4 top-4 flex gap-2 items-center rounded-md cursor-pointer px-2 py-1 bg-white bg-opacity-40'><Icon icon="mdi:camera" width="1.2em" height="1.2em"  style={{color: ''}} /><span className='font-semibold'>Change cover photo</span> </div>
     )} 
   <div className='absolute right-0 top-0 p-2'>
     </div>
 <div className='flex px-11 items-center'>
        <div>
-        <img  className='w-36 border-4 border-gray-300e h-36 rounded-full' alt='' src={`http://localhost:8082/${user.profileImagePath}`} /></div> 
+        <img  className='w-36 border-4 border-gray-300e h-36 rounded-full' alt='' src={`http://localhost:8086${user.profileImagePath}`} /></div> 
        { parseInt(userID) === userId && <div onClick={openImageForm} className='absolute justify-end mt-20 ml-28 flex text-cta hover:bg-cta hover:text-white border border-cta cursor-pointer items-center justify-center py-1.5 w-min px-1.5 rounded-full bg-white'><Icon icon="mdi:camera" width="1.2em" height="1.2em"  style={{color: ''}} /></div>}
         </div>
     <div className='flex justify-between relative md:px-11 sm:px-6 items-center md:w-full sm:w-auto h-20 bg-white'>
@@ -239,33 +469,35 @@ style={{
         <span>Posts</span>
         <span>{profile.posts}</span>
         </div> */} 
-        <Link to='/following'>
+        <Link to={`/following/${userID}`}>
         <div className='flex items-center flex-col'>
         <span>Following</span>
-        <span>{profile.following}</span>
+        <span>{following?.count}</span>
         </div></Link>
-        <Link to='/followers'>
+        <Link to={`/followers/${userID}`}>
         <div className='flex items-center flex-col'>
         <span>Followers</span>
-        <span>{profile.followers}</span>
+        <span>{followers?.count}</span>
         </div></Link>
         </div>
         {parseInt(userID) === userId ? (<div className='p-2 bg-gray-50 cursor-pointer rounded-full'><Icon icon="system-uicons:menu-vertical" width="1.2em" height="1.2em"  /></div>) : (
         <div className='flex gap-8'>
         <div className='flex gap-1 cursor-pointer items-center justify-center w-32 rounded-md h-10 bg-cta hover:opacity-85 text-white'>
-        {request? <div onClick={handleRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-5 h-5' icon="material-symbols:person-cancel-rounded" /> <span>Cancel</span></div> : <div onClick={handleRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-4 h-4' icon="mingcute:user-add-fill" /><span>Add Friend</span></div>}
+        {isFriends? <div className='flex items-center gap-1'><Icon className='w-4 h-4' icon="fa-solid:user-friends" />Friends</div>:isRequested? <div onClick={cancelRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-5 h-5' icon="material-symbols:person-cancel-rounded" /> <span>Cancel</span></div> : <div onClick={sendRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-4 h-4' icon="mingcute:user-add-fill" /><span>Add Friend</span></div>}
+          </div>  
 
-          </div>  
-          <div className='flex gap-1 cursor-pointer items-center justify-center w-32 rounded-md hover:opacity-85 h-10 bg-cta text-white'>
-            {follow?            <div className='flex items-center gap-1'>
-          <Icon className='w-5 h-5 font-semibold' icon="charm:tick" />
-          <span onClick={handleFollow} className='font-semibold'>Following</span>
-          </div>: <div className='flex items-center'>
-          <Icon className='w-5 h-5 font-semibold' icon="ic:sharp-add" />
-          <span onClick={handleFollow} className='font-semibold'>Follow</span>
-          </div> }
-          </div>  
-        </div>) }
+{isFollowed ? (
+    <button onClick={unfollowUser} key={user.id} className=' flex gap-1 cursor-pointer items-center justify-center w-32 rounded-md hover:opacity-85 h-10 bg-cta text-white'>
+      <Icon className='w-5 h-5 font-semibold' icon="charm:tick" />
+      <span  className='font-semibold'>Following</span>
+    </button>
+  ) : (
+    <button onClick={followUser}  key={user.id} className=' flex gap-1 cursor-pointer items-center justify-center w-32 rounded-md hover:opacity-85 h-10 bg-cta text-white'>
+      <Icon className='w-5 h-5 font-semibold' icon="ic:sharp-add" />
+      <span className='font-semibold'>Follow</span>
+    </button>
+          )}
+        </div>)}
     </div>
   </div>
   </div>
