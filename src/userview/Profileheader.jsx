@@ -32,6 +32,15 @@ const ProfileheaderUser = () => {
   const [isRequested,setIsRequested] = useState()
   const [friends,setFriends] = useState()
   const [isFriends,setIsFriends] = useState()
+  const [options,setOptions] = useState(false)
+
+  const handleOptions = ()=>{
+    setOptions(!options)
+  }
+
+  const closeOptions = ()=>{
+    setOptions(false)
+  }
 
   const handleRequest = ()=>{
     sentRequest(!request)
@@ -247,7 +256,7 @@ const fetchRequest = async () => {
           'Authorization': `Bearer ${token}`,
         },
       });
-    
+      
       if (response.ok) {
         const data = await response.json();
         setFriends(data);
@@ -369,8 +378,31 @@ const fetchRequest = async () => {
         if (!user) {
           return <p>Loading...</p>;
         }
-    console.log(isFollowed);
-    console.log(isRequested);
+
+    const unFriend = async (unfriendId)=>{
+      const token = localStorage.getItem('token')
+  
+      try{
+        const response = await fetch(`http://localhost:8080/friend-requests/delete-friend/${userId}/${unfriendId}`,{
+          method:'DELETE',
+          headers:{
+            'Authorization':`bearer${token}`
+          },
+        
+        })
+        if(response.ok){
+          console.log('')
+          fetchfriends()
+          closeOptions()
+        }
+        else{
+          console.log('error in posting data')
+        }
+      }
+      catch(error){
+        console.error(error)
+      }
+    }
     
   return (
     <div>
@@ -482,10 +514,14 @@ style={{
         </div>
         {parseInt(userID) === userId ? (<div className='p-2 bg-gray-50 cursor-pointer rounded-full'><Icon icon="system-uicons:menu-vertical" width="1.2em" height="1.2em"  /></div>) : (
         <div className='flex gap-8'>
+          <div className='relative'>
         <div className='flex gap-1 cursor-pointer items-center justify-center w-32 rounded-md h-10 bg-cta hover:opacity-85 text-white'>
-        {isFriends? <div className='flex items-center gap-1'><Icon className='w-4 h-4' icon="fa-solid:user-friends" />Friends</div>:isRequested? <div onClick={cancelRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-5 h-5' icon="material-symbols:person-cancel-rounded" /> <span>Cancel</span></div> : <div onClick={sendRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-4 h-4' icon="mingcute:user-add-fill" /><span>Add Friend</span></div>}
+        {isFriends? <div onClick={handleOptions} className='flex items-center gap-1'><Icon className='w-4 h-4' icon="fa-solid:user-friends" />Friends</div>:isRequested? <div onClick={cancelRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-5 h-5' icon="material-symbols:person-cancel-rounded" /> <span>Cancel</span></div> : <div onClick={sendRequest} className='flex items-center gap-1 font-semibold'><Icon className='w-4 h-4' icon="mingcute:user-add-fill" /><span>Add Friend</span></div>}
           </div>  
-
+          {options && <div className='absolute flex flex-col p-2 shadow-lg w-32'>
+            <span onClick={()=>{unFriend(user.id)}} className='flex cursor-pointer items-center gap-1 py-1 text-sm justify-center' ><Icon className='text-cta' icon="icon-park-solid:people-delete-one" width="1.2em" height="1.2em" />Unfriend</span>
+            <span className='flex items-center cursor-pointer gap-1 py-1 text-sm justify-center'>Block</span></div>}
+</div>
 {isFollowed ? (
     <button onClick={unfollowUser} key={user.id} className=' flex gap-1 cursor-pointer items-center justify-center w-32 rounded-md hover:opacity-85 h-10 bg-cta text-white'>
       <Icon className='w-5 h-5 font-semibold' icon="charm:tick" />

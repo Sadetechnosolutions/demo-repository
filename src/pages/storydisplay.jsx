@@ -152,7 +152,7 @@ const timeDifference = calculateTimeDifference();
             />}
 
 {users?.map(user=>user.id === item.userId ? 
-                <div className='top-4 flex items-center gap-2 p-2 absolute'><img className='w-11 h-11 rounded-full border-2 border-cta' src='profile.jpg' /><div className='flex flex-col'><span className='text-white font-semibold  text-sm'>{user.UserName}</span><span className='text-white text-sm font-semibold'>{timeDifference}</span></div></div>
+                <div className='top-4 flex items-center gap-2 p-2 absolute'><img className='w-11 h-11 rounded-full border-2 border-cta' src={`http://localhost:8086${item.profileImagePath}`}/><div className='flex flex-col'><span className='text-white font-semibold  text-sm'>{user.UserName}</span><span className='text-white text-sm font-semibold'>{timeDifference}</span></div></div>
                 :null
     )}
           {loading && <Loader />}

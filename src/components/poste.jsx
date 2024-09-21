@@ -445,6 +445,7 @@ const Post = () => {
     } catch (error) {
       console.error('Error submitting form:', error);
       setPostComment('');
+      userId();
       setSelectedPostId('');
       setReplyId('');
       dispatch(selectPhotoComment(null))
@@ -539,7 +540,6 @@ const Post = () => {
       console.error('Error submitting form:', error);
     }
   };
-
 
   const likesCount = async (postId) => {
     try {
@@ -730,8 +730,9 @@ style={{
     </div>
     <div className='flex items-center gap-1'><Icon onClick={() => toggleComment(post.postId)} className="cursor-pointer h-6 w-6 text-gray-600" icon="iconamoon:comment-light" /> { <span>{displayComments[post.postId]?.length}</span> || 0 }</div>
           </div>
+
           {comment === post.postId && (   <div className="flex items-center gap-2"><label className="cursor-pointer"><Icon className="w-7 h-7 text-gray-500" icon="mdi:camera-outline" /><input onChange={(e)=>{handleImageChange(e)}}  className="absolute opacity-0" type="file" /></label><InputEmoji onChange={(text) => setPostComment(text)} placeholder="Add a comment" /><Icon onClick={handleComment} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div>)}
-{selectedphotocomment && <img className='w-28 h-28' src={selectedphotocomment?.name.name} />}
+{selectedphotocomment && <img className='w-28 h-28' src={selectedphotocomment?.name.name} alt={`http://localhost:8086${selectedphotocomment.name}`} />}
           {comment === post.postId && displayComments[post.postId]?(
   displayComments[post.postId].map((comment) => {
     const commentUser = users.find(user => user.id === comment.userId);
@@ -838,7 +839,6 @@ style={{
       <Icon onClick={closeDelete} className='absolute cursor-pointer top-2 right-2' icon="mdi:remove" />
     </div>
  </Modal>
-
     </form>
   );
 };

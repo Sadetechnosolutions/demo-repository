@@ -156,9 +156,6 @@ const isCurrentUser = parseInt(userID) === userId;
                     </div>
                   )}
             </div>
-            <div>
-              <span className='fuck me elakkiya'></span>
-              </div>
                 <div className='flex flex-col gap-1.5'>
 
                   <div className='flex justify-between'>

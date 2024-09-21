@@ -25,11 +25,11 @@ const Post = () => {
   const [postComment, setPostComment] = useState('');
   const [liked, setLiked] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null); // Manage dropdown visibility
-  const { newsfeed = [] } = useSelector((state) => state.photo);
-  const { selectedphotocomment } = useSelector((state) => state.photo);
-  const postliked = useSelector((state) => state.like.postliked);
-  const postlikeCount = useSelector((state) => state.like.postlikeCount);
-  const { Saved } = useSelector((state) => state.photo);
+  // const { newsfeed = [] } = useSelector((state) => state.photo);
+  // const { selectedphotocomment } = useSelector((state) => state.photo);
+  // const postliked = useSelector((state) => state.like.postliked);
+  // const postlikeCount = useSelector((state) => state.like.postlikeCount);
+  // const { Saved } = useSelector((state) => state.photo);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState([]);
   const userId = useSelector((state) => state.auth.userId);

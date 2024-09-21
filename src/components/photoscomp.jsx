@@ -27,35 +27,34 @@ const Photoscomp = ({seeallPhotos}) => {
 <Icon icon="grommet-icons:next" />    
 </button>
 );
-const fetchImage = async () => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('No token found in localStorage');
-      return;
-    }
-    const response = await fetch(`http://localhost:8080/posts/user/${userID}/images`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      setImages(data);  // This should trigger a re-render
-    } else {
-      console.error('Failed to fetch user Image:', response.statusText);
-    }
-  } catch (error) {
-    console.error('Error fetching user Image:', error);
-  }
-};
-
 useEffect(() => {
-  if (userID) {
-    fetchImage();
-  }
-},[]);
+  const fetchImage = async () => {
+      // Prevent fetching if already called
+      try {
+          const token = localStorage.getItem('token');
+          if (!token) {
+              console.error('No token found in localStorage');
+              return;
+          }
+          const response = await fetch(`http://localhost:8080/posts/user/${userID}/images`, {
+              method: 'GET',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+              },
+          });
+          if (response.ok) {
+              const data = await response.json();
+              setImages(data);
+          } else {
+              console.error('Failed to fetch user Image:', response.statusText);
+          }
+      } catch (error) {
+          console.error('Error fetching user Image:', error);
+      }
+  };
+
+  fetchImage();
+}, []);
 
 const renderBackButton = ({ isDisabled, onClick }) => (
     <button
@@ -85,9 +84,9 @@ const renderBackButton = ({ isDisabled, onClick }) => (
                     No Images available
                   </div>
                 )}
-
               </div>
               </div>
+              
     </div>
   )
 }

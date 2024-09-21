@@ -58,7 +58,6 @@ const Birthday = () => {
   useEffect(() => {
     fetchUserDetails();
   }, [userId]);
-
   const handleDateClick = () => {
     setShowCalendar(!showCalendar); // Toggle calendar visibility
   };

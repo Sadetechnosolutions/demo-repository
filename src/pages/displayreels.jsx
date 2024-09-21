@@ -102,10 +102,10 @@ const handleOption = ()=>{
             />
           </div>
           <div className="w-1/2 min-screen p-2">
-          {users.map((user)=>user.id == selectedReel.userId ?
+          {users?.map((user)=>user.id == selectedReel.userId ?
           <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                    <img className="border w-9 h-9 rounded-full bg-gray-400" src={selectedReel.userImage || ''} alt="" />
+                    <img className="border w-9 h-9 rounded-full bg-gray-400" src={`http://localhost:8086${selectedReel.profileImagePath}`} alt="" />
                     <p className="font-semibold ">{user.UserName}</p>
                   </div>{selectedReel.userId === userId && <span className="flex flex-col"><Icon onClick={handleOption}  icon="iconamoon:menu-kebab-vertical-bold" />
  

@@ -105,7 +105,7 @@ const fetchfriends = async () => {
           <div className='flex py-2 items-center'>
           <AliceCarousel responsive={responsive} disableDotsControls renderNextButton={renderNextButton} renderPrevButton={renderBackButton}>
            {friends?.friends.map((friend)=>(
-            <div key={friend.id} className='flex ml-10 flex-col border w-44 border-gray-150 rounded-md pb-3 justify-center gap-2 text-center'>
+            <div key={friend.id} className='flex ml-10 h-64 flex-col border w-44 border-gray-150 rounded-md pb-3 justify-center gap-2 text-center'>
             <div className='flex flex-col justify-center text-center'>
             <img className='w-48 h-40' alt='' src={`http://localhost:8086${friend.profileImagePath}`} />
             </div>
@@ -116,7 +116,7 @@ const fetchfriends = async () => {
             {isCurrentUser?(<div className='flex justify-center gap-2'>
             <div className='flex p-2 cursor-pointer hover:bg-cta rounded-md items-center justify-center bg-gray-500'><Icon icon="ph:chat-dots" width="1.2em" height="1.2em"  style={{color: 'white'}} /></div>
             <div onClick={()=>{unFriend(friend.id)}} className='flex p-2 cursor-pointer hover:bg-red rounded-md items-center justify-center bg-gray-500'><Icon icon="icon-park-solid:people-delete-one" width="1.2em" height="1.2em"  style={{color: 'white'}} /></div>
-            </div>) : (<div className='px-3'><div className='flex p-2 cursor-pointer gap-2 hover:bg-cta rounded-md items-center justify-center bg-gray-400'><Icon icon="bi:person-add" width="1.2em" height="1.2em"  style={{color: 'white'}} /><span className='text-white'>Add Friend</span></div></div>)}
+            </div>) : userId === friend.id ? '' : (<div className='px-3'><div className='flex p-2 cursor-pointer gap-2 hover:bg-cta rounded-md items-center justify-center bg-gray-400'><Icon icon="bi:person-add" width="1.2em" height="1.2em"  style={{color: 'white'}} /><span className='text-white'>Add Friend</span></div></div>)}
             </div>
            ))}
            </AliceCarousel>
