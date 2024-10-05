@@ -26,7 +26,6 @@
 background: linear-gradient(#5CBE8F,#3AB4BC);
   color: white; /* Set text color to white for contrast */
 }
-
   
   @keyframes circleAnimation {
     0% {
@@ -40,6 +39,7 @@ background: linear-gradient(#5CBE8F,#3AB4BC);
       opacity: 0;
     }
   }
+
   .custom-date-picker {
     width: 100%; /* Full width */
     height: 45px;
@@ -70,7 +70,6 @@ body.custom-scrollbar::-webkit-scrollbar {
   padding-top: 8px;
   padding-bottom: 8px;
 }
-
 
   @keyframes fadeIn {
     0% { opacity: 0; }

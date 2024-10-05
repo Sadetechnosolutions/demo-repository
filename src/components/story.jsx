@@ -23,7 +23,7 @@ const Story = () => {
       };
       
       const renderNextButton = ({ isDisabled, onClick }) => (
-        <button className={`absolute p-2 flex hover:bg-cta hover:text-white items-center justify-center bg-gray-100 rounded-full top-44 right-4 ${story?.length ===0 ? 'hidden': ''}`}
+        <button className={`absolute p-2 flex hover:bg-cta text-cta hover:text-white items-center justify-center bg-gray-100 rounded-full top-44 right-4 ${story?.length ===0 ? 'hidden': ''}`}
             onClick={onClick}
             disabled={isDisabled}>
     <Icon icon="grommet-icons:next" />    
@@ -47,7 +47,7 @@ const Story = () => {
     }, []);
     
     const renderBackButton = ({ isDisabled, onClick }) => (
-        <button className={`absolute p-2 hover:bg-cta hover:text-white bg-gray-100 rounded-full ${story?.length ===0 ? 'hidden': ''} top-44 left-4`}
+        <button className={`absolute p-2 hover:bg-cta text-cta hover:text-white bg-gray-100 rounded-full ${story?.length ===0 ? 'hidden': ''} top-44 left-4`}
             onClick={onClick}
             disabled={isDisabled}>
     <Icon icon="ic:twotone-arrow-back-ios" /> </button>);
@@ -141,8 +141,8 @@ const addStory = ()=>{
               
               const timeDifference = calculateTimeDifference();
       return(
-                <div onClick={() =>{ handleClick(story);openStory()}} className='relative bg-black w-auto h-96'>
-              {story.type === 'IMAGE' ?  <img src={`http://localhost:8086${story.content}`} className='w-full opacity-90 h-96' /> :      <ReactPlayer
+                <div onClick={() =>{ handleClick(story);openStory()}} className='relative bg- w-auto h-96'>
+              {story.type === 'IMAGE' ?  <img src={`http://localhost:8086${story.content}`} alt={`http://localhost:8086${story.content}`} className='w-full opacity-90 h-96' /> :      <ReactPlayer
         url={`http://localhost:8086${story.content}`}  // Replace with your video URL
         playing={true}  // Autoplay the video
         controls={false} // Hide controls if desired

@@ -22,9 +22,10 @@ function isValidMobileNumber(input) {
   const mobileRegex = /^[0-9]{10}$/;
   return mobileRegex.test(input);
 }
+
 const handleClosemail = ()=>{
   showemailotp(false);
-  handleshowotp()
+  navigate('/')
 }
 
 const handleInputChange = (e) => {
@@ -77,6 +78,7 @@ const handleSendOtp = async (e) => {
       const data = await response.json();
       console.log('Sent code for email reset');
       handleClosemail()
+      handleshowotp()
       // Handle success based on your backend response
       if (data.ok) {
         // Backend success handling

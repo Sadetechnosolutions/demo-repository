@@ -17,11 +17,12 @@ import { Link, NavLink, useParams } from 'react-router-dom'
 import Post from '../components/poste'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Shortcut from '../components/shortcut'
 
 const Home = () => {
   const[shortcut,showShortcut] = useState(false);
   const navigate = useNavigate();
-  const {Friends} = useSelector((state)=>state.friend)
+
   const [hover,setHover] = useState(null);
   const userId = useSelector((state)=>state.auth.userId)
 
@@ -123,23 +124,7 @@ const Home = () => {
   
   return(
     <div className='w-full bg-gray-50  px-20 py-4 flex flex-col gap-4'>
-      <div className='fixed flex flex-col gap-4 left-0 h-auto'>
-      <div onClick={handleShortcut} className='w-11 h-11 flex items-center cursor-pointer justify-center border bg-cta rounded-full '>
-      <Icon className='w-6 h-6 text-white' icon="mynaui:menu" />
-      </div>
-      {shortcut &&(
-      <div className=' flex flex-col gap-4 left-0 h-auto'>
-        {options.map((option)=>(
-          <NavLink to={option.path}><div onClick={() => handleNavigation(option.path)} onMouseEnter={()=>handleHover(option.id)} onMouseLeave={closeHover} key={option.id}  className={`relative flex items-center rounded-full bg-gradient-to-tr from-span-start to-span-end ${hover === option.id ? 'w-40' : 'w-11'} transition-all duration-300`}>
-      <div key={option.id} className=' w-11 h-11 slide-in-down duration-500 flex items-center cursor-pointer justify-center border bg-cta rounded-full'>
-      <span data-tooltip-content= {option.name} data-tooltip-id= "mytooltip" className='flex items-center justify-center text-white'>{option.icon}</span>
-      </div>
-      {hover === option.id && <div className=' text-white ml-4 flex '>{option.name}</div>}
-      </div></NavLink>
-        ))}
-      </div>
-      )}
-      </div>
+<Shortcut />
     <div className='w-full justify-between flex flex-wrap gap-4 '>
     <aside className='md:w-1/5 sm:w-full xs:w-full flex flex-col gap-4'>
     <Weather />
@@ -148,17 +133,17 @@ const Home = () => {
     <Advertisement />
     </aside> 
     <div className='md:w-1/2 flex flex-col gap-4 sm:w-full'>
-    {Friends?.length>0&&<Reels />} 
+    <Reels /> 
     <Createpost />
-    {Friends?.length>0&&<Post />} 
-    {Friends?.length===0&&  
+    <Post />
+{/* 
     <div className="flex bg-gradient-to-tr from-span-start to-span-end text-white flex-col justify-center gap-4 h-96 items-center">
       <div className='flex flex-col items-center'>
          <div className="border-2 p-4 rounded-full text-center w-max"><Icon className="w-11 h-11" icon="fa-solid:user-friends" /></div>
          <p className="text-xl font-semibold">Add Friends</p>
       </div>
          <span onClick={openFriendSuggestion} className='border border-white p-2 hover:bg-white hover:text-cta rounded-md cursor-pointer font-semibold'>View Suggestions</span>
-         </div>}
+         </div> */}
     </div>
     <aside className='flex flex-col gap-4 md:w-1/4 sm:w-full'>
     <Suggestfriends />

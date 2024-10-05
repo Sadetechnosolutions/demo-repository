@@ -230,7 +230,7 @@ const Profile = () => {
             </div>
             <div className='flex flex-col'>
               <div className='px-6 text-md '>
-                <span className=' cursor-pointer text-cta'>{user.email}</span>
+                <span className=' cursor-pointer'>{user.email}</span>
               </div>
             </div>
           </div>

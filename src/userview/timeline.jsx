@@ -5,8 +5,6 @@ import InputEmoji from 'react-input-emoji';
 import { addCommentnf, selectPhotoComment, deleteCommentnf, editComment, addToSaved } from "../slices/photoslice";
 import { useDispatch, useSelector } from "react-redux";
 import DropdownMenu from '../components/dropdownmenu';
-import { v4 as uuidv4 } from 'uuid';
-import Heart from 'react-heart';
 import moment from "moment";
 import Modal from 'react-modal';
 
@@ -24,11 +22,6 @@ const Post = () => {
   const [postComment, setPostComment] = useState('');
   const [liked, setLiked] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  const { newsfeed = [] } = useSelector((state) => state.photo);
-  const { selectedphotocomment } = useSelector((state) => state.photo);
-  const postliked = useSelector((state) => state.like.postliked);
-  const postlikeCount = useSelector((state) => state.like.postlikeCount);
-  const { Saved } = useSelector((state) => state.photo);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
@@ -605,20 +598,18 @@ console.log(typeof(comment))
         return(
         <div className='w-3/5 flex flex-col gap-4 shadow-lg py-4 px-4 relative' key={post.postId}>
           <div className="flex justify-between items-center">
-          {users.map(users => 
-          users.id === post.userId ? (
+
             <div className="flex gap-2 items-center">
-              <img className="rounded-full w-11 h-11" src={`http://localhost:8082${user?.profileImagePath}`} alt={`http://localhost:8082${user?.profileImagePath}`}/>
+              <img className="rounded-full w-11 h-11" src={`http://localhost:8086${user?.profileImagePath}`} alt={`http://localhost:8082${user?.profileImagePath}`}/>
               <div className="flex flex-col"> 
                 <span className="font-semibold">
-            <span key={users.id} className="font-semibold">{users.UserName}</span>
+            <span key={users.id} className="font-semibold">{post.name}</span>
           
         </span>
                 <span className="text-sm text-gray-600">{timeDifference}</span>
               </div>
             </div>
-            ) : null
-          )}
+       
             {userIdValue === userId && (<div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}
               <Icon
                 className="w-6 h-6 cursor-pointer"
@@ -636,7 +627,7 @@ console.log(typeof(comment))
           </div>
           <span>{post.description}</span>
           {post.postType === 'IMAGE' ? (
-            <img className='w-full h-[40rem]' src={`http://localhost:8080/posts${post.imageUrl}`} alt='' />
+            <img className='w-full h-[40rem]' src={`http://localhost:8086${post.imageUrl}`} alt={`http://localhost:8086${post.imageUrl}`} />
           ) : post.postType === 'VIDEO' ? (
             <video className='w-full h-[40rem]' controls>
               <source src={`http://localhost:8080/posts${post.videoUrl}`} type="video/mp4" />

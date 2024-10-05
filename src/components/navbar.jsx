@@ -8,6 +8,7 @@ import { removeRequest } from '../slices/friendrequestslice';
 import {useSelector} from 'react-redux';
 import {useDispatch} from 'react-redux';
 import { addFriend } from '../slices/friendlistslice';
+import { SpringValue } from 'react-spring';
 
 const Navbar = () => {
   const [user, setUser] = useState('');
@@ -15,34 +16,41 @@ const Navbar = () => {
   const [request,setRequest] = useState()
   const [showAllNotification,setShowAllNotification] = useState(false);
   const [showAllMessages,setShowAllMessages] = useState(false);
+  const [notification,setNotifications] = useState([]);
   const iconHome = <Icon className='outline-none rounded-full col-white' icon="mynaui:home" width="1.5em" height="1.5em" />;
   const iconPersonAdd = <Icon className='outline-none rounded-md col-white' icon="akar-icons:person-add" color="red" width="1.3em" height="1.3em" />;
   const iconNotifications = <Icon className='outline-none rounded-md col-white' icon="ion:notifications-outline" width="1.4em" height="1.4em" />;
   const iconMessageText = <Icon className='outline-none rounded-md col-white' icon="iconoir:message-text" width="1.4em" height="1.4em" />;
   const token = localStorage.getItem('token');
   const userId = useSelector((state) => state.auth.userId);
+  const [notificationCount,setNotificationCount] = useState(null)
+  const [requestCount , setRequestCount] = useState(null);
   const headers = [
     {
       id: 1, 
       title: 'Home',
       path:'/newsfeed',
       icon: iconHome, 
-      dropdownContent: null
+      dropdownContent: null,
+      count:null
     },
     {
       id: 2, 
       title: 'Friend Request', 
       icon: iconPersonAdd,
+      count:requestCount
     },
     {
       id: 3, 
       title: 'Notifications', 
       icon: iconNotifications, 
+      count:notificationCount
     },
     {
       id: 4, 
       title: 'Messages', 
       icon: iconMessageText, 
+      count:null
     },
   ];
   const [activeSection, setActiveSection] = useState(headers.id=1);
@@ -113,21 +121,95 @@ const fetchUserName = async () => {
     console.error('Error fetching user data:', error);
   }
 };
+const fetchNotification = async () => {
+  try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+          console.error('No token found in localStorage');
+          return;
+      }
 
+      const followApi = await fetch(`http://localhost:8080/follows/notifications/${userId}`, {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${token}`,
+          },
+      });
+
+      const requestApi = await fetch(`http://localhost:8080/friend-requests/notifications/${userId}`, {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${token}`,
+          },
+      });
+
+      const followData = await followApi.json();
+      const requestData = await requestApi.json();
+
+      // Log the responses to check their structure
+      console.log('Follow Notifications:', followData);
+      console.log('Friend Request Notifications:', requestData);
+
+      const combinedNotifications = [
+          ...(Array.isArray(followData.notification) ? followData.notification : []),
+          ...(Array.isArray(requestData.notification) ? requestData.notification : [])
+      ];
+
+      setNotifications(combinedNotifications);
+  } catch (error) {
+      console.error('Error fetching notifications:', error);
+  }
+};
+
+
+
+  
+// const fetchReqNotification = async () => {
+//   try {
+//     const token = localStorage.getItem('token');
+//     if (!token) {
+//       console.error('No token found in localStorage');
+//       return;
+//     }
+//     const response = await fetch(`http://localhost:8080/friend-requests/notifications/1`, {
+//       method: 'GET',
+//       headers: {
+//         'Authorization': `Bearer ${token}`,
+//       },
+//     });
+  
+//     if (response.ok) {
+//       const data = await response.json();
+//       setNotifications(data);
+//       // Check if the user is followed
+//       // setIsRequested(data.sentRequests.find((follower) => follower.recipientId === parseInt(userID)));
+//     } else {
+//       console.error('Failed to fetch user data:', response.status);
+//     }
+//   } catch (error) {
+//     console.error('Error fetching user data:', error);
+//   }
+//   };
 
   const dropdowns = {
     submenu: [
       { id: 1, title: 'General Settings',icon:<Icon className='w-5 h-5'  icon="carbon:settings" />, path: '/settings' },
-      { id: 2, title: 'Edit Profile',icon:<Icon className='w-5 h-5' icon="flowbite:edit-outline" />, path: '/editprofile' },
-      { id: 3, title: 'Notification',icon:<Icon className='w-5 h-5' icon="ic:outline-edit-notifications" />, path: '/notificationsettings' },
+      { id: 2, title: 'Edit Profile',icon:<Icon className='w-5 h-5' icon="flowbite:edit-outline" />, path: '/editprofile'},
+      { id: 3, title: 'Notification',icon:<Icon className='w-5 h-5' icon="ic:outline-edit-notifications" />, path: '/notificationsettings'},
       { id: 4, title: 'Messages',icon:<Icon className='w-5 h-4' icon="bx:message-edit" />, path: '/messagesettings' },
       { id: 5, title: 'Privacy & data',icon:<Icon className='w-5 h-4' icon="carbon:security" />, path: '/Privacydata' },
-      { id: 6, title: 'Security',icon:<Icon className='w-5 h-4' icon="material-symbols:lock-outline" />, path: '/security' },
+      { id: 6, title: 'Security',icon:<Icon className='w-5 h-4' icon="material-symbols:lock-outline" />, path: '/security', },
 ],
   };
 
   const handleIconClick = (id) => {
     setActiveSection(id === activeSection ? null : id);
+
+    if (id === 2) { // Assuming 2 is the ID for 'Friend Requests'
+      setRequestCount(null);
+    } else if (id === 3) { // Assuming 3 is the ID for 'Notifications'
+      setNotificationCount(null);
+    }
   };
 
   const showRequest = showAllRequests ? friendrequests.slice().reverse() :  friendrequests.slice(-5);
@@ -172,8 +254,8 @@ const fetchUserName = async () => {
       if (response.ok) {
         const data = await response.json();
         setRequest(data);
-        // Check if the user is followed
-        // setIsRequested(data.sentRequests.find((follower) => follower.recipientId === parseInt(userID)));
+        setRequestCount(data.pendingCount)
+
       } else {
         console.error('Failed to fetch user data:', response.status);
       }
@@ -181,6 +263,8 @@ const fetchUserName = async () => {
       console.error('Error fetching user data:', error);
     }
     };
+
+
 
     const acceptRequest = async (acceptID)=>{
       const token = localStorage.getItem('token')
@@ -208,7 +292,7 @@ const fetchUserName = async () => {
         console.error(error)
       }
     }
-
+    console.log(notification)
     const cancelRequest = async (cancelID)=>{
       const token = localStorage.getItem('token')
       const payload={
@@ -236,15 +320,12 @@ const fetchUserName = async () => {
       }
     }
     useEffect(() => {
-      if (userId) {
         fetchUserName();
-        fetchRequest()
-      }
-    }, [userId]);
-    
-    if (!user) {
-      return <p>Loading...</p>; // Show loading state while fetching
-    }
+        fetchRequest();
+        fetchNotification();
+
+    }, []);
+
   return (
     <>
     <nav className='flex bg-gradient-to-tr sticky top-0 w-full sm:text-md z-10 from-span-start to-span-end justify-between items-center h-16 flex-row'>
@@ -265,7 +346,7 @@ const fetchUserName = async () => {
         </div>
         <div className='flex items-center gap-8'>
           <NavLink to={`/user/${userId}`}><div className='flex items-center gap-4'>
-        <img src={`http://localhost:8082${user.profileImagePath}`} data-tooltip-id="my-tooltip" data-tooltip-content="Profile" alt='' className='cursor-pointer rounded-full h-10 w-11 bg-gray-300'/>
+        <img src={`http://localhost:8086${user.profileImagePath}`} data-tooltip-id="my-tooltip" data-tooltip-content="Profile" alt='' className='cursor-pointer rounded-full h-10 w-11 bg-gray-300'/>
       <p data-tip="Profile" className='text-white w-28 truncate font-semibold'>{user.name}</p> 
       </div></NavLink>
         <div onClick={() => handleIconClick('dashboard')}
@@ -286,7 +367,7 @@ const fetchUserName = async () => {
               <div className="relative">
                 <NavLink to={header.path}><button
                   onClick={() => {handleIconClick(header.id)}}
-                  className={`cursor-pointer hover:bg-transparent px-3 py-3 rounded-full transition-colors duration-500 ease-in-out ${activeSection === header.id ? '' : ''}`}>
+                  className={`relative cursor-pointer hover:bg-transparent px-2 py-2 rounded-full transition-colors duration-500 ease-in-out ${activeSection === header.id ? '' : ''}`}>
                   <span className="">
                     {React.cloneElement(header.icon, {
                       'data-tooltip-content': header.title,
@@ -295,20 +376,22 @@ const fetchUserName = async () => {
                         color: activeSection === header.id ? 'white' : '',
                       },
                     })}
+                             <span className={`absolute top-0 right-0 w-4 h-4 text-xs rounded-full ${header.count > 0 ?'bg-red' : ''} text-white flex items-center justify-center`}> {header.count > 0 ? header.count : ''}</span>
                   </span>
+                
                 </button></NavLink>
                 {activeSection === header.id && header.title==='Friend Request' && (
                   <div ref={dropdownRef} className="absolute top-full overflow-y-auto overflow-x-hidden -right-20 w-[360px] h-[433px] bg-white rounded-md slide-in-down drop shadow-lg z-10 overflow-hidden">
                     <ul className="">
   <div className='flex absolute sticky top-0 bg-white justify-between items-center text-sm py-2 px-4'><p>Requests</p><p className='text-cta' onClick={()=>{gotoRequestpage()}}>ViewAll</p></div>
-  {showRequest.length===0&& (
+  {request.pendingCount===0 && (
     <>
     <div className='flex items-center justify-center'>
       <p>No Requests</p></div></>
   )}
 {request?.pendingRequests.map((item) => (
                         <div key={item.id} className=" text-sm notification-item text-gray-800 flex flex-col hover:bg-gray-50 justify-between cursor-pointer">
-                          <div className='flex flex-col px-4 border:gray-300 py-4  border-b text-sm '>
+                          <div className='flex flex-col px-4 h-20 border:gray-300 py-4  border-b text-sm '>
                           <div className='flex justify-between items-center justify-center'>
                             <div className='flex gap-2 items-center'>
                           <img className='rounded-full w-8 h-8' alt='alt' src='profile.jpg' />
@@ -328,7 +411,7 @@ const fetchUserName = async () => {
                       ))}
                     </ul>
                     <div className='flex  justify-center items-center'>
-                    {showRequest.length>=5 && (
+                    {request.pendingCount >=5 && (
   <button className="flex w-full items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4">
      <p onClick={() => setShowAllRequests(true)} >Show more</p>
   </button>
@@ -340,31 +423,33 @@ const fetchUserName = async () => {
                   <div ref={dropdownRef} className="absolute top-full overflow-y-auto overflow-x-hidden top-full -right-20 h-[470px] w-[360px] bg-white rounded-md slide-in-down drop shadow-lg z-10 overflow-hidden">
                     <ul className="">
                     <div className='flex absolute sticky top-0 bg-white justify-between text-sm py-2 px-4'><p>Notifications</p> <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm px-4' onClick={()=>{openNotifications();handleViewAll('NOTIFICATIONS');closeDropdown()}}><p>Show All</p></div></div>
-{showNotifications.length<=0 && <div className='flex items-center justify-center'><p>No Notifications</p></div>}
-{showNotifications.map((item) => (
+{notification?.count===0 && <div className='flex items-center justify-center'><p>No Notifications</p></div>}
+{notification?.map((item) =>{ 
+  
+  return(
                         <div key={item.id} className=" text-sm text-gray-800 flex flex-col  hover:bg-gray-50 justify-between cursor-pointer">
-                          <div className='flex flex-col px-4 justify-center border:gray-300 py-2 border-b text-sm '>
+                          <div className='flex flex-col px-4 justify-center border:gray-300 h-20 py-2 border-b text-sm '>
                           <div className='flex justify-between items-center'>
                             <div className='flex gap-2 items-center'>
                               <div>
-                          <img className='rounded-full w-8 h-8' alt='alt' src={item.img} />
+                          <img className='rounded-full w-8 h-8' alt='alt' src={`http://localhost:8086${item.profileImagePath}`} />
                           </div>
                           <div className='flex flex-col'>
                             <div className='hover:text-cta'>{item.name}</div> 
-                            <div className='text-gray-400 text-[12px]'>{item.notification}</div>
-                            {item.notification.includes('birthday')&&(<p className='text-xs text-cta'> Wish him a Happy birthday!</p>)}
+                            <div className='text-gray-600 font-semibold text-md'>{item.message}</div>
+                            {item.message.includes('birthday')&&(<p className='text-xs text-cta'> Wish him a Happy birthday!</p>)}
                             </div>
                           </div>
                           <div className='flex flex-col gap-1 items-end'>
                         <div className=' text-gray-400 text-xs'>{item.time}</div>
-                        <div><img alt='' className='w-12 h-11' src={item.target} /></div>
+                        {/* <div><img alt='' className='w-12 h-11' src={item.target} /></div> */}
                           </div>
                           </div>
                           </div>
                         </div>
-                      ))}
+                      )})}
                     </ul>
-                    {showNotifications.length>=5&& <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4' onClick={()=>{ setShowAllNotification(true)}}><p>Show more</p></div>}
+                    {notification?.length>=5&& <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4' onClick={()=>{ setShowAllNotification(true)}}><p>Show more</p></div>}
                   </div>
                 )}
                 {activeSection === header.id && header.title==='Messages' && (

@@ -1,14 +1,11 @@
 import React,{useEffect,useState} from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import data from '../following.json'
-import { unFollow } from "../slices/followingslice";
 import { useParams } from "react-router";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, } from "react-redux";
 
 const Following = ()=>{
   const [loaded, setLoaded] = useState(false);
-    const dispatch = useDispatch()
-    const {Following} = useSelector(state=>state.following)
+
     const {userID} = useParams()
     const userId = useSelector((state)=>state.auth.userId)
     const [following,setFollowing] = useState()

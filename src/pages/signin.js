@@ -22,6 +22,7 @@ const Signin = () => {
     const [signinOtp,showOtp] = useState(false);
     const [otpPage,showOtpPage] = useState(false);
     const [languages,setLanguages] = useState(false);
+    const [language,setLanguage] = useState(null)
     const [active,setActive] = useState(false);
     const [seconds, setSeconds] = useState(300)
     const [error,setError] = useState('')
@@ -179,7 +180,6 @@ const Signin = () => {
           toast.error('Invalid email format.');
           return;
         }
-      
         try {
           console.log(user);
           const response = await fetch('http://localhost:8081/api/auth/login', {
@@ -226,7 +226,11 @@ const Signin = () => {
           toast.error('An error occurred while fetching data');
         }
       };
-      
+      const handleSelectLanguage = (lang)=>{
+        setLanguage(lang);
+        setActive(false);
+        handleShowLanguages(false);
+      }
   const handleOTPChange = (e, index) => {
     const { value } = e.target;
     // Ensure the value is a single digit or empty
@@ -311,12 +315,13 @@ const Signin = () => {
   }, [otpPage, seconds]);
     return (
         <>
-         <div style={{fontFamily:'revert-layer'}}  className="bg-[image-url]  min-h-screen justify-center justify-between items-center bg-gradient-to-tr from-span-start to-span-end pt-20 pr-40 pl-40 flex flex-col ">
-          <div  className='w-full text-font-mono flex items-center justify-between mb-40'>
-            <div className='flex flex-col w-1/3'>
-              <img className='w-85 h-38' src='logo.png' alt='logo' />
+         <div style={{fontFamily:'revert-layer'}}  className="relative bg-[image-url]  min-h-screen justify-center items-center bg-gradient-to-tr from-span-start to-span-end flex flex-col ">
+          <div  className='w-full text-font-mono flex items-center justify-between'>
+            <div className='flex flex-col bg-white h-screen items-center justify-center  w-1/2'>
+              <img className='w-96 h-38' src='logo.png' alt='logo' />
             </div>
-            <form onSubmit={handleSubmit} className='flex flex-col bg-white px-4 rounded-md justify-center items-center md:w-2/5 py-6'>
+            <div className='w-1/2 flex items-center justify-center'>
+            <form onSubmit={handleSubmit} className='flex flex-col bg-white px-4 rounded-md justify-center items-center md:w-3/5 py-6'>
               <div className='flex mt-6 wd-full items-center gap-5 mb-6'>
           <div className='flex gap-2'>
           <input onChange={handleChange} className='checked:bg-blue-500  form-radio' type="radio" name="option" checked={true} value="Individual" />
@@ -328,15 +333,15 @@ const Signin = () => {
           </div>
           <div className='flex items-center relative'>
               <div className='flex flex-col'>
-              <div className='flex items-center'>
-              <p>Language</p>
+              <div className='w-20 flex justify-end items-center'>
+              <p>{language ? language.name : 'English'}</p>
               <div className=''>{active ? <FaCaretUp onClick={()=>{handleActive(); handleShowLanguages()}} /> : <FaCaretDown  onClick={()=>{handleActive(); handleShowLanguages()}}  />}</div>
               </div>
-              {languages && <Languages />}
+              {languages && <Languages selectLanguage = {handleSelectLanguage} />}
               </div>
               </div>
           </div>
-          <div className='flex flex-col w-full md:w-3/4 lg:w-3/9 gap-3 mb-8'>
+          <div className='flex flex-col w-full md:w-5/6 gap-3 mb-8'>
           <div className='flex gap-2 flex-col'>
           <label className='text-md'>Email <span className='text-red'>*</span></label>
           <input id='email' name='email' onChange={handleChange} value={user.email} className=" px-3 py-2 mt-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:border-gray" type='email' required placeholder='Enter your email' />
@@ -347,21 +352,17 @@ const Signin = () => {
           </div>
           <NavLink to='/forgotpassword'><p className=' text-sm hover:underline'>Forgot your password?</p></NavLink>
           <span className='text-red'>{error}</span>
-          <div className='cursor-pointer' onClick={handleShowOTP}>
+          {/* <div className='cursor-pointer' onClick={handleShowOTP}>
             Login with OTP
-          </div>
+          </div> */}
           <div className='flex flex-col text-center w-full gap-3' >
           <button type='submit' className="px-4 py-2 items-center border border-gray-300 bg-gradient-to-tr from-span-start w-full to-span-end text-white-800 hover:bg-custom-hover text-white font-semibold rounded-md">Log In</button>
           <p>I am a new member <NavLink to='/signup'><span className='text-highlight font-semibold hover:text-button cursor-pointer'>Sign Up Here</span></NavLink></p>
           </div>
           <span className=''>{error}</span>
           </div>
-          <Modal style={{}} >
-          <div className='shadow-lg bg-white '>
-          <span></span>
-          </div>
-          </Modal>
             </form>
+            </div>
           </div>
           <div></div>
           <Modal
@@ -398,7 +399,7 @@ const Signin = () => {
           />
         <div className='flex w-80 items-center justify-between'>
         <button type='submit'
-          className="cursor-pointer px-4 py-2 border border-gray-300 bg-gradient-to-tr from-span-start to-span-end text-white-800 text-white font-semibold rounded-md"
+          className="cursor-pointer px-4 py-2 border border-gray-300 bg-gradient-to-lr from-span-start to-span-end text-white-800 text-white font-semibold rounded-md"
         >
           Send OTP
         </button>
@@ -473,7 +474,7 @@ const Signin = () => {
   </div>
 </Modal>
 
-<div className="flex flex-col w-full sm:items-center py-4 sm:gap-2 md:flex-row md:justify-center md:gap-3.5">
+<div className="absolute  bg-gradient-to-tr from-span-start to-span-end bottom-0 flex flex-col w-full sm:items-center py-2 sm:gap-2 md:flex-row md:justify-center md:gap-3.5">
   {info.map((detail, index) => (
     <React.Fragment key={index}>
       <NavLink to={detail.path}><p className="cursor-pointer hover:text-white">{detail.heading}</p></NavLink>

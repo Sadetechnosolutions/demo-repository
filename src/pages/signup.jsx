@@ -233,20 +233,21 @@ const Signup = () => {
         },]
     return(
 <>
-  <div style={{fontFamily:'revert-layer'}} className="min-h-screen bg-gradient-to-tr items-center justify-center from-span-start to-span-end flex flex-col">
+  <div style={{fontFamily:'revert-layer'}} className="relative min-h-screen bg-gradient-to-tr items-center justify-center from-span-start to-span-end flex flex-col">
     <ToastContainer />
-    <div className="w-full flex flex-col sm:gap-2 md:flex-row items-center justify-between pr-6 md:pr-40 pl-6 md:pl-40 mb-5">
-      <div className="flex flex-col w-full md:w-1/3 gap-3 justify-center  text-center items-center md:items-center">
-        <div>
-        <img className="w-55 h-38" src="logo.png" alt="logo" />
-        </div>
-        <div className="text-center items-center md:text-center">
+    <div className="w-full flex flex-col sm:gap-2 md:flex-row items-center justify-between ">
+      <div className="flex flex-col h-screen w-full md:w-1/2 bg-white gap-3 justify-center  text-center items-center md:items-center">
+      <div className="text-center items-center md:text-center">
           <p className="text-black font-mono font-bold mb-1 text-4xl">Welcome To Destiny </p>
           <span className="text-lg text-span">- Are You Ready To Fulfil Your Destiny -</span>
         </div>
-      </div>
+        <div>
+        <img className="w-96 h-38" src="logo.png" alt="logo" />
+        </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col bg-white mt-16 rounded-md justify-center items-center  md:mb-14 md:w-2/5 py-8">
+      </div>
+<div className='flex w-1/2 h-screen items-center justify-center'>
+      <form onSubmit={handleSubmit} className="flex flex-col bg-white rounded-md justify-center items-center  md:mb-14 md:w-3/5 py-8">
         <div className="flex w-full mt-2 md:w-3/6 justify-center relative text-center gap-5 mb-4">
           <div className="flex items-center gap-2">
             <input type="radio"  onChange={handleChange} name="option" checked={true} value="Individual" />
@@ -259,9 +260,9 @@ const Signup = () => {
           </div>
           <div className="flex items-center">
             <div className="flex justify-center flex-col">
-              <div className="flex items-center justify-center">
+            <div className='w-20 flex justify-end items-center'>
                 <div>
-                <p>{language ? language.name : 'Language'}</p>
+                <p>{language ? language.name : 'English'}</p>
                 </div>
                 <div >
                   {active ? <FaCaretUp onClick={() => { setActive(false); handleShowLanguages() }} /> : <FaCaretDown  onClick={() => { setActive(true); handleShowLanguages() }} />}
@@ -375,8 +376,9 @@ const Signup = () => {
 </Modal>
 
       </form>
+      </div>
     </div>
-    <div className="flex flex-col w-full sm:items-center sm:gap-2 md:flex-row md:justify-center md:gap-3.5">
+    <div className="absolute bottom-0 bg-gradient-to-tr from-span-start to-span-end py-2 flex flex-col w-full sm:items-center sm:gap-2 md:flex-row md:justify-center md:gap-3.5">
   {info.map((detail, index) => (
     <React.Fragment key={index}>
       <NavLink to={detail.path}><p className="cursor-pointer hover:text-white">{detail.heading}</p></NavLink>

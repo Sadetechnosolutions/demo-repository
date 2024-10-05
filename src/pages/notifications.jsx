@@ -1,12 +1,42 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react';
 import { removeNotification } from '../slices/notificationslice';
 import { useDispatch } from 'react-redux';
 import {useSelector} from 'react-redux'
 
+
 const Notifications = () => {
   const dispatch = useDispatch();
-  const {notifications} = useSelector((state)=>state.notification)
+  const userId = useSelector((state)=>state.auth.userId)
+  const [notification,setNotifications] = useState();
+
+  
+
+  const fetchnotifications = async()=>{
+    const token = localStorage.getItem('token')
+    try{
+      const response = await fetch(`http://localhost:8080/follows/notifications/${userId}`,{
+        method:'GET',
+        headers:{
+          'Authorization': `bearer${token}`
+        }
+      })
+    if(response.ok){
+      const data = await response.json()
+      setNotifications(data)
+    }
+    else{
+    console.log('');
+    }
+    }
+    catch(error){
+      console.error('error fetching data', error)
+    }
+  }
+
+  useEffect = (() => {
+    fetchnotifications()
+  },[])
 
   return (
     <>
@@ -17,15 +47,15 @@ const Notifications = () => {
       <span className='font-semibold'>All Notifications</span>
     </div>
     <div>
-      {notifications.map((notify) => (
+      {notification?.notifications.map((notify) => (
         <div key={notify.id} className='flex cursor-pointer hover:bg-gray-50 notification-item border-b justify-between border-gray-170 py-6 items-center'>
           <div className='flex items-center gap-3'>
             <div>
-              <img className='h-11 w-11 rounded-full' alt='' src={notify.img} />
+              <img className='h-11 w-11 rounded-full' alt='' src={`http://localhost:8086${notify.profileImagePath}`} />
             </div>
             <div className='flex flex-col'>
               <p>
-                <span className=' cursor-pointer hover:text-cta'>{notify.name}</span> {notify.notification}
+                <span className=' cursor-pointer hover:text-cta'>{notify.name}</span> {notify.message}
               </p>
               <div className='flex items-center'>
                 <div></div>

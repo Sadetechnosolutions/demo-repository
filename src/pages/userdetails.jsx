@@ -33,7 +33,6 @@ const UserDetails = () => {
   const userId = useSelector((state) => state.auth.userId);
   const { userID } = useParams(); // Get userId from URL params
   const [user, setUser] = useState(null);
-
   const [imageForm,setImageForm] = useState(false);
   const [coverForm,setCoverForm] = useState(false);
   const [file, setFile] = useState(null);

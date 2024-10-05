@@ -78,7 +78,7 @@ const Birthday = () => {
   });
 
   return (
-    <div className="w-full flex flex-col bg-white gap-6 rounded-md shadow-lg">
+    <div className="w-full flex flex-col h-80 bg-white gap-6 rounded-md shadow-lg">
       <div className="w-full px-4 py-2 flex justify-between items-center bg-pink text-lg font-semibold ">
         <span className="text-white">Birthdays</span>
         <span className="bg-pink text-center w-1/2" onClick={handleDateClick}>
@@ -90,6 +90,7 @@ const Birthday = () => {
             dateFormat="dd/MM"
             className=" px-2 "
           />
+
         </span>
       </div>
       {showCalendar && (

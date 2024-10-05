@@ -53,8 +53,6 @@ const PhotosUser = () => {
         return;
       }
 
-      // Convert userID to an integer and validate
-      // Make the API request with the integer userID
       const userIdValue = parseInt(userID, 10);
       const response = await fetch(`http://localhost:8080/posts/user/${userIdValue}`, {
         method: 'GET',
@@ -309,7 +307,7 @@ const PhotosUser = () => {
           <div key={photo.postId} className='inline-block cursor-pointer relative overflow-hidden'>
 <NavLink key={photo.postId} to={`/photos/${photo.id}`}>
   <div className='relative cursor-pointer'>
-  <img className='w-80 md:h-64 rounded-lg' src={`http://localhost:8083${photo.imageUrl}`} alt={`http://localhost:8084${photo.imageUrl}`} />
+  <img className='w-80 md:h-64 rounded-lg' src={`http://localhost:8086${photo.imageUrl}`} alt={`http://localhost:8086${photo.imageUrl}`} />
     <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 hover:opacity-80 rounded-lg flex items-center justify-center">
     <p className="text-white flex items-center justify-center gap-2 md:w-full i know an assassin when i see one unmaiyana miso kellam free pass kudutharrathu namma hypocrisy ah question panna label ottidrathu paaka azhaga irukka nu tha mannichu vidren avan varamaatan di yaaru pa athu crowd uh enakku therinjavangala achum yarna maati tholaingalen da ithu mattu enga meera ka ku therinjuthu rocket raja oru thirudan ah whats a crocodile doing in perungalathur ethayachum sollu ya w-40 md:text-lg font-semibold"> <Icon className='text-cta' icon="ph:heart-fill" width="1.4em" height="1.4em" />{likeCount[photo.postId] || 0} </p>
     </div>

@@ -166,7 +166,7 @@ const Createpost = () => {
       <p className='font-semibold py-2'>Create post</p>
 
       <div className='w-full flex gap-2'>
-      <img className='w-9 h-9 rounded-full' src={`http://localhost:8082/${user.profileImagePath}`} alt='' />
+      <img className='w-9 h-9 rounded-full' src={`http://localhost:8086${user.profileImagePath}`} alt='' />
       <InputEmoji
         value={description}
         onChange={setDescription} // Update description state

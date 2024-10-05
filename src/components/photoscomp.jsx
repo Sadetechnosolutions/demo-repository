@@ -74,7 +74,7 @@ const renderBackButton = ({ isDisabled, onClick }) => (
                 {images?.length >0 && (
                                   <AliceCarousel disableDotsControls renderPrevButton={renderBackButton} renderNextButton={renderNextButton} responsive={responsive} items={images?.map((photo)=>(
                                     <div className='inline-block rounded-md overflow-hidden'>
-                                    <img className='w-64 h-64 object-cover cursor-pointer transition-transform duration-300 transform hover:scale-110 hover:opacity-90' alt='imagpg' src={`http://localhost:8083${photo.imageUrl}`} />
+                                    <img className='w-64 h-64 object-cover cursor-pointer transition-transform duration-300 transform hover:scale-110 hover:opacity-90' alt='imagpg' src={`http://localhost:8086${photo.imageUrl}`} />
                                     </div>
                                    ))}>
                                     </AliceCarousel> 

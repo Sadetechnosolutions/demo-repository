@@ -101,7 +101,7 @@ const handleOption = ()=>{
               height='100%'
             />
           </div>
-          <div className="w-1/2 min-screen p-2">
+          <div className="w-1/2 flex flex-col gap-2 min-screen p-2">
           {users?.map((user)=>user.id == selectedReel.userId ?
           <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -119,6 +119,15 @@ const handleOption = ()=>{
                   )}
 
             <p>{selectedReel.caption}</p>
+            <div className="flex gap-4 items-center"> 
+       <Icon
+        className={`cursor-pointer h-7 w-7 text-gray-600 like-animate`}
+        icon={ "material-symbols-light:favorite-outline"}
+        width='1.2em'
+        height='1.2em'
+      />
+      <Icon className="cursor-pointer h-6 w-6 text-gray-600" icon="iconamoon:comment-light" />
+    </div>
           </div>
         </div>
       ) : (

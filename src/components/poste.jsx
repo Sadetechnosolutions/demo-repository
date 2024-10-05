@@ -10,7 +10,7 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
-import Swiper from '../pages/uploadreels.';
+
 
 const Post = () => {
   const userID = useParams()
@@ -435,20 +435,17 @@ const Post = () => {
         toggleReplies(replyId); 
         fetchComments() // Close the reply input
         dispatch(selectPhotoComment(null))
+
       } else {
         console.log('An error occurred. Please try again later.');
         setPostComment('');
         setSelectedPostId('');
         setReplyId('');
+        fetchComments()
         dispatch(selectPhotoComment(null))
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
-      setPostComment('');
-      userId();
-      setSelectedPostId('');
-      setReplyId('');
-      dispatch(selectPhotoComment(null))
+
     }
   };
 
@@ -587,7 +584,7 @@ const Post = () => {
 
   const isLiked = (postId) => like[postId] || false;
   return (
-    <form onSubmit={handleSubmit} className="rounded-md flex flex-col bg-white gap-16 shadow-lg w-full py-2 px-4">
+    <form onSubmit={handleSubmit} className="rounded-md flex flex-col bg-white gap-6 shadow-lg w-full py-2 px-4">
       {userData?.map((post) =>{ 
              const calculateTimeDifference = () => {
               const pastDate = moment(post.createdAt);
@@ -617,17 +614,16 @@ const Post = () => {
         <div className='w-5/3 flex flex-col gap-4 shadow-lg py-4 px-4 relative' key={post.postId}>
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
-              <img className="rounded-full w-11 h-11" src={`http://localhost:8082${userDetail?.profileImagePath}`} alt="Profile" />
+              <img className="rounded-full w-11 h-11" src={`http://localhost:8086${post?.profileImagePath}`} alt="Profile" />
               <div className="flex flex-col">
-                <span className="font-semibold">{users?.map(user => 
-          user.id === post.userId ? (
-            <span key={user.id} className="font-semibold">{user.UserName}</span>
-          ) : null
-        )}</span>
+                <span className="font-semibold">
+            <span key={user.id} className="font-semibold">{post.name}</span>
+         
+       </span>
                 <span className="text-sm text-gray-600">{timeDifference}</span>
               </div>
             </div>
-{/* 
+{/*    
                           <div className="flex flex-col items-center relative">
                           <Icon
                             className="w-6 h-6 cursor-pointer"
@@ -641,15 +637,16 @@ const Post = () => {
                               onClose={() => setShowDropdown(null)} 
                             />
                           )}
-                        </div> */}
-
+                        </div> 
+                        
+                        */}
           </div>
           <span>{post.description}</span>
           {post.postType === 'IMAGE' ? (
-            <img className='w-full h-[40rem]' src={`http://localhost:8080/posts${post.imageUrl}`} alt='' />
+            <img className='w-full h-[40rem]' src={`http://localhost:8086${post.imageUrl}`} alt='' />
           ) : post.postType === 'VIDEO' ? (
             <video className='w-full h-[40rem]' controls>
-              <source src={`http://localhost:8080/posts${post.videoUrl}`} type="video/mp4" />
+              <source src={`http://localhost:8086${post.videoUrl}`} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           ) : null}
@@ -699,7 +696,9 @@ style={{
         icon="material-symbols-light:favorite"
         width='1.2em'
         height='1.2em'
+
       /></div><span>{client.name} </span>
+
                   </span>
                   <NavLink to={`/user/${client.id}`}><span className='p-2 bg-cta text-white font-semibold rounded-md cursor-pointer'>View Profile</span></NavLink>
                   </div>
