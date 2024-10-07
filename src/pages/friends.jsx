@@ -115,6 +115,7 @@ const isCurrentUser = parseInt(userID) === userId;
               <Icon icon="ooui:search" width="1.2em" height="1.2em"  className='text-gray-400' />
             </button>
           </div>
+          
           {/* <div className='flex flex-col justify-start '>
           <Icon icon="ion:settings-outline" className='cursor-pointer' onClick={handleprivacyDropdown} width="1.2em" height="1.2em" />
           {dropdown &&(
