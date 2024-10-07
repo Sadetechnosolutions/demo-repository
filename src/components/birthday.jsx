@@ -12,13 +12,12 @@ const Birthday = () => {
   const options = { month: 'long', day: 'numeric' };
   const today = new Date();
   const currentDate = today.toLocaleDateString('en-US', options);
-
   const userId = useSelector((state) => state.auth.userId);
+
 
   const [selectedDate, setSelectedDate] = useState(null); // State to hold selected date
   const [showCalendar, setShowCalendar] = useState(false); // State to control calendar visibility
   const [users, setUsers] = useState([]);
-
   const responsive = {
     0: { items: 1 },
     600: { items: 1 },

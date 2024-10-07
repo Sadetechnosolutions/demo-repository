@@ -8,17 +8,15 @@ import Modal from 'react-modal';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setAuth } from '../slices/authslice';
 import { fetchUserProfile } from '../admindashboard/fetchuser';
 
 
 const Signin = () => {
     const [user,setUser] = useState({ email: '', password:'',loginmail:''});
-    const [details,setDetails] = useState();
     const dispatch = useDispatch();
     const [otp, setOtp] = useState(Array(6).fill(''));
-    const userId = useSelector((state) => state.auth.userId);
     const [signinOtp,showOtp] = useState(false);
     const [otpPage,showOtpPage] = useState(false);
     const [languages,setLanguages] = useState(false);
@@ -31,9 +29,7 @@ const Signin = () => {
         const { name, value } = e.target;
           setUser({ ...user, [name]: value });
       };
-      const handleShowOTP = ()=>{
-        showOtp(true);
-      }
+
       const handleCloseOTP = ()=>{
         showOtp(false);
       }
@@ -44,9 +40,7 @@ const Signin = () => {
       const handlecloseotpPage = ()=>{
         showOtpPage(false);
       }
-    const openHome = ()=>{
-       navigate('/newsfeed')
-    }
+
     const handleShowLanguages = ()=>{
         setLanguages(!languages);
     }
@@ -108,7 +102,6 @@ const Signin = () => {
     
         if (response.ok) {
           const data = await response.json();
-          setDetails(data);
           return data;
         }
          else {
@@ -142,7 +135,6 @@ const Signin = () => {
           console.log('Response headers:', response.headers);
       
           if (response.ok) {
-            const data = await response.json();
             handleotpPage();
             toast.success('OTP sent successfully! Please check your email.');
             // Handle success based on your backend response
@@ -217,7 +209,6 @@ const Signin = () => {
               toast.error('Invalid credentials. Please try again.');
             }
           } else {
-            const errorText = await response.text();
             toast.error(`Invalid Email/Password`);
             setError('Incorrect Username/Password');
           }

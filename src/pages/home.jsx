@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React from 'react'
 import Weather from '../components/weather'
 import Createpost from '../components/createpost'
 import Suggestfriends from '../components/suggestfriends'
@@ -8,120 +8,14 @@ import Invite from '../components/invite'
 import Birthday from '../components/birthday'
 import Blogs from '../components/blogs'
 import Jobposting from '../components/job posting'
-import Advertisement from '../components/ad'
+
 import Story from '../components/story'
 import Createjob from '../components/addjob'
-import { Icon } from '@iconify/react/dist/iconify.js'
-import {Tooltip } from 'react-tooltip'
-import { Link, NavLink, useParams } from 'react-router-dom'
 import Post from '../components/poste'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 import Shortcut from '../components/shortcut'
 
 const Home = () => {
-  const[shortcut,showShortcut] = useState(false);
-  const navigate = useNavigate();
 
-  const [hover,setHover] = useState(null);
-  const userId = useSelector((state)=>state.auth.userId)
-
-  const handleHover = (id)=>{
-    setHover(id)
-  }
-
-  const closeHover = ()=>{
-    setHover(null)
-  }
-
-  const handleShortcut =()=>{
-    showShortcut(!shortcut);
-  }
-
-  const openFriendSuggestion = ()=>{
-    navigate('/addfriends')
-  }
-
-  const handleLogout = () => {
-    navigate('/');
-    localStorage.removeItem('token');
-  };
-
-  const options = [{
-    id:1,
-    name:"Profile",
-    icon:<Icon className='optionicon' icon="gravity-ui:person" />,
-    path:`/user/${userId}`,
-    task:'none'
-  },
-
-  {
-    id:2,
-    name:"Chat",
-    icon:<Icon className='optionicon' icon="mingcute:message-4-line" />,
-    path:'/messages',
-    task:'none',
-  },
-
-  {
-    id:3,
-    name:"My Pages",
-    icon:<Icon className='optionicon' icon="icon-park-solid:web-page" />,
-    path:'/page',
-    task:'none'
-  },
-
-  {
-    id:4,
-    name:"Friends",
-    icon:<Icon className='optionicon' icon="icon-park-outline:peoples-two" />,
-    path:`/friendsview/${userId}`    ,
-    task:'none'
-  },
-
-  {
-    id:5,
-    name:"Photos",
-    icon:<Icon className='optionicon' icon="ph:image-duotone" />,
-    path:`/photosview/${userId}`,
-    task:'none'
-  },
-
-  {
-    id:6,
-    name:"Videos",
-    icon:<Icon className='optionicon' icon="bxs:videos" />,
-    path:`/videosview/${userId}`,
-    task:'none'
-  },
-
-  {
-    id:7,
-    name:"Notifications",
-    icon:<Icon className='optionicon' icon="mi:notification" />,
-    path:`/notifications/${userId}`,
-    task:'none'
-  },
-
-  {
-    id:8,
-    name:"Saved",
-    icon:<Icon icon="foundation:book-bookmark" />,
-    path:'/saved',
-    task:'none'
-  },
-
-  {
-    id:9,
-    name:"Logout",
-    icon:<Icon className='optionicon' icon="fe:logout" />,
-
-  }]
-
-  const handleNavigation = (path) => {
-    navigate(path);
-  };
-  
   return(
     <div className='w-full bg-gray-50  px-20 py-4 flex flex-col gap-4'>
 <Shortcut />
@@ -130,7 +24,6 @@ const Home = () => {
     <Weather />
     <Birthday />
     <Events />
-    <Advertisement />
     </aside> 
     <div className='md:w-1/2 flex flex-col gap-4 sm:w-full'>
     <Reels /> 

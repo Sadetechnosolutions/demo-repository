@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useCallback} from 'react'
 import { Link, NavLink,useLocation } from 'react-router-dom'
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useSelector,useDispatch } from 'react-redux';
@@ -14,8 +14,7 @@ const ProfileheaderUser = () => {
   const [imageForm,setImageForm] = useState(false);
   const [coverForm,setCoverForm] = useState(false);
   const [file, setFile] = useState(null);
-  const [request,sentRequest] = useState(false)
-  const [follow,setFollow] = useState(false)
+
   const dispatch = useDispatch();
   const {selectedprofilepic} = useSelector((state)=>state.photo)
   const {profilepic} = useSelector((state)=>state.photo)
@@ -42,18 +41,9 @@ const ProfileheaderUser = () => {
     setOptions(false)
   }
 
-  const handleRequest = ()=>{
-    sentRequest(!request)
-  }
-
-  const handleFollow = ()=>{
-    setFollow(!follow)
-  }
-
   const openImageForm = ()=>{
     setImageForm(true);
   }
-
   const openCoverForm = ()=>{
     setCoverForm(true);
   }
@@ -136,7 +126,7 @@ const ProfileheaderUser = () => {
             reader.readAsDataURL(selectedFile);
           }
         }
-        const fetchUserDetails = async () => {
+        const fetchUserDetails = useCallback(async () => {
           try {
             const response = await axios.get(`http://localhost:8080/api/users/${userID}`, {
               method: 'GET',
@@ -148,15 +138,14 @@ const ProfileheaderUser = () => {
           } catch (error) {
             console.error("Error fetching user details:", error);
           }
-        };
+        },[userID]);
 
-        const handleFollowStatus = (data) => {
+        const handleFollowStatus = useCallback( (data) => {
           // Assuming data has a list of followers
           setIsFollowed(data.users.some((follower) => follower.id === userId));
-        };
-        
+        },[userId]);
 
-        const fetchFollowers = async () => {
+        const fetchFollowers = useCallback(async () => {
           try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -181,15 +170,10 @@ const ProfileheaderUser = () => {
           } catch (error) {
             console.error('Error fetching user data:', error);
           }
-        };
-useEffect(()=>{
-fetchFollowers()
-fetchFollowing()
-fetchRequest()
-fetchfriends()
-},[userID,userId])
+        },[userID,handleFollowStatus]);
 
-const fetchFollowing = async () => {
+
+const fetchFollowing = useCallback(async () => {
 try {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -214,9 +198,9 @@ try {
 } catch (error) {
   console.error('Error fetching user data:', error);
 }
-};
+},[userId,userID]);
 
-const fetchRequest = async () => {
+const fetchRequest = useCallback (async () => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -241,9 +225,9 @@ const fetchRequest = async () => {
   } catch (error) {
     console.error('Error fetching user data:', error);
   }
-  };
+  },[userID,userId]);
 
-  const fetchfriends = async () => {
+  const fetchfriends = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -268,8 +252,14 @@ const fetchRequest = async () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-    };
-
+    },[isCurrentUser,userId,userID]);
+    useEffect(()=>{
+      fetchFollowers()
+      fetchFollowing()
+      fetchRequest()
+      fetchfriends()
+      },[fetchFollowers,fetchFollowing,fetchRequest,fetchfriends])
+      
         const followUser = async ()=>{
           const token = localStorage.getItem('token')
           try{
@@ -373,7 +363,7 @@ const fetchRequest = async () => {
 
         useEffect(() => {
           fetchUserDetails();
-        }, [userID]);
+        }, [fetchUserDetails]);
 
         if (!user) {
           return <p>Loading...</p>;

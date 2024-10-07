@@ -1,6 +1,5 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js'
-import { selectPhoto } from '../slices/photoslice'
 import { useDispatch,useSelector } from 'react-redux'
 import Postphoto from '../components/uploadphoto'
 import { IoClose } from "react-icons/io5";
@@ -19,7 +18,6 @@ const PhotosUser = () => {
   const [createAlbum,showCreateAlbum] = useState(false);
   const [images,setImages] = useState()
   const [file, setFile] = useState(null);
-  const { selected } = useSelector((state) => state.post);
   const [likeCount,setLikeCount] = useState({});
   const [userData,setUserData] = useState([]);
   const [like,setLike] = useState(false);
@@ -31,8 +29,6 @@ const PhotosUser = () => {
   
   const userId = useSelector((state) => state.auth.userId);
   const { userID } = useParams();
-
-  const {uploaded} = useSelector((state)=>state.photo)
   const dispatch = useDispatch();
 
   const openPostPhoto = ()=>{
@@ -44,8 +40,7 @@ const PhotosUser = () => {
     showUploadFolder(true);
     closeuploadPhoto()
   }
-  const userIDObject = userID;
-  const fetchUserData = async () => {
+  const fetchUserData = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -71,16 +66,16 @@ const PhotosUser = () => {
     } catch (error) {
       console.error('Error fetching user data:', userID);
     }
-  };
+  },[userID]);
 
 
   useEffect(() => {
     if (userID) {
       fetchUserData();
     }
-  }, [userID]);
+  }, [userID,fetchUserData]);
 
-  const fetchLikes = async (postId) => {
+  const fetchLikes = useCallback(async (postId) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -108,7 +103,7 @@ const PhotosUser = () => {
     } catch (error) {
       console.error('Error fetching likes:', error);
     }
-  };
+  },[userId]);
 
   const likesCount = async (postId) => {
     try {
@@ -134,7 +129,7 @@ const PhotosUser = () => {
         }
       });
     }
-  }, [userData]);
+  }, [userData,fetchLikes]);
 
   const openuploadPhoto = () => {
     showuploadPhoto(true);
@@ -150,17 +145,9 @@ const PhotosUser = () => {
   const closeuploadPhoto = () => {
     showuploadPhoto(false);
   };
-  const selectedPhoto = (event) => {
-      const file = event.target.files[0];
-      const fileObject = { name: file.name };
-      console.log(fileObject);
-     dispatch(selectPhoto(fileObject));
-     openPostPhoto();
-  };
 
-  const fetchImage = async () => {
-    const userIDObject = userID;
-    const userIdValue = parseInt(userIDObject.userID, 10);
+  const fetchImage = useCallback(async () => {
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -182,13 +169,13 @@ const PhotosUser = () => {
     } catch (error) {
       console.error('Error fetching user Image:', error);
     }
-  };
+  },[userID]);
   
   useEffect(() => {
     if (userID) {
       fetchImage();
     }
-  },[]);
+  },[fetchImage,userID]);
   
             const handleImageChange = (event) => {
               const selectedFile = event.target.files[0];

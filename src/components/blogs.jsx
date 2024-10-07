@@ -11,6 +11,7 @@ const Blogs = ()=>{
         img:'np.jpg',
         desc:"moiras fade reaches much farther than you think moira's fade reaches much farther than you think."
     },]
+    
     return(
         <div className="w-full flex flex-col py-2 bg-white gap-2 shadow-lg rounded-md px-4">
             <div className="flex items-center justify-between"><span className="text-md font-semibold">Recent Blogs</span><span className="text-sm text-cta">See all</span></div>

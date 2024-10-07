@@ -11,7 +11,6 @@ const Addfriends =()=>{
             [id]: !prevRequests[id]
         }));
     };
-
 return(
     <div className="flex min-h-screen items-center justify-center">
          <div className="relative flex flex-col gap-6 w-1/2 ">

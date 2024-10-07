@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js';
 import {useSelector,useDispatch} from 'react-redux'
 import { removeRequest } from '../slices/friendrequestslice';
@@ -14,7 +14,7 @@ const Friendrequest = () => {
   const dispatch = useDispatch();
     const {friendrequests} = useSelector(state=>state.friendrequest)
 
-    const fetchRequest = async () => {
+    const fetchRequest = useCallback(async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -39,7 +39,7 @@ const Friendrequest = () => {
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
-      };
+      },[userId]);
   
       const acceptRequest = async (acceptID)=>{
         const token = localStorage.getItem('token')
@@ -67,6 +67,8 @@ const Friendrequest = () => {
           console.error(error)
         }
       }
+
+      
   
       const cancelRequest = async (cancelID)=>{
         const token = localStorage.getItem('token')
@@ -95,18 +97,16 @@ const Friendrequest = () => {
         }
       }
       useEffect(() => {
-        if (userId) {
-
           fetchRequest()
-        }
-      }, [userId]);
+      }, [fetchRequest]);
   return (
 <div className='w-full flex items-center justify-center'>
       <div className='w-5/6 px-6 drop bg-white shadow-lg  rounded-md h-auto w-3/5 flex-col '>
       <div className="flex items-center p-4 justify-between">
-      <span className='text-lg font-semibold'>FriendRequests ({friendrequests.length})</span>
+      <span className='text-lg font-semibold'>FriendRequests ()</span>
       <div className='flex items-center gap-2'>
           <div className="relative">
+        {/* <input type='text' value={inputValue} placeholder='' /> */}
             <input
               type="text"
               placeholder="Search"
@@ -122,23 +122,22 @@ const Friendrequest = () => {
           </div>
         </div>
         <div className='flex flex-wrap gap-8 items-center p-2'>
-            {friendrequests.map((friend)=>(
+            {request?.pendingRequests.map((friend)=>(
             <div key={friend.id} className='flex flex-col border border-gray-200 rounded-md w-[22rem] '>
 <div className="relative">
-  <img className="w-full h-28" src={friend.coverimg} alt="" />
+  <img className="w-full h-28" src={`http://localhost:8086${friend.senderBannerPath}`} alt="" />
   <div className="absolute -mt-10 ml-2 flex  items-center">
-    <img className="rounded-full w-16 h-16 border-2 border-white" alt="" src={friend.img} />
+    <img className="rounded-full w-16 h-16 border-2 border-white" alt="" src={`http://localhost:8086${friend.senderImagePath}`} />
   </div>
 </div>
             <div className='flex flex-col mt-5 gap-3 p-2'>
               <div className='flex justify-between items-start'>
             <div className='flex items-start flex-col'>
-                <span className='text-md font-semibold'>{friend.name}</span>
+                <span className='text-md font-semibold'>{friend.senderName}</span>
                 <span className='text-sm'>{friend.place}</span>
                 <span className='text-sm text-gray'>{friend.mutual}</span>
             </div>
             </div>
-
             <div className=' gap-4   flex justify-center rounded-md cursor-pointer border-cta'><button onClick={()=>{handleAddfriend(friend);dispatch(removeRequest(friend.id))}} className='text-cta border hover:bg-cta p-1 rounded-md flex border-cta justify-center hover:text-white w-1/2'>Confirm</button><button onClick={()=>{dispatch(removeRequest(friend.id))}} className='text-red border hover:bg-red p-1 border-red rounded-md flex justify-center hover:text-white w-1/2'>Delete</button></div>
          </div>
          </div>

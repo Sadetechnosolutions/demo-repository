@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Icon } from '@iconify/react';
 import { removeNotification } from '../slices/notificationslice';
 import { useDispatch } from 'react-redux';
@@ -9,7 +9,6 @@ const Notifications = () => {
   const dispatch = useDispatch();
   const userId = useSelector((state)=>state.auth.userId)
   const [notification,setNotifications] = useState();
-
   
 
   const fetchnotifications = async()=>{
@@ -36,7 +35,7 @@ const Notifications = () => {
 
   useEffect = (() => {
     fetchnotifications()
-  },[])
+  },[fetchnotifications])
 
   return (
     <>
