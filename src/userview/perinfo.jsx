@@ -5,7 +5,6 @@ import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import { FaCaretDown } from "react-icons/fa";
 import { FaCaretUp } from "react-icons/fa";
-import { useNavigate } from "react-router";
 import { useSelector,useDispatch } from "react-redux";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { updatePhoto,changecoverPhoto,updateCover,changePhoto } from '../slices/photoslice';
@@ -24,7 +23,6 @@ const PersonalInfo = ({ GetInfo, formData, updateFormData,onNext   })=>{
     const {profilepic} = useSelector((state)=>state.photo)
 
     const {coverpic} = useSelector((state)=>state.photo)
-    const Navigate = useNavigate()
     const handleShowCountry = ()=>{
         ShowCountries(!countries);
     }

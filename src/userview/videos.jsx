@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react'
+import React,{useState, useEffect, useCallback} from 'react'
 import { Player,LoadingSpinner,BigPlayButton } from 'video-react';
 import 'video-react/dist/video-react.css';
 import '../styles.css'
@@ -9,7 +9,6 @@ import PostVideo from '../components/uploadvideo';
 import Uploadvideofolder from '../components/uploadvideofolder';
 import { IoClose } from 'react-icons/io5';
 import Createvideoalbum from '../components/createvideoalbum';
-import { selectVideo } from '../slices/videoslice';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { selectPost } from '../slices/postslice';
@@ -25,13 +24,6 @@ const VideosUser = () => {
   const { userID } = useParams();
   const [videos,setVideos] = useState();
   const [file,setFile] = useState(null)
-
-  const selectedVideo = (event) => {
-    const file = event.target.files[0];
-    const fileObject = { name: file.name };
-    dispatch(selectVideo(fileObject));
-    openPostVideo();
-};
 
   const openCreateAlbum = ()=>{
     showCreateAlbum(true);
@@ -61,7 +53,7 @@ const VideosUser = () => {
     showCreateAlbum(false);
   };
 
-  const fetchVideos = async () => {
+  const fetchVideos = useCallback(async () => {
     try {
             const token = localStorage.getItem('token');
       if (!token) {
@@ -83,13 +75,13 @@ const VideosUser = () => {
               } catch (error) {
         console.error('Error fetching user Image:', error);
       }
-            };
+            },[userID]);
 
       useEffect(() => {
-        if (userId) {
+
           fetchVideos();
-      }
-            }, [userId]);
+
+            }, [fetchVideos]);
 
 const handleImageChange = (event) => {
               const selectedFile = event.target.files[0];

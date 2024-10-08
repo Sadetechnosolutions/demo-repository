@@ -14,9 +14,7 @@ const GeneralInfo = ({section}) => {
     const { coverpic } = useSelector((state) => state.photo);
     const { profilepic } = useSelector((state) => state.photo);
     const interests = formData.interests;
-    const { countryCode } = useSelector((state) => state.form);
     const userId = useSelector((state) => state.auth.userId); // Adjust based on your store's structure
-    const token = localStorage.getItem('token'); 
     const [interest, setInterest] = useState('');
     const [showAdditionalExperience, setshowAdditionalExperience] = useState(false);
 
@@ -43,7 +41,7 @@ const GeneralInfo = ({section}) => {
         const { name, value } = e.target;
     
     if (name.startsWith("workExperience")) {
-            const [_, index, field] = name.split('-');
+            const [ index, field] = name.split('-');
             const updatedworkExperience = formData.workExperience.map((exp, idx) => 
                 idx === parseInt(index) ? { ...exp, [field]: value } : exp
             );
@@ -135,8 +133,8 @@ const handleSubmit = async (event) => {
             // Log detailed error message
             const errorText = await response.text();
             console.error('Error:', response.status, errorText);
-            return null;
             navigate('/newsfeed')
+            return null;
         }
     } catch (error) {
         console.error('Error:', error);

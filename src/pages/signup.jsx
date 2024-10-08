@@ -123,7 +123,6 @@ const Signup = () => {
       console.log('Response headers:', response.headers);
 
       if (response.ok) {
-        const { token } = await response.json();
         handleshowotp()
       } 
       else {

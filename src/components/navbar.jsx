@@ -1,20 +1,16 @@
 
-import React, { useState,useEffect,useRef } from 'react';
+import React, { useState,useEffect,useRef, useCallback } from 'react';
 import { Icon } from '@iconify/react';
 import '../styles.css'
 import { useNavigate,NavLink,useLocation } from 'react-router-dom';
 import {Tooltip } from 'react-tooltip';
-import { removeRequest } from '../slices/friendrequestslice';
 import {useSelector} from 'react-redux';
-import {useDispatch} from 'react-redux';
-import { addFriend } from '../slices/friendlistslice';
-import { SpringValue } from 'react-spring';
+
 
 const Navbar = () => {
   const [user, setUser] = useState('');
   const [showAllRequests, setShowAllRequests] = useState(false);
   const [request,setRequest] = useState()
-  const [showAllNotification,setShowAllNotification] = useState(false);
   const [showAllMessages,setShowAllMessages] = useState(false);
   const [notification,setNotifications] = useState([]);
   const iconHome = <Icon className='outline-none rounded-full col-white' icon="mynaui:home" width="1.5em" height="1.5em" />;
@@ -58,16 +54,9 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
   const [activeTitle,setActiveTitle] = useState(null);
   const navigate = useNavigate();
-  const {notifications} = useSelector((state)=>state.notification)
-  const {friendrequests} = useSelector((state)=>state.friendrequest)
   const {messages} = useSelector((state)=>state.message)
-  const {profilepic} = useSelector((state)=>state.photo)
-  const dispatch = useDispatch();
 
-  const handleFriend = (id) => {
-    // Navigate to user details page with the user ID
-    navigate(`/user/${id}`);
-  };
+
 // Check if the token exists
 if (token) {
   console.log('Token retrieved:', token);
@@ -76,7 +65,6 @@ if (token) {
 }
 useEffect(() => {
   const routeName = location.pathname.split('/').pop();
-  const type = parseInt(routeName,10) === Number
   console.log(routeName)
     setActiveTitle(routeName.toUpperCase());
 }, [location.pathname]);
@@ -93,7 +81,7 @@ useEffect(() => {
   };
 }, []);
 
-const fetchUserName = async () => {
+const fetchUserName = useCallback(async () => {
   try {
     const token = localStorage.getItem('token');
 
@@ -120,8 +108,8 @@ const fetchUserName = async () => {
   } catch (error) {
     console.error('Error fetching user data:', error);
   }
-};
-const fetchNotification = async () => {
+},[userId]);
+const fetchNotification = useCallback( async () => {
   try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -159,7 +147,7 @@ const fetchNotification = async () => {
   } catch (error) {
       console.error('Error fetching notifications:', error);
   }
-};
+},[userId]);
 
 
 
@@ -211,9 +199,6 @@ const fetchNotification = async () => {
       setNotificationCount(null);
     }
   };
-
-  const showRequest = showAllRequests ? friendrequests.slice().reverse() :  friendrequests.slice(-5);
-  const showNotifications =   showAllNotification ? notifications.slice().reverse() :  notifications.slice(-5);
   const showMessages = showAllMessages ? messages.slice().reverse() :  messages.slice(-5);
 
   const openNotifications = ()=>{
@@ -233,11 +218,8 @@ const fetchNotification = async () => {
   const openMessages = ()=>{
     navigate('/messages/1')
   }
-  const handleAddfriend =(id)=>{
-    dispatch(addFriend(id));
-  }
 
-  const fetchRequest = async () => {
+  const fetchRequest = useCallback( async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -262,7 +244,7 @@ const fetchNotification = async () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-    };
+    },[userId]);
 
 
 
@@ -324,7 +306,7 @@ const fetchNotification = async () => {
         fetchRequest();
         fetchNotification();
 
-    }, []);
+    }, [fetchUserName,fetchRequest,fetchNotification]);
 
   return (
     <>
@@ -449,7 +431,7 @@ const fetchNotification = async () => {
                         </div>
                       )})}
                     </ul>
-                    {notification?.length>=5&& <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4' onClick={()=>{ setShowAllNotification(true)}}><p>Show more</p></div>}
+                    {notification?.length>=5&& <div className='flex items-center justify-center text-cta hover:bg-gray-100 text-sm py-1.5 px-4'><p>Show more</p></div>}
                   </div>
                 )}
                 {activeSection === header.id && header.title==='Messages' && (

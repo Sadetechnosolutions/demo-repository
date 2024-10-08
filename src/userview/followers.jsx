@@ -12,7 +12,6 @@ const FollowersView = ()=>{
   
       return () => clearTimeout(timer);
     }, []);
-  
     // If not loaded yet, return a loading indicator or null
     if (!loaded) {
       return <div></div>; // You can customize this loading indicator
@@ -26,7 +25,7 @@ const FollowersView = ()=>{
             <div className="flex flex-wrap gap-2">
             <div className="flex w-[49rem] shadow-md justify-between py-2 px-8 items-center">
             <div className="flex items-center gap-2">
-            <img className="w-16 h-16 rounded-full" src="profile.jpg"/>
+            <img className="w-16 h-16 rounded-full" alt="" src="profile.jpg"/>
             <p className="text-lg">John liebert</p>
             <span></span>
             </div>
@@ -36,7 +35,7 @@ const FollowersView = ()=>{
             </div>
             <div className="flex w-[49rem] shadow-md justify-between py-2 px-8 items-center">
             <div className="flex items-center gap-2">
-            <img className="w-16 h-16 rounded-full" src="profile.jpg"/>
+            <img className="w-16 h-16 rounded-full" alt="" src="profile.jpg"/>
             <p className="text-lg">John liebert</p>
             <span></span>
             </div>

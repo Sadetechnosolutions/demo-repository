@@ -1,4 +1,4 @@
-import React,{useEffect,useState} from "react";
+import React,{useCallback, useEffect,useState} from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useParams } from "react-router";
 import { useSelector, } from "react-redux";
@@ -9,8 +9,7 @@ const Following = ()=>{
     const {userID} = useParams()
     const userId = useSelector((state)=>state.auth.userId)
     const [following,setFollowing] = useState()
-
-    const fetchFollowing = async () => {
+    const fetchFollowing = useCallback( async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -33,10 +32,10 @@ const Following = ()=>{
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
-    };
+    },[userID]);
 useEffect(()=>{
 fetchFollowing()
-},[userID,userId])
+},[fetchFollowing])
     useEffect(() => {
       // Simulate loading delay
       const timer = setTimeout(() => {
@@ -81,7 +80,7 @@ fetchFollowing()
             {following?.users.map((Following)=>(
             <div key={Following.id} className="flex w-[48rem] shadow-md justify-between py-2 px-8 items-center">
             <div className="flex items-center gap-2">
-            <img className="w-16 h-16 rounded-full" src={`http://localhost:8086${Following.profileImagePath}`}/>
+            <img className="w-16 h-16 rounded-full" src={`http://localhost:8086${Following.profileImagePath}`} alt={`http://localhost:8086${Following.profileImagePath}`}/>
             <p className="text-lg w-24 truncate">{Following.name}</p>
             </div>
             <span> {Following.work} </span>

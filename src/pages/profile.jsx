@@ -146,7 +146,7 @@ const Profile = () => {
         <div key={profile.id} className='flex flex-col text-sm cursor-pointer justify-between gap-6 py-6'>
           <div className='flex flex-col gap-2'>
             <div className='flex font-semibold items-center gap-1.5'>
-            <Icon icon="ic:round-person" width="1.2em" height="1.2em"  /> <span>About Me:</span>
+            <Icon icon="ic:round-person" width="1.2em" height="1.2em"  /> <span>AbMe:</span>
             </div>
             <div className='flex flex-col'>
               <div className='px-6 text-md '>

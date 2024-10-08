@@ -24,14 +24,13 @@ const Messagelist = ({messages,handleSelectMessage})=>{
                         <div key={message.id} className={`h-24 cursor-pointer border-gray-300 border-b rounded-md flex items-center px-4 ${location.pathname.includes(message.id) ? "active" : ""}`}
   style={location.pathname.includes(message.id) ? { backgroundColor: '#5CBE8F',color:'#fff' } : null}>
                             <div className="flex items-center gap-2">
-                                <img className="md:w-9 h-9 rounded-full" src={`/${message.img}`} />
+                                <img className="md:w-9 h-9 rounded-full" src={`/${message.img}`} alt={`/${message.img}`} />
                                 <div className="flex  w-1/4 flex-col gap-1"> 
                                 <span className="font-semibold w-full ">{message.name}</span>
                                 <span className="md:w-40 w-full block truncate">{message.message}</span>
                                 </div>
                             </div>
-                        </div> 
-                        
+                        </div>
                         </Link>
                     ))}
                 </div>

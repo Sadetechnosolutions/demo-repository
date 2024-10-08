@@ -13,7 +13,6 @@ const Editprofile = ({close}) => {
     const [countries,ShowCountries] = useState(false);
     const [country,SetCountry] = useState('');
     const [active,SetActive] = useState(false);
-  
     const handleShowCountry = ()=>{
         ShowCountries(!countries);
     }

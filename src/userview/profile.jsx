@@ -1,4 +1,4 @@
-import React ,{useState} from 'react'
+import React from 'react'
 import { Icon } from '@iconify/react';
 import {Tooltip } from 'react-tooltip';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,8 +7,6 @@ import Photoscomp from '../components/photoscomp';
 import Friendscomp from './friends';
 
 const ProfileView = () => {
-  const [editprofile, showEditprofile] = useState(false);
-  const [editPersonal,showEditpersonal] = useState(false);
   const navigate = useNavigate()
   const {userID} = useParams()
 
@@ -26,7 +24,6 @@ const ProfileView = () => {
         { id: 1,hobbies:'I like to ride the bicycle, swimming, and working out. I also like reading design magazines, and searching on internet, and also binge watching a good hollywood Movies while it’s raining outside.',Education:'Master of computer science, sixteen years degree From Oxford Uniersity, London ',Interests:[{id:'1',activity:'Swimming'},{id:'2',activity:'Photography'},{id:'3',activity:'Street Art'},{id:'4',activity:'Anime'},{id:'4',activity:'Anime'},{id:'4',activity:'Anime'},],  Workexperience: [{id:1,work:'Assistant Cinematographer,',experience:'Assisted in camera setup and various operations'},{id:2,work:'Cinematographer,', experience:'Camera operations for production, shot division decisions and ensuring high quality visuals'}],}
       ]
     }
-
     const social = {
       media:[{
         id:1,
@@ -45,7 +42,7 @@ const ProfileView = () => {
   icon:<Icon icon="mdi:youtube" width="1.2em" height="1.2em" />
 }]
     }
-  
+
   return (
     <>
     <div className='md:flex bg-black  sm:flex xs:flex-col gap-4 w-full justify-center'>

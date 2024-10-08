@@ -17,6 +17,7 @@ const FollowingView = ()=>{
     if (!loaded) {
       return <div></div>; // You can customize this loading indicator
     }
+
     return(
         <div className={`w-full flex items-center justify-center `}>
             <div className="w-5/6 shadow-lg flex p-2 flex-col gap-4">
@@ -26,7 +27,7 @@ const FollowingView = ()=>{
             <div className="flex flex-wrap gap-2">
             <div className="flex w-[49rem] shadow-md justify-between py-2 px-8 items-center">
             <div className="flex items-center gap-2">
-            <img className="w-16 h-16 rounded-full" src="profile.jpg"/>
+            <img className="w-16 h-16 rounded-full" alt="" src="profile.jpg"/>
             <p className="text-lg">John liebert</p>
             <span></span>
             </div>
@@ -36,7 +37,7 @@ const FollowingView = ()=>{
             </div>
             <div className="flex w-[49rem] shadow-md justify-between py-2 px-8 items-center">
             <div className="flex items-center gap-2">
-            <img className="w-16 h-16 rounded-full" src="profile.jpg"/>
+            <img className="w-16 h-16 rounded-full" alt="" src="profile.jpg"/>
             <p className="text-lg">John liebert</p>
             <span></span>
             </div>

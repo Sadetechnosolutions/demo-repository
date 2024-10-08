@@ -10,13 +10,10 @@ import Home from './pages/home';
 import Profile from './pages/profile';
 import Notifications from './pages/notifications'; 
 import Navbar from './components/navbar';
-import Friendlist from './pages/friends';
 import Friendrequest from './pages/friendrequest';
 import SetEditprofile from './pages/editprofilesetting';
 import Profileheader from './components/profileheader';
 import Personalinfo from './pages/Personal info';
-import Photos from './pages/photos';
-import Videos from './pages/videos';
 import Modal from 'react-modal';
 import Photodisplay from './pages/photodisplay';
 import Videodisplay from './pages/videodisplay';
@@ -47,7 +44,6 @@ import Addfriends from './userview/addfriends';
 import Dashboard from './admindashboard/dashboard';
 import UserDetails from './pages/userdetails';
 import UserForm from './userview/defaultform';
-
 import Post from './userview/timeline';
 import StoryUpload from './pages/uploadstory';
 import Sliper from './pages/uploadreels.';
@@ -85,7 +81,6 @@ function App() {
     <>
     <Router>
       <Routes>
-
         <Route path='/' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/forgotpassword' element={<Forgotpassword />} />
@@ -100,9 +95,6 @@ function App() {
         <Route path='messages/:messagesId' element={<MessageDetails data={data} />} />
         <Route path='/notifications/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Notifications /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/profile' element={<DefaultWithNavbar><DefaultWithHeader><Profile /></DefaultWithHeader></DefaultWithNavbar>} />
-        <Route path='/friends' element={<DefaultWithNavbar><DefaultWithHeader><Friendlist /></DefaultWithHeader></DefaultWithNavbar>} />
-        <Route path='/photos'  exact element={<DefaultWithNavbar><DefaultWithHeaderUser><DefaultShortcut><Photos /></DefaultShortcut></DefaultWithHeaderUser></DefaultWithNavbar>} />
-        <Route path='/videos' element={<DefaultWithNavbar><DefaultWithHeader><Videos /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/followers/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Followers /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/following/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Following /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/timeline' element={<Timeline />} />
