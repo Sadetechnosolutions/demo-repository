@@ -47,7 +47,7 @@ import Addfriends from './userview/addfriends';
 import Dashboard from './admindashboard/dashboard';
 import UserDetails from './pages/userdetails';
 import UserForm from './userview/defaultform';
-
+import Chat from './pages/chat';
 import Post from './userview/timeline';
 import StoryUpload from './pages/uploadstory';
 import Sliper from './pages/uploadreels.';
@@ -85,7 +85,6 @@ function App() {
     <>
     <Router>
       <Routes>
-
         <Route path='/' element={<Signin />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/forgotpassword' element={<Forgotpassword />} />
@@ -132,6 +131,7 @@ function App() {
         <Route path='*' element={<ErrorPage />} />
         <Route path='test' element={ <Sliper />} />
         <Route path='/Reels/:userID' element={<DefaultWithNavbar><DisplayReels /></DefaultWithNavbar>} />
+        <Route path='/chat' element={<Chat />} />
       </Routes>
     </Router>
     </>

@@ -10,10 +10,12 @@ import Createalbum from '../components/createalbum'
 import { NavLink } from 'react-router-dom'
 
 const Photos = () => {
+  
   const [uploadPhoto, showuploadPhoto] = useState(false);
   const [postPhoto,showPost] = useState(false);
   const [Folder,showUploadFolder] = useState(false);
   const [createAlbum,showCreateAlbum] = useState(false);
+
   const openCreateAlbum = ()=>{
     showCreateAlbum(true);
     closeuploadPhoto()
@@ -46,6 +48,7 @@ const Photos = () => {
   const closeuploadPhoto = () => {
     showuploadPhoto(false);
   };
+
   const selectedPhoto = (event) => {
       const file = event.target.files[0];
       const fileObject = { name: file.name };

@@ -10,7 +10,6 @@ const Friendlist = () => {
   const [blocked,isBlocked] = useState(false);
   const [dropdown,setDropdown] = useState(false);
   const [activeDropdown,setActiveDropdown] = useState('public');
-  const {Friends} = useSelector((state)=>state.friend)
   const dispatch = useDispatch();
   const [friends,setFriends] = useState()
   const userId = useSelector((state)=>state.auth.userId)
@@ -115,7 +114,7 @@ const isCurrentUser = parseInt(userID) === userId;
               <Icon icon="ooui:search" width="1.2em" height="1.2em"  className='text-gray-400' />
             </button>
           </div>
-          
+
           {/* <div className='flex flex-col justify-start '>
           <Icon icon="ion:settings-outline" className='cursor-pointer' onClick={handleprivacyDropdown} width="1.2em" height="1.2em" />
           {dropdown &&(

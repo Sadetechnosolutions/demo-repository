@@ -7,7 +7,6 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 import moment from 'moment';
 import axios from 'axios';
-import { Player } from 'video-react';
 import ReactPlayer from 'react-player';
 
 const Story = () => {

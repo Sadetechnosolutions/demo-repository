@@ -1,0 +1,131 @@
+2024-10-08 14:28:19 [main] INFO  c.s.f.FriendRequestModuleApplication - Starting FriendRequestModuleApplication using Java 20.0.2 with PID 19984 (E:\destiny\new-bend-destiny\demo-repository\master-destiny-bend\friend-request-module\target\classes started by admin in E:\destiny\new-bend-destiny)
+2024-10-08 14:28:19 [main] DEBUG c.s.f.FriendRequestModuleApplication - Running with Spring Boot v3.3.3, Spring v6.1.12
+2024-10-08 14:28:19 [main] INFO  c.s.f.FriendRequestModuleApplication - No active profile set, falling back to 1 default profile: "default"
+2024-10-08 14:28:20 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-10-08 14:28:20 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 123 ms. Found 2 JPA repository interfaces.
+2024-10-08 14:28:20 [main] INFO  o.s.cloud.context.scope.GenericScope - BeanFactory id=22eefa5f-5a27-3961-9a91-f7ca48a76568
+2024-10-08 14:28:20 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2024-10-08 14:28:20 [main] WARN  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2024-10-08 14:28:21 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8089 (http)
+2024-10-08 14:28:21 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2024-10-08 14:28:21 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.28]
+2024-10-08 14:28:21 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2024-10-08 14:28:21 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1624 ms
+2024-10-08 14:28:21 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-10-08 14:28:21 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.5.2.Final
+2024-10-08 14:28:21 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-10-08 14:28:21 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-10-08 14:28:21 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-10-08 14:28:22 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3f4964f2
+2024-10-08 14:28:22 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-10-08 14:28:22 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-10-08 14:28:22 [main] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2024-10-08 14:28:22 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-10-08 14:28:22 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-10-08 14:28:23 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-10-08 14:28:23 [main] INFO  o.s.c.o.FeignClientFactoryBean - For 'user-module' URL not provided. Will try picking an instance via load-balancing.
+2024-10-08 14:28:23 [main] INFO  o.s.c.n.e.c.DiscoveryClientOptionalArgsConfiguration - Eureka HTTP Client uses RestTemplate.
+2024-10-08 14:28:23 [main] WARN  o.s.c.l.c.LoadBalancerCacheAutoConfiguration$LoadBalancerCaffeineWarnLogger - Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2024-10-08 14:28:23 [main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+2024-10-08 14:28:23 [main] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Disable delta property : false
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Application is null : false
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Application version is -1: true
+2024-10-08 14:28:23 [main] INFO  c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+2024-10-08 14:28:24 [main] INFO  c.netflix.discovery.DiscoveryClient - The response status is 200
+2024-10-08 14:28:24 [main] INFO  c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+2024-10-08 14:28:24 [main] INFO  c.n.discovery.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+2024-10-08 14:28:24 [main] INFO  c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1728377904140 with initial instances count: 10
+2024-10-08 14:28:24 [main] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Registering application FRIEND-REQUEST-MODULE with eureka with status UP
+2024-10-08 14:28:24 [main] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1728377904146, current=UP, previous=STARTING]
+2024-10-08 14:28:24 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_FRIEND-REQUEST-MODULE/DESKTOP-4O4KHH7:friend-request-module:8089: registering service...
+2024-10-08 14:28:24 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8089 (http) with context path '/'
+2024-10-08 14:28:24 [main] INFO  o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 8089
+2024-10-08 14:28:24 [DiscoveryClient-InstanceInfoReplicator-%d] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_FRIEND-REQUEST-MODULE/DESKTOP-4O4KHH7:friend-request-module:8089 - registration status: 204
+2024-10-08 14:28:24 [main] INFO  c.s.f.FriendRequestModuleApplication - Started FriendRequestModuleApplication in 5.246 seconds (process running for 5.62)
+2024-10-08 14:33:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 14:37:06 [http-nio-8089-exec-2] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2024-10-08 14:37:06 [http-nio-8089-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2024-10-08 14:37:06 [http-nio-8089-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2024-10-08 14:37:06 [http-nio-8089-exec-1] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 14:37:25 [http-nio-8089-exec-3] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 14:37:39 [http-nio-8089-exec-5] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 14:38:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 14:43:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 14:48:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 14:53:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 14:58:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:03:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:08:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:13:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:18:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:23:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:28:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:33:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:38:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:43:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:48:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:53:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 15:58:23 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:03:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:08:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:13:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:18:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:23:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:28:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:28:32 [http-nio-8089-exec-9] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 16:33:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:38:23 [http-nio-8089-exec-2] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 16:38:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:38:51 [http-nio-8089-exec-1] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 16:38:53 [http-nio-8089-exec-3] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 16:43:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:45:08 [http-nio-8089-exec-5] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 16:46:36 [http-nio-8089-exec-8] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 16:48:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:53:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 16:58:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:03:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:05:51 [http-nio-8089-exec-9] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:05:57 [http-nio-8089-exec-2] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:06:41 [http-nio-8089-exec-3] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:06:41 [http-nio-8089-exec-4] INFO  c.s.f.Service.FriendRequestService - Got the request sent list of user 1
+2024-10-08 17:06:41 [http-nio-8089-exec-5] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:06:41 [http-nio-8089-exec-8] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:08:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:08:45 [http-nio-8089-exec-2] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:13:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:18:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:20:57 [http-nio-8089-exec-4] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:23:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:28:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:32:19 [http-nio-8089-exec-8] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:32:23 [http-nio-8089-exec-9] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:32:28 [http-nio-8089-exec-2] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:32:29 [http-nio-8089-exec-4] INFO  c.s.f.Service.FriendRequestService - Got the request sent list of user 1
+2024-10-08 17:32:29 [http-nio-8089-exec-3] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:32:29 [http-nio-8089-exec-5] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:32:32 [http-nio-8089-exec-6] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:32:40 [http-nio-8089-exec-7] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:32:54 [http-nio-8089-exec-10] INFO  c.s.f.Service.FriendRequestService - Got the request sent list of user 1
+2024-10-08 17:32:54 [http-nio-8089-exec-2] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:32:54 [http-nio-8089-exec-1] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:33:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:36:03 [http-nio-8089-exec-5] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:36:06 [http-nio-8089-exec-8] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:36:09 [http-nio-8089-exec-9] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:36:25 [http-nio-8089-exec-1] INFO  c.s.f.Service.FriendRequestService - Got the request sent list of user 1
+2024-10-08 17:36:25 [http-nio-8089-exec-2] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:36:25 [http-nio-8089-exec-3] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:36:25 [http-nio-8089-exec-5] INFO  c.s.f.Service.FriendRequestService - Got the Friend List of user 1
+2024-10-08 17:36:29 [http-nio-8089-exec-6] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:37:22 [http-nio-8089-exec-7] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:37:24 [http-nio-8089-exec-10] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:37:58 [http-nio-8089-exec-2] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:38:00 [http-nio-8089-exec-4] INFO  c.s.f.Service.FriendRequestService - Got the Pending request list of user 1
+2024-10-08 17:38:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+2024-10-08 17:43:24 [AsyncResolver-bootstrap-executor-%d] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
