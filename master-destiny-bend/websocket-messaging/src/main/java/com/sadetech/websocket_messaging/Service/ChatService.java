@@ -7,6 +7,7 @@ import com.sadetech.websocket_messaging.Repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,25 +24,32 @@ public class ChatService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    // Saves message to the conversation and broadcasts it to WebSocket clients
+    @Transactional
     public void saveMessage(Message message) {
         Optional<Conversation> conversationOptional = findConversationByParticipants(message.getSenderId(), message.getRecipientId());
 
         if (conversationOptional.isPresent()) {
             // Existing conversation found
             Conversation conversation = conversationOptional.get();
-            message.setConversation(conversation);
-            messageRepository.save(message);
+            message.setConversation(conversation);  // Associate message with the existing conversation
+            messageRepository.save(message);  // Save the message
             messagingTemplate.convertAndSend("/topic/conversation/" + conversation.getId(), message);
         } else {
             // No conversation found, create a new one
             Conversation newConversation = new Conversation();
-            newConversation.getMessages().add(message);
+            newConversation.setParticipantOneId(message.getSenderId());
+            newConversation.setParticipantTwoId(message.getRecipientId());
+
+            // Save the new conversation first
+            conversationRepository.save(newConversation);  // Save the conversation to get an ID
+
+            // Now associate the message with the new conversation
             message.setConversation(newConversation);
-            conversationRepository.save(newConversation);
+            messageRepository.save(message);  // Save the message with a valid conversation reference
+
             messagingTemplate.convertAndSend("/topic/conversation/" + newConversation.getId(), message);
-        }
-    }
+   }
+}
 
     // Utility to find a conversation by participants
     private Optional<Conversation> findConversationByParticipants(Long senderId, Long recipientId) {

@@ -1,5 +1,7 @@
 package com.Sadetechno.user_module.Service;
 
+import com.Sadetechno.user_module.DTO.BannerDTO;
+import com.Sadetechno.user_module.DTO.ProfileDTO;
 import com.Sadetechno.user_module.Repository.UserRepository;
 import com.Sadetechno.user_module.model.User;
 import com.Sadetechno.user_module.model.UserCreationDTO;
@@ -160,4 +162,36 @@ public class UserService {
             throw new RuntimeException("Unexpected error updating user: " + e.getMessage(), e);
         }
     }
+
+    public User updateProfileImage(Long id, ProfileDTO profileDTO) throws IOException {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            // Upload the new profile image and update the path
+            String newProfileImagePath = fileUploadService.uploadFile(profileDTO.getProfileImagePath());
+            user.setProfileImagePath(newProfileImagePath);
+
+            return userRepository.save(user); // Save the updated user
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
+    }
+
+    public User updateBannerImage(Long id, BannerDTO bannerDTO) throws IOException {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if(optionalUser.isPresent()){
+               User user = optionalUser.get();
+
+              String newBannerImagePath = fileUploadService.uploadFile(bannerDTO.getBannerImagePath());
+              user.setBannerImagePath(newBannerImagePath);
+
+              return userRepository.save(user);
+        }else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
+    }
+
+
 }
