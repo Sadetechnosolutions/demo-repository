@@ -1,5 +1,6 @@
 package com.sadetech.websocket_messaging.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,11 +28,12 @@ public class Message {
 
     @CreationTimestamp
     private LocalDateTime sentAt;
-    @CreationTimestamp
+
     private LocalDateTime readAt;
 
     @ManyToOne
     @JoinColumn(name = "conversation_Id",referencedColumnName = "id")
+    @JsonIgnore
     private Conversation conversation;
 
 }

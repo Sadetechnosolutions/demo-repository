@@ -5,7 +5,6 @@ import com.sadetech.friend_request_module.FeignConnect.UserFeignClient;
 import com.sadetech.friend_request_module.Model.FriendRequest;
 import com.sadetech.friend_request_module.Model.Status;
 import com.sadetech.friend_request_module.Repository.FriendRequestRepository;
-import com.sadetech.notification_module.DTO.NotificationRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
