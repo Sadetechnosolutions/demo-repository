@@ -36,8 +36,6 @@ import ProfileheaderUser from './userview/Profileheader';
 import VideosUser from './userview/videos';
 import ProfileView from './userview/profile';
 import Friendview from './userview/friendlist';
-import FollowersView from './userview/followers';
-import FollowingView from './userview/following';
 import Followers from './pages/follower';
 import Following from './pages/following';
 import Formbar from './userview/formbar';
@@ -124,8 +122,7 @@ function App() {
         <Route path='/videosview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><DefaultShortcut><VideosUser /></DefaultShortcut></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/profileview' element={<DefaultWithNavbar><DefaultWithHeaderUser><ProfileView /></DefaultWithHeaderUser></DefaultWithNavbar>}/>
         <Route path='/friendsview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><DefaultShortcut><Friendview /></DefaultShortcut></DefaultWithHeaderUser></DefaultWithNavbar>} />
-        <Route path='followersview' element={<DefaultWithNavbar><DefaultWithHeaderUser><FollowersView /></DefaultWithHeaderUser></DefaultWithNavbar>} />
-        <Route path='followingview' element={<DefaultWithNavbar><DefaultWithHeaderUser><FollowingView /></DefaultWithHeaderUser></DefaultWithNavbar>} />
+       
         <Route path='*' element={<ErrorPage />} />
         <Route path='test' element={ <Sliper />} />
         <Route path='/Reels/:userID' element={<DefaultWithNavbar><DisplayReels /></DefaultWithNavbar>} />

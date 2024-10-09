@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useCallback} from 'react'
 import { Link, NavLink,useLocation } from 'react-router-dom'
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useSelector,useDispatch } from 'react-redux';
@@ -9,13 +9,10 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Modal from 'react-modal';
 
-
 const ProfileheaderUser = () => {
   const [imageForm,setImageForm] = useState(false);
   const [coverForm,setCoverForm] = useState(false);
   const [file, setFile] = useState(null);
-  const [request,sentRequest] = useState(false)
-  const [follow,setFollow] = useState(false)
   const dispatch = useDispatch();
   const {selectedprofilepic} = useSelector((state)=>state.photo)
   const {profilepic} = useSelector((state)=>state.photo)
@@ -42,14 +39,6 @@ const ProfileheaderUser = () => {
     setOptions(false)
   }
 
-  const handleRequest = ()=>{
-    sentRequest(!request)
-  }
-
-  const handleFollow = ()=>{
-    setFollow(!follow)
-  }
-
   const openImageForm = ()=>{
     setImageForm(true);
   }
@@ -73,6 +62,7 @@ const ProfileheaderUser = () => {
       reader.onload = () => {
         dispatch(changePhoto(reader.result)); 
         setFile(selectedFile);
+        console.log(file)
       };
       reader.readAsDataURL(selectedFile); 
     }
@@ -136,7 +126,7 @@ const ProfileheaderUser = () => {
             reader.readAsDataURL(selectedFile);
           }
         }
-        const fetchUserDetails = async () => {
+        const fetchUserDetails = useCallback(async () => {
           try {
             const response = await axios.get(`http://localhost:8080/api/users/${userID}`, {
               method: 'GET',
@@ -148,15 +138,15 @@ const ProfileheaderUser = () => {
           } catch (error) {
             console.error("Error fetching user details:", error);
           }
-        };
+        },[userID]);
 
-        const handleFollowStatus = (data) => {
+        const handleFollowStatus = useCallback((data) => {
           // Assuming data has a list of followers
           setIsFollowed(data.users.some((follower) => follower.id === userId));
-        };
+        },[userId]);
         
 
-        const fetchFollowers = async () => {
+        const fetchFollowers = useCallback(async () => {
           try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -175,21 +165,17 @@ const ProfileheaderUser = () => {
               setFollowers(data);
               // Check if the user is followed
               handleFollowStatus(data); 
+              console.log(isFollowed)
             } else {
               console.error('Failed to fetch user data:', response.status);
             }
           } catch (error) {
             console.error('Error fetching user data:', error);
           }
-        };
-useEffect(()=>{
-fetchFollowers()
-fetchFollowing()
-fetchRequest()
-fetchfriends()
-},[userID,userId])
+        },[handleFollowStatus,isFollowed,userID]);
 
-const fetchFollowing = async () => {
+
+const fetchFollowing = useCallback(async () => {
 try {
   const token = localStorage.getItem('token');
   if (!token) {
@@ -208,15 +194,16 @@ try {
     setFollowing(data);
     // Check if the user is followed
     setisFollowing(data.users.some((follower) => follower.id === userId));
+    console.log(isFollowing)
   } else {
     console.error('Failed to fetch user data:', response.status);
   }
 } catch (error) {
   console.error('Error fetching user data:', error);
 }
-};
+},[isFollowing,userID,userId]);
 
-const fetchRequest = async () => {
+const fetchRequest = useCallback(async () => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -241,9 +228,9 @@ const fetchRequest = async () => {
   } catch (error) {
     console.error('Error fetching user data:', error);
   }
-  };
+  },[userID,userId]);
 
-  const fetchfriends = async () => {
+  const fetchfriends = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -262,13 +249,14 @@ const fetchRequest = async () => {
         setFriends(data);
         // Check if the user is followed
         setIsFriends(data.friends.find((follower) => follower.id === userId));
+        console.log(friends)
       } else {
         console.error('Failed to fetch user data:', response.status);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-    };
+    },[friends,isCurrentUser,userID,userId]);
 
         const followUser = async ()=>{
           const token = localStorage.getItem('token')
@@ -293,7 +281,16 @@ const fetchRequest = async () => {
           }
         }
 
-        
+        useEffect(()=>{
+          fetchFollowers()
+          fetchFollowing()
+          fetchRequest()
+          fetchfriends()
+          },[fetchFollowers,
+            fetchFollowing,
+            fetchRequest,
+            fetchfriends])
+            
         const sendRequest = async ()=>{
           const token = localStorage.getItem('token')
           const payload={
@@ -309,7 +306,7 @@ const fetchRequest = async () => {
               body:JSON.stringify(payload)
             })
             if(response.ok){
-              console.log('')
+              console.log(sentrequest)
               fetchRequest()
             }
             else{
@@ -373,11 +370,12 @@ const fetchRequest = async () => {
 
         useEffect(() => {
           fetchUserDetails();
-        }, [userID]);
+        }, [fetchUserDetails]);
 
         if (!user) {
           return <p>Loading...</p>;
         }
+        
 
     const unFriend = async (unfriendId)=>{
       const token = localStorage.getItem('token')

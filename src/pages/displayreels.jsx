@@ -32,7 +32,7 @@ const handleOption = ()=>{
         const data = await response.json();
         if (data) {
           // Find the selected reel based on userID
-          const reel = data.find(r => r.id === userID);
+          const reel = data.find(r => r.id === parseInt(userID));
           setSelectedReel(reel);
         } else {
           console.error("Expected an array but got:", data);

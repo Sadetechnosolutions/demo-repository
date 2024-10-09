@@ -1,6 +1,5 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js'
-import { selectPhoto } from '../slices/photoslice'
 import { useDispatch,useSelector } from 'react-redux'
 import Postphoto from '../components/uploadphoto'
 import { IoClose } from "react-icons/io5";
@@ -19,9 +18,7 @@ const PhotosUser = () => {
   const [createAlbum,showCreateAlbum] = useState(false);
   const [images,setImages] = useState()
   const [file, setFile] = useState(null);
-  const { selected } = useSelector((state) => state.post);
   const [likeCount,setLikeCount] = useState({});
-  const [userData,setUserData] = useState([]);
   const [like,setLike] = useState(false);
   
   const openCreateAlbum = ()=>{
@@ -32,7 +29,6 @@ const PhotosUser = () => {
   const userId = useSelector((state) => state.auth.userId);
   const { userID } = useParams();
 
-  const {uploaded} = useSelector((state)=>state.photo)
   const dispatch = useDispatch();
 
   const openPostPhoto = ()=>{
@@ -44,43 +40,8 @@ const PhotosUser = () => {
     showUploadFolder(true);
     closeuploadPhoto()
   }
-  const userIDObject = userID;
-  const fetchUserData = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No token found in localStorage');
-        return;
-      }
 
-      const userIdValue = parseInt(userID, 10);
-      const response = await fetch(`http://localhost:8080/posts/user/${userIdValue}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUserData(data);
-      } else {
-        const errorText = await response.text();
-        console.error('Failed to fetch user data:', response.status, errorText);
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', userID);
-    }
-  };
-
-
-  useEffect(() => {
-    if (userID) {
-      fetchUserData();
-    }
-  }, [userID]);
-
-  const fetchLikes = async (postId) => {
+  const fetchLikes = useCallback(async (postId) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -102,14 +63,14 @@ const PhotosUser = () => {
           ...prev,
           [postId]: userHasLiked
         }));
+        console.log(like)
       } else {
         console.error('Failed to fetch likes:', response.status);
       }
     } catch (error) {
       console.error('Error fetching likes:', error);
     }
-  };
-
+  },[like,userId]);
   const likesCount = async (postId) => {
     try {
       const response = await fetch(`http://localhost:8080/likes/post/${postId}/count`);
@@ -125,16 +86,7 @@ const PhotosUser = () => {
     }
   };
 
-  useEffect(() => {
-    if (userData.length > 0) {
-      userData.forEach(post => {
-        if (post.postId) {
-          fetchLikes(post.postId); // Fetch likes for each post
-          likesCount(post.postId); // Fetch like counts for each post
-        }
-      });
-    }
-  }, [userData]);
+
 
   const openuploadPhoto = () => {
     showuploadPhoto(true);
@@ -150,17 +102,8 @@ const PhotosUser = () => {
   const closeuploadPhoto = () => {
     showuploadPhoto(false);
   };
-  const selectedPhoto = (event) => {
-      const file = event.target.files[0];
-      const fileObject = { name: file.name };
-      console.log(fileObject);
-     dispatch(selectPhoto(fileObject));
-     openPostPhoto();
-  };
 
-  const fetchImage = async () => {
-    const userIDObject = userID;
-    const userIdValue = parseInt(userIDObject.userID, 10);
+  const fetchImage = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -182,13 +125,22 @@ const PhotosUser = () => {
     } catch (error) {
       console.error('Error fetching user Image:', error);
     }
-  };
+  },[userID]);
+
+  useEffect(() => {
+    if (images?.length > 0) {
+      images.forEach(post => {
+        if (post.postId) {
+          fetchLikes(post.postId); // Fetch likes for each post
+          likesCount(post.postId); // Fetch like counts for each post
+        }
+      });
+    }
+  }, [images,fetchLikes]);
   
   useEffect(() => {
-    if (userID) {
       fetchImage();
-    }
-  },[]);
+  },[fetchImage]);
   
             const handleImageChange = (event) => {
               const selectedFile = event.target.files[0];
@@ -227,7 +179,7 @@ const PhotosUser = () => {
         },}}
   isOpen={uploadPhoto} onRequestClose={closeuploadPhoto}>
         <div className='flex  w-full items-center justify-center'>
-      <div className='w-1/2 h-96 flex flex-col p-4 gap-4 shadow-lg rounded-md bg-black'>
+      <div className='w-1/2 h-96 flex flex-col p-4 gap-4 shadow-lg rounded-md bg-white'>
         <div className='flex justify-between p-2 items-center justify-center'><span className='font-semibold text-lg'>Upload</span><div onClick={closeuploadPhoto} className='cursor-pointer bg-gray-200 p-1 hover:bg-red hover:text-white rounded-full'><IoClose className='h-5 w-5 cursor-pointer'/></div></div>
         <div className='w-full h-full flex flex-col items-center gap-6 justify-center'>
         <div className='p-2 cursor-pointer border flex items-center justify-center gap-1 w-1/2 rounded-md border-cta text-cta hover:bg-cta hover:text-white'>
@@ -294,7 +246,7 @@ const PhotosUser = () => {
  isOpen={createAlbum} onRequestClose={closePopups} >
   <Createalbum close={closePopups} />
   </Modal>
-        <div className='flex flex-col w-5/6 px-5 h-[57vh] shadow-lg drop'>
+        <div className='flex flex-col w-5/6 px-5 h-auto py-2 shadow-lg drop'>
         <div className='font-semibold text-lg p-4'>Photos ({images?.length})</div>
         <div className='flex flex-wrap p-2 gap-8'>
           {parseInt(userID) === userId && <div onClick={openuploadPhoto} className='w-80 h-64 flex bg-gray-50 cursor-pointer items-center justify-center'>

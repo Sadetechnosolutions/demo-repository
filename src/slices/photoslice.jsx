@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import data from '../photos.json'
 import posts from '../posts.json'
-import { update } from "react-spring";
 
 const initialState = {
     uploaded: data,
@@ -85,10 +84,7 @@ const photoslice = createSlice({
         selectPhotoComment(state, action) {
             state.selectedphotocomment = action.payload;
         },
-        
-        addPhotoComment(state,action){
-        
-        },
+
         removeSelected(state) {
             state.selected = null;
         },

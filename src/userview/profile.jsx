@@ -1,4 +1,4 @@
-import React ,{useState} from 'react'
+import React from 'react'
 import { Icon } from '@iconify/react';
 import {Tooltip } from 'react-tooltip';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,8 +7,6 @@ import Photoscomp from '../components/photoscomp';
 import Friendscomp from './friends';
 
 const ProfileView = () => {
-  const [editprofile, showEditprofile] = useState(false);
-  const [editPersonal,showEditpersonal] = useState(false);
   const navigate = useNavigate()
   const {userID} = useParams()
 

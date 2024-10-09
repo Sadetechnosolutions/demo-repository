@@ -3,7 +3,6 @@ import { Icon } from "@iconify/react";
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
-import { useNavigate } from "react-router";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,8 +13,6 @@ import moment from 'moment';
 
 const UserForm = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-
     const [showAdditionalEducation, setShowAdditionalEducation] = useState(false);
     const [interest, setInterest] = useState('');
     const [interestList, setInterestList] = useState([]);
@@ -44,9 +41,8 @@ const UserForm = () => {
         youtube: ''
     });
 
-    const { selectedprofilepic } = useSelector((state) => state.photo);
+
     const { profilepic } = useSelector((state) => state.photo);
-    const { selectedcoverpic } = useSelector((state) => state.photo);
     const { coverpic } = useSelector((state) => state.photo);
 
     const handleShowCountry = () => {
@@ -59,10 +55,6 @@ const UserForm = () => {
     const handleSelectPhoneCode = (code) => {
         setCountryCode(code)
         showPhoneCode(false);
-    };
-    
-    const open = () => {
-        navigate('/');
     };
 
     const handleSetCountry = (selectedCountry) => {

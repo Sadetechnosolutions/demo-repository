@@ -9,11 +9,9 @@ import PostVideo from '../components/uploadvideo';
 import Uploadvideofolder from '../components/uploadvideofolder';
 import { IoClose } from 'react-icons/io5';
 import Createvideoalbum from '../components/createvideoalbum';
-import { selectVideo } from '../slices/videoslice';
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { selectPost } from '../slices/postslice';
-
 
 const VideosUser = () => {
   const [uploadVideo, showuploadVideo] = useState(false);
@@ -26,12 +24,6 @@ const VideosUser = () => {
   const [videos,setVideos] = useState();
   const [file,setFile] = useState(null)
 
-  const selectedVideo = (event) => {
-    const file = event.target.files[0];
-    const fileObject = { name: file.name };
-    dispatch(selectVideo(fileObject));
-    openPostVideo();
-};
 
   const openCreateAlbum = ()=>{
     showCreateAlbum(true);
@@ -61,35 +53,35 @@ const VideosUser = () => {
     showCreateAlbum(false);
   };
 
-  const fetchVideos = async () => {
-    try {
-            const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No token found in localStorage');
-        return;
-                }
-                const response = await fetch(`http://localhost:8080/posts/user/${userID}/videos`, {
-        method: 'GET',
-      headers: {
-    'Authorization': `Bearer ${token}`,
-      },
-        });
-        if (response.ok) {
-        const data = await response.json();
-      setVideos(data);
-      } else {
-              console.error('Failed to fetch user Image:', response.status);
-      }
-              } catch (error) {
-        console.error('Error fetching user Image:', error);
-      }
-            };
+
 
       useEffect(() => {
-        if (userId) {
-          fetchVideos();
-      }
-            }, [userId]);
+        const fetchVideos = async () => {
+          try {
+                  const token = localStorage.getItem('token');
+            if (!token) {
+              console.error('No token found in localStorage');
+              return;
+                      }
+                      const response = await fetch(`http://localhost:8080/posts/user/${userID}/videos`, {
+              method: 'GET',
+            headers: {
+          'Authorization': `Bearer ${token}`,
+            },
+              });
+              if (response.ok) {
+              const data = await response.json();
+            setVideos(data);
+            } else {
+                    console.error('Failed to fetch user Image:', response.status);
+            }
+                    } catch (error) {
+              console.error('Error fetching user Image:', error);
+            }
+                  };
+
+            fetchVideos()
+            }, [userID]);
 
 const handleImageChange = (event) => {
               const selectedFile = event.target.files[0];

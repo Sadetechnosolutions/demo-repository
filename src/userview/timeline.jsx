@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { setpostLike } from '../slices/likeslice';
+
 import InputEmoji from 'react-input-emoji';
-import { addCommentnf, selectPhotoComment, deleteCommentnf, editComment, addToSaved } from "../slices/photoslice";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useSelector } from "react-redux";
 import DropdownMenu from '../components/dropdownmenu';
 import moment from "moment";
 import Modal from 'react-modal';
@@ -13,16 +13,12 @@ import axios from 'axios';
 
 const Post = () => {
   const [comment, setComment] = useState(null);
-  const [share, showShare] = useState(false);
-  const [shareImage, setShareImage] = useState(null);
-  const [shareVideo, setShareVideo] = useState(null);
+
   const [edit, setEdit] = useState(false);
-  const [hover, setHover] = useState(null);
   const [saved, setSaved] = useState({});
   const [postComment, setPostComment] = useState('');
   const [liked, setLiked] = useState(false);
   const [showDropdown, setShowDropdown] = useState(null);
-  const dispatch = useDispatch();
   const [userData, setUserData] = useState([]);
   const userId = useSelector((state) => state.auth.userId);
   const [user, setUser] = useState();
@@ -39,9 +35,8 @@ const Post = () => {
   const [like,setLike] = useState(false);
   const [likeCount,setLikeCount] = useState({});
   const [users, setUsers] = useState([]);
-  const [timeDifference, setTimeDifference] = useState('');
+
   const [animationPostId, setAnimationPostId] = useState(null);
-  const [likedBy,setLikedBy] = useState(null);
 
 
   const openDelete = ()=>{
@@ -52,9 +47,6 @@ const Post = () => {
     setDeletePopup(false)
   }
 
-  const showLikedBy = (id)=>{
-    setLikedBy(id)
-  }
 
   const toggleReplies = (commentId) => {
     setVisibleReplies(prev => ({
@@ -120,7 +112,7 @@ const Post = () => {
     ));
   };
   
-  const fetchLikes = async (postId) => {
+  const fetchLikes = useCallback(async (postId) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -142,13 +134,14 @@ const Post = () => {
           ...prev,
           [postId]: userHasLiked
         }));
+        console.log(liked)
       } else {
         console.error('Failed to fetch likes:', response.status);
       }
     } catch (error) {
       console.error('Error fetching likes:', error);
     }
-  };
+  },[userId,liked]);
 
   const toggleReplyInput = (commentId) => {
     setReplyInputVisible(prev => ({
@@ -159,14 +152,14 @@ const Post = () => {
   };
   
   // Fetch user data
-  const fetchUserName = async () => {
+  const fetchUserName = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         console.error('No token found in localStorage');
         return;
       }
-      const userIdValue = parseInt(userID, 10);
+
       const response = await fetch(`http://localhost:8080/api/users/${userID}`, {
         method: 'GET',
         headers: {
@@ -182,22 +175,15 @@ const Post = () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-  };
+  },[userID]);
+
+
   useEffect(() => {
-    if (shouldRefetch) {
-      fetchUserData(); // Refetch data
-      setShouldRefetch(false); // Reset flag
-    }
-  }, [shouldRefetch]);
-  
-  useEffect(() => {
-    if (userId) {
       fetchUserName();
-    }
-  }, [userId]);
+  }, [fetchUserName]);
   const userIDObject = userID;
 
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = useCallback(async () => {
     const userIdValue = parseInt(userIDObject.userID, 10);
     try {
       const response = await axios.get(`http://localhost:8080/api/users/${userIdValue}`, {
@@ -210,11 +196,11 @@ const Post = () => {
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
-  };
+  },[userIDObject.userID]);
 
   useEffect(() => {
     fetchUserDetails();
-  }, [userId]);
+  }, [fetchUserDetails]);
 
   const fetchUsers = async () => {
     try {
@@ -236,7 +222,7 @@ const Post = () => {
   // Extract the userID property and convert to number
   const userIdValue = parseInt(userIDObject.userID, 10);
   // Fetch posts
-  const fetchUserData = async () => {
+  const fetchUserData =  useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -264,13 +250,17 @@ const Post = () => {
     } catch (error) {
       console.error('Error fetching user data:', userID);
     }
-  };
+  },[userID,userIdValue]);
+  useEffect(() => {
+    if (shouldRefetch) {
+      fetchUserData(); // Refetch data
+      setShouldRefetch(false); // Reset flag
+    }
+  }, [fetchUserData,shouldRefetch]);
 
   useEffect(() => {
-    if (userID) {
       fetchUserData();
-    }
-  }, [userID]);
+  }, [fetchUserData]);
 
   // Handle saved posts
   useEffect(() => {
@@ -288,6 +278,7 @@ const Post = () => {
   const handleEdit = (postId) => {
     console.log('Edit post with ID:', postId);
     setEdit(postId);
+    console.log(edit)
   };
 
   const handleDelete = (postId) => {
@@ -299,12 +290,12 @@ const Post = () => {
     setShowDropdown(prev => (prev === postId ? null : postId)); // Toggle visibility
   };
 
-  const handleSave = (id) => {
-    setSaved(prevSaved => ({
-      ...prevSaved,
-      [id]: !prevSaved[id]
-    }));
-  };
+  // const handleSave = (id) => {
+  //   setSaved(prevSaved => ({
+  //     ...prevSaved,
+  //     [id]: !prevSaved[id]
+  //   }));
+  // };
 
   const toggleComment = (postId) => {
     setComment(prev => {
@@ -318,23 +309,6 @@ const Post = () => {
     });
   };
   
-
-  const handleShowShare = (post) => {
-    showShare(post);
-  };
-
-  const closeShare = () => {
-    showShare(false);
-  };
-
-  const handleSaved = (id) => {
-    console.log(dispatch(addToSaved(id)));
-  };
-
-  const handleEditComment = (imageId, commentId, newComment) => {
-    console.log(dispatch(editComment({ imageId, commentId, newComment })));
-    setEdit(false);
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -358,31 +332,31 @@ const Post = () => {
       alert('An error occurred while attempting to submit.');
     }
   };
-  const handleLikes = async (postId) => {
-    const jsonData = {
-      postId:postId,
-      userId:userId
-    };
-    try {
-      const response = await fetch(`http://localhost:8080/likes/toggle?postId=${postId}&userId=${userId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(jsonData),
-      });
+  // const handleLikes = async (postId) => {
+  //   const jsonData = {
+  //     postId:postId,
+  //     userId:userId
+  //   };
+  //   try {
+  //     const response = await fetch(`http://localhost:8080/likes/toggle?postId=${postId}&userId=${userId}`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(jsonData),
+  //     });
   
-      if (response.ok) {
-        setSelectedPostId('') // Close the reply input
-      } else {
-        console.log('An error occurred. Please try again later.');
-        setSelectedPostId('');
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSelectedPostId('');
-    }
-  };
+  //     if (response.ok) {
+  //       setSelectedPostId('') // Close the reply input
+  //     } else {
+  //       console.log('An error occurred. Please try again later.');
+  //       setSelectedPostId('');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error submitting form:', error);
+  //     setSelectedPostId('');
+  //   }
+  // };
   const likesCount = async (postId) => {
     try {
       const response = await fetch(`http://localhost:8080/likes/post/${postId}/count`);
@@ -408,7 +382,7 @@ const Post = () => {
         }
       });
     }
-  }, [userData]);
+  }, [fetchLikes,userData]);
 
   const handleLike = async (postId) => {
     try {
@@ -519,54 +493,10 @@ const Post = () => {
         }
       });
     }
-  },[]);
+  },[userData]);
 
   console.log(postComment)
-  const calculateTimeDifference = (date) => {
-    const pastDate = moment(date);
-    const now = moment();
 
-    const diffInDays = now.diff(pastDate, 'days');
-    const diffInHours = now.diff(pastDate, 'hours');
-    const diffInMinutes = now.diff(pastDate, 'minutes');
-
-    let displayText = '';
-
-    if (diffInDays > 0) {
-      displayText = `${diffInDays}d${diffInDays > 1 ? ' ago' : ''}`;
-    } else if (diffInHours > 0) {
-      displayText = `${diffInHours}h${diffInHours > 1 ? ' ago' : ''}`;
-    } else if (diffInMinutes > 0) {
-      displayText = `${diffInMinutes}m${diffInMinutes > 1 ? ' ago' : ''}`;
-    } else {
-      displayText = 'Just now';
-    }
-
-    return displayText;
-  };
-
-  // State to store the time differences
-  const [timeDifferences, setTimeDifferences] = useState({});
-
-  // Function to update the time differences every minute
-  const updateTimeDifferences = () => {
-    setTimeDifferences(prev => {
-      const newDifferences = {};
-      userData.forEach(post => {
-        newDifferences[post.postId] = calculateTimeDifference(post.createdAt);
-      });
-      return newDifferences;
-    });
-  };
-
-  // Set up interval to update time differences every minute
-  useEffect(() => {
-    updateTimeDifferences(); // Initial update
-    const intervalId = setInterval(updateTimeDifferences, 60000); // Update every minute
-
-    return () => clearInterval(intervalId); // Clear interval on component unmount
-  }, [userData]);
-  const isLiked = (postId) => like[postId] || false;
   return (
     <form onSubmit={handleSubmit} className="rounded-md flex flex-col bg-white items-center gap-16 shadow-lg w-full py-2 px-4">
         <div className='w-5/6'>
@@ -645,8 +575,8 @@ console.log(typeof(comment))
           /> {likeCount[post.postId] || 0}</div>
           <div className='flex items-center gap-1'><Icon onClick={() => toggleComment(post.postId)} className="cursor-pointer h-6 w-6 text-gray-600" icon="iconamoon:comment-light" />{ <span>{displayComments[post.postId]?.length}</span> || 0 }</div>
           </div>
-          {comment == post.postId && (   <div className="flex items-center gap-2"><label className="cursor-pointer"><Icon className="w-7 h-7 text-gray-500" icon="mdi:camera-outline" /><input  className="absolute opacity-0" type="file" /></label><InputEmoji onChange={(text) => setPostComment(text)} placeholder="Add a comment" /><Icon onClick={handleComment} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div>)}
-          {comment == post.PostId && displayComments[post.postId] &&(
+          {comment === post.postId && (   <div className="flex items-center gap-2"><label className="cursor-pointer"><Icon className="w-7 h-7 text-gray-500" icon="mdi:camera-outline" /><input  className="absolute opacity-0" type="file" /></label><InputEmoji onChange={(text) => setPostComment(text)} placeholder="Add a comment" /><Icon onClick={handleComment} className='text-cta cursor-pointer' icon="majesticons:send" width="1.5em" height="1.6em" strokeWidth='2' /></div>)}
+          {comment && displayComments[post.postId] &&(
   displayComments[post.postId].map((comment) => {
     const commentUser = users.find(user => user.id === comment.userId);
     const commentTime = () => {
@@ -753,4 +683,3 @@ style={{
 };
 
 export default Post;
-

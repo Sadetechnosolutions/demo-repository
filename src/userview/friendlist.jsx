@@ -1,52 +1,44 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react';
-import { useSelector,useDispatch } from 'react-redux';
-import { removeFriend } from '../slices/friendlistslice';
+import { useSelector } from 'react-redux';
+
 import {Tooltip } from 'react-tooltip';
 import { useParams } from 'react-router';
 
 const Friendview = () => {
   const [activeId, setActiveId] = useState(null);
-  const [blocked,isBlocked] = useState(false);
+
   const [dropdown,setDropdown] = useState(false);
   const [activeDropdown,setActiveDropdown] = useState('public');
-  const {Friends} = useSelector((state)=>state.friend)
-  const dispatch = useDispatch();
+
   const userId = useSelector((state)=>state.auth.userId)
   const {userID} = useParams()
   const [friends,setFriends] = useState();
   const [isFriends,setIsFriends] = useState();
   const [myFriends,setMyFriends] = useState();
-  const [isRequested,setIsRequested] = useState();
 
-  const removefromlist = (id)=>{
-    dispatch(removeFriend(id))
-  }
-  const block = ()=>{
-    isBlocked(!blocked);
-  }
   const handleDropdownActive = (id) => {
     setActiveDropdown(id === activeDropdown ? id : id);
   };
-  const options = [{
-    id:1,
-    name: blocked? 'Unblock':'Block',
-    task:block
-  },
-  {
-    id:2,
-    name:'Unfriend',
-    task:removefromlist
-  },
-  {
-    id:3,
-    name:'Mute'
-  },
-  {
-    id:4,
-    name:'Hide'
-  }
-]
+//   const options = [{
+//     id:1,
+//     name: blocked? 'Unblock':'Block',
+//     task:block
+//   },
+//   {
+//     id:2,
+//     name:'Unfriend',
+//     task:removefromlist
+//   },
+//   {
+//     id:3,
+//     name:'Mute'
+//   },
+//   {
+//     id:4,
+//     name:'Hide'
+//   }
+// ]
 const isCurrentUser = parseInt(userID) === userId;
   const handleprivacyDropdown = ()=>{
     setDropdown(!dropdown)
@@ -60,7 +52,7 @@ const isCurrentUser = parseInt(userID) === userId;
     setDropdown(false)
   }
 
-  const fetchMyfriends = async () => {
+  const fetchMyfriends = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -84,9 +76,9 @@ const isCurrentUser = parseInt(userID) === userId;
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-    };
+    },[userId]);
 
-  const fetchfriends = async () => {
+  const fetchfriends = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -114,11 +106,12 @@ const isCurrentUser = parseInt(userID) === userId;
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-    };
+    },[friends.friends,isCurrentUser,myFriends.friends,userID,userId]);
   
     useEffect(()=>{
       fetchfriends()
-    },[])
+      fetchMyfriends()
+    },[fetchMyfriends,fetchfriends])
  return (
     <div className=' flex w-full items-center justify-center'>
       <div className='w-5/6 drop bg-white shadow-lg h-auto px-6 flex-col '>

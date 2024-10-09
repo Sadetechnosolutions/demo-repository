@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { setFormData } from "../slices/formslice";
 
 const ProfessionalInfo = () => {
     const dispatch = useDispatch();
     const formData = useSelector((state) => state.form);
-    const [showAdditionalExperience, setshowAdditionalExperience] = useState(false);
     const handleChange = (e) => {
         const { name, value } = e.target;
     
     if (name.startsWith("workExperience")) {
-            const [_, index, field] = name.split('-');
+            const [index, field] = name.split('-');
             const updatedworkExperience = formData.workExperience.map((exp, idx) => 
                 idx === parseInt(index) ? { ...exp, [field]: value } : exp
             );
@@ -24,11 +21,11 @@ const ProfessionalInfo = () => {
         }
     };
     
-    const addWorkExperience = () => {
-        setshowAdditionalExperience(true);
-        const updatedExperience = [...formData.workExperience, { field: '', university: '' }];
-        dispatch(setFormData({ workExperience: updatedExperience }));
-    }
+    // const addWorkExperience = () => {
+    //     setshowAdditionalExperience(true);
+    //     const updatedExperience = [...formData.workExperience, { field: '', university: '' }];
+    //     dispatch(setFormData({ workExperience: updatedExperience }));
+    // }
 
     const handleSubmit = async (e) => {
         e.preventDefault();

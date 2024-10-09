@@ -138,7 +138,7 @@ return(
             {/* <div style={{backgroundImage:"url(coverimg.jpg)"}} className="relative contain-r inline-block cursor-pointer rounded-lg overflow-hidden flex flex-col w-44 h-[22rem]">
             <span className="rounded-full border border-white text-white flex items-center justify-center absolute transition-transform duration-300 hover:scale-110 ml-4 mt-4 w-9 h-9" ><Icon className="w-6 h-6" icon="mingcute:add-line" /></span>
             <div className="absolute w-full text-center child-r p-2 bottom-0">
-            <span className="text-white text-lg font-semibold">Upload your reels</span>
+            <span className="text-white text-lg font-semibold">Upload  reels</span>
             </div>
             <input onChange={e=>{handleReelsChange(e)}} className="absolute inset-0 cursor-pointer opacity-0" accept="video/*" type="file" />
             </div> */}
