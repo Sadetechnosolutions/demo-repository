@@ -1,0 +1,145 @@
+package com.Sadetechno.user_module.Controller;
+
+import com.Sadetechno.user_module.DTO.BannerDTO;
+import com.Sadetechno.user_module.DTO.ProfileDTO;
+import com.Sadetechno.user_module.Service.UserService;
+import com.Sadetechno.user_module.model.User;
+import com.Sadetechno.user_module.model.UserCreationDTO;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+@Slf4j
+public class UserController {
+
+    private final UserService userService;
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        users.forEach(user -> {
+            user.setProfileImagePath(getFullUrl(user.getProfileImagePath()));
+            user.setBannerImagePath(getFullUrl(user.getBannerImagePath()));
+        });
+        return users;
+    }
+    private String getFullUrl(String imagePath) {
+        if (imagePath == null || imagePath.isEmpty()) {
+            return null;
+        }
+        return "http://localhost:8080/" + imagePath;
+    }
+
+    @GetMapping("/uploads/{fileName:.+}")
+    public ResponseEntity<Resource>serveFile(@PathVariable String fileName){
+        try {
+            Path filePath = Paths.get("static/uploads/").resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if(resource.exists()){
+                String contentType = determineContentType(fileName);
+
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(contentType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            }else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    private String determineContentType(String fileName) {
+        if (fileName.toLowerCase().endsWith(".mp4")) {
+            return "video/mp4";
+        } else if (fileName.toLowerCase().endsWith(".jpg") || fileName.toLowerCase().endsWith(".jpeg")) {
+            return "image/jpeg";
+        } else if (fileName.toLowerCase().endsWith(".png")) {
+            return "image/png";
+        } else {
+            return "application/octet-stream";
+        }
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/createUserWithImages")
+    public ResponseEntity<?> createUserWithImages(@RequestParam("userJson") String userJson,
+                                                  @RequestParam("profileImage") MultipartFile profileImage,
+                                                  @RequestParam("bannerImage") MultipartFile bannerImage) {
+        try {
+            UserCreationDTO userCreationDTO = new UserCreationDTO();
+            userCreationDTO.setUserJson(userJson);
+            userCreationDTO.setProfileImage(profileImage);
+            userCreationDTO.setBannerImage(bannerImage);
+            User createdUser = userService.createUserWithImages(userCreationDTO);
+            return ResponseEntity.status(HttpStatus.OK).body("User created successfully with ID: " + createdUser.getId());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if (userService.getUserById(id).isPresent()) {
+            userService.deleteUser(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @ModelAttribute UserCreationDTO userUpdateDTO) {
+        try {
+            User updatedUser = userService.updateUser(id, userUpdateDTO);
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PatchMapping("/{id}/profile-image")
+    public ResponseEntity<User> updateProfileImage(@PathVariable Long id, @Valid @ModelAttribute ProfileDTO profileDTO) {
+        try {
+            User updatedUser = userService.updateProfileImage(id, profileDTO);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PatchMapping("/{id}/banner-image")
+    public ResponseEntity<User> updateBannerImage(@PathVariable Long id, @Valid @ModelAttribute BannerDTO bannerDTO){
+        try {
+            User updatedUser = userService.updateBannerImage(id,bannerDTO);
+            return new ResponseEntity<>(updatedUser,HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
