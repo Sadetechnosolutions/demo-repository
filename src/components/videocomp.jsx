@@ -2,14 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Player, BigPlayButton } from 'video-react';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
-import { useSelector } from 'react-redux';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 
 const Videocomp = () => {
   const [videos, setVideos] = useState([]);
-  const userId = useSelector((state) => state.auth.userId);
   const navigate = useNavigate();
   const { userID } = useParams();
   const seeAllVideos = () => {
@@ -23,6 +21,7 @@ const Videocomp = () => {
     1024: { items: 3 },
     1600: { items: 3 },
   };
+
 
   const renderNextButton = ({ isDisabled, onClick }) => (
     <button
@@ -44,36 +43,35 @@ const Videocomp = () => {
     </button>
   );
 
-  const fetchVideos = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No token found in localStorage');
-        return;
-      }
 
-      const response = await fetch(`http://localhost:8080/posts/user/${userID}/videos`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setVideos(data);
-      } else {
-        console.error('Failed to fetch videos:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching videos:', error);
-    }
-  };
 
   useEffect(() => {
-    if (userID) {
-      fetchVideos();
-    }
+    const fetchVideos = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found in localStorage');
+          return;
+        }
+  
+        const response = await fetch(`http://localhost:8080/posts/user/${userID}/videos`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          setVideos(data);
+        } else {
+          console.error('Failed to fetch videos:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      }
+    };
+    fetchVideos()
   }, [userID]);
 
   return (

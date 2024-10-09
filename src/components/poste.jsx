@@ -1,26 +1,21 @@
 import React, { useState, useEffect,useCallback } from 'react';
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { setpostLike } from '../slices/likeslice';
 import InputEmoji from 'react-input-emoji';
-import { addCommentnf, selectPhotoComment, deleteCommentnf, editComment, addToSaved } from "../slices/photoslice";
+import { selectPhotoComment } from "../slices/photoslice";
 import { useDispatch, useSelector } from "react-redux";
-import DropdownMenu from './dropdownmenu';
 import moment from "moment";
 import Modal from 'react-modal';
 import axios from 'axios';
-import { useParams } from 'react-router';
 import { NavLink } from 'react-router-dom';
 
 
 const Post = () => {
-  const userID = useParams()
   const [comment, setComment] = useState(null);
-  const [share, showShare] = useState(false);
-  const [edit, setEdit] = useState(false);
+
   const [saved, setSaved] = useState({});
   const [postComment, setPostComment] = useState('');
   const [liked, setLiked] = useState(false);
-  const [showDropdown, setShowDropdown] = useState(null); // Manage dropdown visibility
+
   const [commentdropdown,setCommentDropdown] = useState(null);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState([]);
@@ -39,7 +34,6 @@ const Post = () => {
   const [likeCount,setLikeCount] = useState({});
   const [postsWithUsernames, setPostsWithUsernames] = useState([]);
   const [users,setUsers] = useState()
-  const [userDetail,setUserDetail] = useState()
   const [animationPostId, setAnimationPostId] = useState(null);
   const [isTooltipVisible, setTooltipVisible] = useState(null);
   const [likeduser,setLikeduser] = useState();
@@ -47,6 +41,7 @@ const Post = () => {
   const [likedBy,setLikedBy] = useState(null);
   const [file,setFile] = useState()
   const {selectedphotocomment} = useSelector((state)=>state.photo)
+
 
   const showLikedBy = (id)=>{
     setLikedBy(id)
@@ -61,9 +56,6 @@ const Post = () => {
     setTooltipVisible(id)
     fetchLikedBy(id)
   },[])
-  const openDelete = ()=>{
-    setDeletePopup(true)
-  }   
   
   const closeDelete = ()=>{
     setDeletePopup(false)
@@ -166,7 +158,7 @@ const Post = () => {
   };
 
   // Fetch user data
-  const fetchUserName = async () => {
+  const fetchUserName = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -188,7 +180,7 @@ const Post = () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-  };
+  },[userId]);
   useEffect(() => {
     if (shouldRefetch) {
       fetchUserData(); // Refetch data
@@ -197,10 +189,8 @@ const Post = () => {
   }, [shouldRefetch]);
   
   useEffect(() => {
-    if (userId) {
       fetchUserName();
-    }
-  }, [userId]);
+  }, [fetchUserName]);
   // Fetch posts
   const fetchUserData = async () => {
     try {
@@ -245,8 +235,9 @@ const Post = () => {
         }));
 
         setPostsWithUsernames(updatedPosts);
+        console.log(postsWithUsernames)
     }
-}, [userData, user]);
+}, [userData, user,postsWithUsernames]);
 
   // Handle saved posts
   useEffect(() => {
@@ -261,22 +252,10 @@ const Post = () => {
   }, [saved]);
 
   // Handle dropdown menu actions
-  const handleEdit = (postId) => {
-    console.log('Edit post with ID:', postId);
-    setEdit(postId);
-  };
-
-  const handleDelete = (postId) => {
-    console.log('Delete post with ID:', postId);
-    setDeleteId(postId)
-  };
-
-  const toggleDropdown = (postId) => {
-    setShowDropdown(prev => (prev === postId ? null : postId)); // Toggle visibility
-  };
 
   const toggleCommentDropdown = (commentId)=>{
     setCommentDropdown(prev => (prev === commentId? null : commentId))
+    
   }
 
 
@@ -292,7 +271,7 @@ const Post = () => {
     });
   };
   
-  const fetchLikes = async (postId) => {
+  const fetchLikes = useCallback(async (postId) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -309,18 +288,20 @@ const Post = () => {
       if (response.ok) {
         const data = await response.json();
         // Check if the logged-in user is in the list of users who liked the post
+
         const userHasLiked = data.some(like => like.userId === userId);
         setLike(prev => ({
           ...prev,
           [postId]: userHasLiked
         }));
+        console.log(like)
       } else {
         console.error('Failed to fetch likes:', response.status);
       }
     } catch (error) {
       console.error('Error fetching likes:', error);
     }
-  };
+  },[like,userId]);
 
   
 
@@ -406,7 +387,8 @@ const Post = () => {
         const fileObject = { name: selectedFile };
             setFile(fileObject.name.name); 
             dispatch(selectPhotoComment(fileObject))
-            console.log(fileObject)
+            console.log(file)
+            
     }
 };
 
@@ -460,7 +442,7 @@ const Post = () => {
         }
       });
     }
-  }, [userData]);
+  }, [userData,fetchLikes]);
 
   const fetchComments = async (postId) => {
     try {
@@ -581,8 +563,6 @@ const Post = () => {
   }, [userData]);
 
   
-
-  const isLiked = (postId) => like[postId] || false;
   return (
     <form onSubmit={handleSubmit} className="rounded-md flex flex-col bg-white gap-6 shadow-lg w-full py-2 px-4">
       {userData?.map((post) =>{ 
@@ -766,7 +746,7 @@ style={{
 <div className='flex flex-col'>
 <p className='font-semibold'>{commentUser?.UserName}</p>
 <span className='text-sm'>{commenttime}</span>
-{comment.imagePath && <img className='w-52 h-44' src={`http://localhost:8086${comment.imagePath}`} />}
+{comment.imagePath && <img className='w-52 h-44' src={`http://localhost:8086${comment.imagePath}`} alt='' />}
 </div>
 </div>
 <div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}

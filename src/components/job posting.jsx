@@ -8,6 +8,7 @@ const Jobposting = ()=>{
         company:'XYZ Tech',
         image:''
     },
+
     {
         id:2,
         jobname:'Data Analyst',
@@ -22,7 +23,7 @@ return(
     <div key={job.id} className="w-full flex flex-col gap-2">
     <div className="flex items-center p-2 cursor-pointer hover:bg-gray-100 justify-between">
         <div className="flex items-center gap-2 ">
-            <img className="rounded-full w-9 h-9" src={job.image} />
+            <img className="rounded-full w-9 h-9" src={job.image} alt='' />
             <div className="flex flex-col gap-1">
                 <span className="font-semibold">{job.jobname}</span>
                 <span className="text-sm text-gray-500">{job.company}</span>

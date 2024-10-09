@@ -4,10 +4,10 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Forgotpassword2 = () => {
-  const [user,setUser] = useState({})
+
   const [otp, setOtp] = useState(Array(6).fill(''));
-    const[input,setInput] = useState('');
-    const[error,setError] = useState('')
+
+
     const navigate = useNavigate();
 
     const back = ()=>{
@@ -33,18 +33,18 @@ const Forgotpassword2 = () => {
           document.getElementById(`otp-${index - 1}`).focus();
       }
   };
-    const reset = ()=>{
-      const otpCode = otp.join('');
-        if(otpCode.length ===6){
-            navigate('/resetpassword');
-        }
-        else if(otpCode===''){
-          setError('Please enter OTP that has sent to your Mobile and Email.');
-        }
-        else{
-            setError('You have entered wrong code. Please try again. ');
-        }
-    }
+    // const reset = ()=>{
+    //   const otpCode = otp.join('');
+    //     if(otpCode.length ===6){
+    //         navigate('/resetpassword');
+    //     }
+    //     else if(otpCode===''){
+    //       setError('Please enter OTP that has sent to your Mobile and Email.');
+    //     }
+    //     else{
+    //         setError('You have entered wrong code. Please try again. ');
+    //     }
+    // }
     const handleVerifyOtp = async (e) => {
       e.preventDefault();
       if (otp.some(field => field === '')) {
@@ -106,7 +106,6 @@ const Forgotpassword2 = () => {
                                         />
                                     ))}
           </div>
-          <div className='text-red'>{error}</div>
           </div>
           <div className='flex justify-center gap-3'>
           <button onClick={back} className='border border-gray bg-gray-100 text-black hover:border-gray-400 rounded-md py-2 px-4' >Back</button>

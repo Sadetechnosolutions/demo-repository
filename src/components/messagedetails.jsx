@@ -22,6 +22,7 @@ const MessageDetails = ({ data }) => {
               console.log('Connected: ' + frame);
               client.subscribe('/topic/messages', (messageOutput) => {
                   setMessages((prev) => [...prev, JSON.parse(messageOutput.body)]);
+                  setRecipientId(2)
               });
           },
           onStompError: (frame) => {
@@ -53,6 +54,7 @@ const MessageDetails = ({ data }) => {
               body: JSON.stringify(message),
           });
           console.log(JSON.stringify(message));
+          console.log(messages)
   
           // Add the message to the messages state
           setMessages((prev) => [...prev, message]); // Push the entire message object
@@ -74,10 +76,7 @@ const MessageDetails = ({ data }) => {
     }));
   };
 
-  const handleSendMessage = () => {
-    console.log("Message sent for message ID", message.id, ":", inputMessages[message.id]);
-    handleMessageChange('');
-  };
+ 
   const handleReactionClick = (reaction) => {
     setReactions(prevReactions => ({
       ...prevReactions,
@@ -90,9 +89,9 @@ const MessageDetails = ({ data }) => {
     setShowPicker(true);
   };
 
-  const closeReaction = () => {
-    setShowPicker(false); 
-  };
+  // const closeReaction = () => {
+  //   setShowPicker(false); 
+  // };
 
   const currentInputMessage = inputMessages[message.id];
   const selectedReaction = reactions[message.id];
@@ -123,7 +122,7 @@ const MessageDetails = ({ data }) => {
       <div className="px-4 flex flex-col py-4 gap-2">
         <div className="flex flex-col gap-2">
           <div className="h-20 rounded-md gap-4 flex flex-col px-4">
-                <div className="flex gap-2 items-start"><img className="w-6 h-6 rounded-full" src={`/${message.img}`} />
+                <div className="flex gap-2 items-start"><img className="w-6 h-6 rounded-full" src={`/${message.img}`} alt='' />
                 <div className="flex flex-col"><span className="p-3 w-max bg-gray-50 rounded-lg">{message.message}</span>                
                 {selectedReaction && (
                   <span className="relative rounded-lg  bg-yellow-200 cursor-pointer" onClick={openReaction}>
@@ -160,7 +159,7 @@ const MessageDetails = ({ data }) => {
           width="1.5em"
           height="1.6em"
           strokeWidth="2"
-          onClick={handleSendMessage}/>
+          onClick={sendMessage}/>
       </div>
     </div>
     <div className="w-1/2 h-full relative flex flex-col shadow-lg">
@@ -170,7 +169,7 @@ const MessageDetails = ({ data }) => {
          {friend.id === message.id && 
          <div>
           <div className="flex flex-col items-center justify-center gap-2 w-full h-56">
-         <img className="w-24 h-24 rounded-full" src={`/${friend.img}`} alt="Friend Image" />
+         <img className="w-24 h-24 rounded-full" src={`/${friend.img}`} alt="" />
          <p className="text-lg font-semibold text-highlight">{friend.name}</p> 
          </div>
          <div className="px-6 flex flex-col gap-4" >

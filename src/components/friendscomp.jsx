@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js';
-import {useSelector,useDispatch} from 'react-redux'
-import { removeFriend } from '../slices/friendlistslice';
+import {useSelector} from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
@@ -37,11 +36,10 @@ const Friendscomp = ({userID}) => {
         >
     <Icon icon="ic:twotone-arrow-back-ios" /> </button>
     );
-    const {Friends} = useSelector((state)=>state.friend)
-const dispatch = useDispatch();
+
 const isCurrentUser = parseInt(userID) === userId;
 
-const fetchfriends = async () => {
+const fetchfriends = useCallback( async () => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -66,7 +64,7 @@ const fetchfriends = async () => {
   } catch (error) {
     console.error('Error fetching user data:', error);
   }
-  };
+  },[isCurrentUser,userId,userID]);
 
   
   const unFriend = async (unfriendId)=>{
@@ -95,7 +93,7 @@ const fetchfriends = async () => {
 
   useEffect(()=>{
     fetchfriends()
-  },[])
+  },[fetchfriends])
 
   return (
 <div className='flex py-4 px-6 drop bg-white shadow-lg gap-3 rounded-md h-auto flex-col'>

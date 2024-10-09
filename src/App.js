@@ -40,7 +40,6 @@ import FollowersView from './userview/followers';
 import FollowingView from './userview/following';
 import Followers from './pages/follower';
 import Following from './pages/following';
-import Timeline from './pages/timeline';
 import Formbar from './userview/formbar';
 import PersonalInfo from './userview/perinfo';
 import Addfriends from './userview/addfriends';
@@ -104,7 +103,6 @@ function App() {
         <Route path='/videos' element={<DefaultWithNavbar><DefaultWithHeader><Videos /></DefaultWithHeader></DefaultWithNavbar>} />
         <Route path='/followers/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Followers /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/following/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Following /></DefaultWithHeaderUser></DefaultWithNavbar>} />
-        <Route path='/timeline' element={<Timeline />} />
         <Route path='/editpersonal' element={<DefaultWithNavbar><Personalinfo /></DefaultWithNavbar>} />
         <Route path='/friendrequest/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><Friendrequest /></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/editprofile' element={<DefaultWithNavbar><DefaultWithHeader><SetEditprofile /></DefaultWithHeader></DefaultWithNavbar>} />

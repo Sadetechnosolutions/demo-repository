@@ -1,30 +1,17 @@
 import React,{useState} from 'react'
 import { useSelector,useDispatch } from 'react-redux';
-import { addVideo} from '../slices/videoslice'
 import { IoClose } from "react-icons/io5";
 import { Player,BigPlayButton } from 'video-react';
 import InputEmoji from "react-input-emoji";
-import { v4 as uuidv4 } from 'uuid';
 import { selectPost } from '../slices/postslice';
 
 const PostVideo = ({close, file}) => {
   const [caption,setCaption] = useState('');
     const dispatch = useDispatch();
     const {selected} = useSelector((state)=>state.post)
-    const {videos} = useSelector((state)=>state.video)
     const userId = useSelector((state) => state.auth.userId);
 
-    const videoInfo = {
-      id:uuidv4(),
-      name:selected? selected.url : '',
-      desc:caption,
-      postedTime:'1 sec ago'
-    }
 
-    const handlePostVideo = ()=>{
-      console.log(dispatch(addVideo(videoInfo)))
-      console.log(videos);
-    }
     const handleSubmit = async (event) => {
       // Create a FormData object for the file uploads and form data
       const formDataObj = new FormData();

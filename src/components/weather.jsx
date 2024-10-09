@@ -1,9 +1,7 @@
-import React,{useState,useEffect} from 'react'
+import React,{useEffect} from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js'
 
 const Weather = () => {
-    const [weatherData, setWeatherData] = useState(null);
-    const [error, setError] = useState(null);
     const options = { month: 'long', day: 'numeric' };
     const date = new Date();
     const filterdate = (date.toLocaleDateString('en-US', options)).toUpperCase();
@@ -16,9 +14,8 @@ const Weather = () => {
           }
           const data = await response.json();
           console.log(data)
-          setWeatherData(data);
         } catch (error) {
-          setError(error.message);
+          console.error(error.message);
         }
       };
       fetchData();

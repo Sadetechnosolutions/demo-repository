@@ -1,7 +1,6 @@
 import React from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js';
-import {useSelector,useDispatch} from 'react-redux'
-import { useNavigate } from 'react-router-dom';
+import {useSelector} from 'react-redux'
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 
@@ -12,7 +11,7 @@ const Invite = () => {
         1024: { items: 2 },
         1600: { items: 2 },
       };
-    const navigate = useNavigate()
+
     const renderNextButton = ({ isDisabled, onClick }) => (
     <button
             className="absolute p-2 flex hover:bg-cta hover:text-white items-center justify-center bg-gray-100 rounded-full -mt-36 ml-[10rem]"
@@ -29,8 +28,8 @@ const Invite = () => {
             disabled={isDisabled}>
     <Icon icon="ic:twotone-arrow-back-ios" /> </button>
     );
+
     const {Friends} = useSelector((state)=>state.friend)
-const dispatch = useDispatch();
   return (
 <div className='flex py-4 px-6 drop bg-white shadow-lg gap-3 rounded-md w-ful flex-col'>
   <div className='flex justify-between font-semibold items-center'>

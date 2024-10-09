@@ -1,5 +1,4 @@
 import React,{useState,useEffect} from 'react'
-import { useSelector } from 'react-redux'
 import AliceCarousel from 'react-alice-carousel';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import { Icon } from '@iconify/react/dist/iconify.js';
@@ -8,8 +7,6 @@ import { Link } from 'react-router-dom';
 
 const Photoscomp = ({seeallPhotos}) => {
   const [images,setImages] = useState()
-  const{uploaded} = useSelector((state)=>state.photo)
-  const userId = useSelector((state) => state.auth.userId);
   const { userID } = useParams();
   const responsive = {
     0:   { items: 1 },
@@ -54,7 +51,7 @@ useEffect(() => {
   };
 
   fetchImage();
-}, []);
+}, [userID]);
 
 const renderBackButton = ({ isDisabled, onClick }) => (
     <button

@@ -26,6 +26,7 @@ const MessageSetting = () => {
     }
     const Othernotifications = [{
 
+        
 id:1,
 name:'Messages from activity on my page or channel.'
     },

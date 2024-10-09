@@ -1,10 +1,9 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useCallback } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { selectPost } from '../slices/postslice';
 import { useDispatch, useSelector } from 'react-redux';
 import InputEmoji from 'react-input-emoji';
 import MapSelector from './mapselector';
-import moment from 'moment';
 import axios from 'axios';
 
 
@@ -71,7 +70,7 @@ const Createpost = () => {
   const renderMedia = () => {
     if (!selected) return null;
     if (selected.type && selected.type.startsWith('image')) {
-      return <img className='w-36 h-32' src={selected.url} alt='Selected Image' />;
+      return <img className='w-36 h-32' src={selected.url} alt='' />;
     } else if (selected.type && selected.type.startsWith('video')) {
       return <video className='w-36 h-32' controls><source src={selected.url} type={selected.type} /></video>;
     }
@@ -139,7 +138,7 @@ const Createpost = () => {
     }
   };
 
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = useCallback( async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/users/${userId}`, {
         method: 'GET',
@@ -151,11 +150,11 @@ const Createpost = () => {
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
-  };
+  },[userId]);
 
   useEffect(() => {
     fetchUserDetails();
-  }, [userId]);
+  }, [fetchUserDetails]);
 
   if (!user) {
     return <p>Loading...</p>; // Show loading state while fetching
@@ -207,5 +206,6 @@ const Createpost = () => {
     </form>
   );
 };
+
 
 export default Createpost;

@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useCallback} from 'react'
 import { Link, NavLink,useLocation } from 'react-router-dom'
 import { Icon } from '@iconify/react/dist/iconify.js';
 import Modal from 'react-modal';
@@ -18,9 +18,12 @@ const Profileheader = () => {
   const {coverpic} = useSelector((state)=>state.photo)
   const userId = useSelector((state) => state.auth.userId);
   const location = useLocation();
-  const fetchUserName = async () => {
+
+
+  const fetchUserName = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
+
 
       if (!token) {
         console.error('No token found in localStorage');
@@ -45,12 +48,12 @@ const Profileheader = () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-  };
+  },[userId]);
   useEffect(() => {
-    if (userId) {
+
       fetchUserName();
-    }
-  }, [userId]);
+
+  }, [fetchUserName]);
 
   if (!user) {
     return <p>Loading...</p>; // Show loading state while fetching
@@ -100,8 +103,8 @@ const Profileheader = () => {
   const handleupdateCover = ()=>{
     dispatch(updateCover(selectedcoverpic));
     console.log(coverpic)
+    console.log(file)
   }
-
 
     const isActive = (path) => {
       return location.pathname === path;

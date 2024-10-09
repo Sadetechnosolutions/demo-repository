@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { addFriend } from '../slices/friendlistslice';
-import { convertFollower } from '../slices/followerslice';
+
 import axios from 'axios';
 
 const Suggestfriends = () => {
 
-  const userId = useSelector((state) => state.auth.userId);
-  const dispatch = useDispatch();
   const navigate = useNavigate(); // Initialize useNavigate
   const [users, setUsers] = useState([]);
   const fetchUsers = async () => {
@@ -17,7 +13,7 @@ const Suggestfriends = () => {
       const usersData = response.data.map(user => ({
         id: user.id,
         UserName: user.name,
-      }));
+      }))
       setUsers(usersData);
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -33,11 +29,6 @@ const Suggestfriends = () => {
     navigate(`/user/${id}`);
   };
 
-  const handleconvertfollow = (id) => {
-    dispatch(convertFollower(id));
-  };
-
-  const filteredUsers = users.filter(user => user.id !== userId);
 
   return (
     <div className='w-full px-4 py-3 rounded-md bg-white flex flex-col gap-3 shadow-lg'>

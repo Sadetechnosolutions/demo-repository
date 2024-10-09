@@ -24,4 +24,3 @@ export const fetchUserdata = async (token) => {
       return null;
     }
   };
-  

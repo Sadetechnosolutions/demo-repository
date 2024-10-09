@@ -20,7 +20,7 @@ const Story = () => {
         1024: { items: 1 },
         1600: { items: 1 },
       };
-      
+    
       const renderNextButton = ({ isDisabled, onClick }) => (
         <button className={`absolute p-2 flex hover:bg-cta text-cta hover:text-white items-center justify-center bg-gray-100 rounded-full top-44 right-4 ${story?.length ===0 ? 'hidden': ''}`}
             onClick={onClick}
@@ -50,30 +50,6 @@ const Story = () => {
             onClick={onClick}
             disabled={isDisabled}>
     <Icon icon="ic:twotone-arrow-back-ios" /> </button>);
-const stories = [{
-    id:1,
-    name:'John',
-    storyprof:'author.jpg',
-    storyimg:'dp.jpg'
-},
-{
-    id:2,
-    name:'David kennedy',
-    storyprof:'author.jpg',
-    storyimg:'dp.jpg'
-},
-{
-    id:3,
-    name:'Adam',
-    storyprof:'author.jpg',
-    storyimg:'dp.jpg'
-},
-{
-    id:4,
-    name:'McCarthy ',
-    storyprof:'author.jpg',
-    storyimg:'dp.jpg'
-}]
 
 const FetchStories = async ()=>{
   const token = localStorage.getItem('token')
@@ -150,7 +126,7 @@ const addStory = ()=>{
         loop={true} 
       />}
                 {users?.map(user=>user.id === story.userId ? 
-                <div className='top-0 flex items-center gap-2 p-2 absolute'><img className='w-11 h-11 rounded-full border-2 border-cta' src='profile.jpg' /><div className='flex flex-col'><span className='text-white font-semibold  text-sm'>{user.UserName}</span><span className='text-white text-sm font-semibold'>{timeDifference}</span></div></div>
+                <div className='top-0 flex items-center gap-2 p-2 absolute'><img className='w-11 h-11 rounded-full border-2 border-cta' src='profile.jpg' alt='' /><div className='flex flex-col'><span className='text-white font-semibold  text-sm'>{user.UserName}</span><span className='text-white text-sm font-semibold'>{timeDifference}</span></div></div>
                 :null
     )}
                 </div>

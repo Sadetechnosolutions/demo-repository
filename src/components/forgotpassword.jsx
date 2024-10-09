@@ -1,9 +1,9 @@
 import React,{useState} from 'react'
 import { useNavigate } from 'react-router-dom';
 import Modal from 'react-modal';
-import Password from 'antd/es/input/Password';
+
 import { NavLink } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -22,6 +22,7 @@ function isValidMobileNumber(input) {
   const mobileRegex = /^[0-9]{10}$/;
   return mobileRegex.test(input);
 }
+
 
 const handleClosemail = ()=>{
   showemailotp(false);

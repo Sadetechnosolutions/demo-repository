@@ -4,25 +4,24 @@ import { Column } from 'primereact/column';
 import axios from "axios";
 
 const Email = () => {
-    const [users, setUsers] = useState([]);
+ 
     const [otps, setOtps] = useState([]);
 
-    const fetchUsers = async () => {
-        try {
-            const response = await axios.get('http://localhost:8081/api/auth/users/descending');
-            const usersData = response.data.map(user => ({
-                id: user.id,
-                UserName: user.name,
-                Email: user.email,
-                Phonenumber: user.phoneNumber,
-                Role:user.role,
-                Status:user.enabled === true ? 'Active' : 'Disabled'
-            }));
-            setUsers(usersData);
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-        }
-    };
+    // const fetchUsers = async () => {
+    //     try {
+    //         const response = await axios.get('http://localhost:8081/api/auth/users/descending');
+    //         const usersData = response.data.map(user => ({
+    //             id: user.id,
+    //             UserName: user.name,
+    //             Email: user.email,
+    //             Phonenumber: user.phoneNumber,
+    //             Role:user.role,
+    //             Status:user.enabled === true ? 'Active' : 'Disabled'
+    //         }));
+    //     } catch (error) {
+    //         console.error("Error fetching user data:", error);
+    //     }
+    // };
 
     const fetchOtps = async () => {
         try {
@@ -39,17 +38,16 @@ const Email = () => {
         }
     };
 
-    const userdata = users.map(user => {
-        const otpData = otps.find(otp => otp.id === user.id);
-        return {
-            ...user,
-            Otp: otpData ? otpData.Otp : 'N/A',
-            Joined: otpData ? new Date(otpData.Joined).toLocaleString()  : 'N/A'
-        };
-    });
+    // const userdata = users.map(user => {
+    //     const otpData = otps.find(otp => otp.id === user.id);
+    //     return {
+    //         ...user,
+    //         Otp: otpData ? otpData.Otp : 'N/A',
+    //         Joined: otpData ? new Date(otpData.Joined).toLocaleString()  : 'N/A'
+    //     };
+    // });
 
     useEffect(() => {
-        fetchUsers();
         fetchOtps();
     });
 

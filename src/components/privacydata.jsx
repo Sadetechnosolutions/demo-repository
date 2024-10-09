@@ -18,6 +18,7 @@ const PrivacyData = ()=>{
         <span>Hide your profile from search engine (Ex.google) <span className="text-cta font-semibold">Learn more</span></span>
         </div>
         <div>
+          
         <Checkbox
                     initialItemState={!isChecked}
                     onCheckboxChange={handleCheckboxChange}

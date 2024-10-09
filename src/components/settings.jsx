@@ -20,5 +20,4 @@ const location = useLocation()
         </div>
     )
 }
-
 export default SettingsBar;

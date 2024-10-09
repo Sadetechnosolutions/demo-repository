@@ -29,7 +29,6 @@ const Sidebar = () => {
         <li>Item 2</li>
         <li>Item 3</li>
       </ul>}
-
       {/* Button to toggle sidebar */}
 
     </motion.div>

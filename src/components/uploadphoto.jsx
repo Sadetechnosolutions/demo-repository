@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addPhoto, selectPhoto,  } from '../slices/photoslice';
+import { selectPhoto,  } from '../slices/photoslice';
 import { IoClose } from "react-icons/io5";
 import { removeSelected } from '../slices/photoslice';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { v4 as uuidv4 } from 'uuid';
+
 import InputEmoji from "react-input-emoji";
 import moment from 'moment';
 import { selectPost } from '../slices/postslice';
@@ -15,9 +15,7 @@ const Postphoto = ({ close,file }) => {
   const dispatch = useDispatch();
   const { selected } = useSelector((state) => state.post);
   const postedTimeRef = useRef(null);
-  const [userData,setUserData] = useState()
   const userId = useSelector((state) => state.auth.userId);
-
   // const fetchUserName = async () => {
   //   try {
   //     const token = localStorage.getItem('token');
@@ -56,9 +54,9 @@ const Postphoto = ({ close,file }) => {
     postedTimeRef.current = setInterval(() => {
       setPostedTime(moment().fromNow()); // Update postedTime every minute
     }, 60000);
-
+     console.log(postedTime)
     return () => clearInterval(postedTimeRef.current); // Clean up the interval on unmount
-  }, []);
+  }, [postedTime]);
 
   const selectedPhoto = (event) => {
     const file = event.target.files[0];
@@ -71,16 +69,6 @@ const Postphoto = ({ close,file }) => {
     dispatch(removeSelected())
   }
 
-  const photoInfo = {
-    id: uuidv4(),
-    desc: caption,
-    name: selected? selected.url : '',
-    postedTime: postedTime,
-  };
-
-  const handlePostPhoto = () => {
-    console.log(dispatch(addPhoto(photoInfo)));
-  };
   const handleSubmit = async (event) => {
     // Create a FormData object for the file uploads and form data
     const formDataObj = new FormData();

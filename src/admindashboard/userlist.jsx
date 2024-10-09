@@ -25,7 +25,6 @@ const UserList = () => {
             console.error("Error fetching user data:", error);
         }
     };
-
     // Fetch OTP data
     const fetchOtps = async () => {
         try {

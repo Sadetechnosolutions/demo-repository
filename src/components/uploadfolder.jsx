@@ -19,6 +19,7 @@ const Uploadfolder = ({close}) => {
      console.log(dispatch(addPhoto(files)));
     ;
   };
+  
   return (
     <div>
         <div className='flex w-full items-center h-[500px] justify-center'>

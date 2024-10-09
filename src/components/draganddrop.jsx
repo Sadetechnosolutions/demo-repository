@@ -9,7 +9,7 @@ function DragDrop() {
   
   const handleChange = (droppedFiles) => {
       console.log("Dropped files:", droppedFiles);
-
+      console.log(file)
     
     if (droppedFiles.length === 0) {
       alert("No files dropped.");

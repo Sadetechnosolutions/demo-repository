@@ -14,6 +14,7 @@ const Phonecode = ({setFlag}) => {
         code:'+93',
     },
     ]
+    
   return (
     <>
     <div>

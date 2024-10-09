@@ -1,18 +1,15 @@
 import React, { useState,useEffect } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Input } from "antd";
 import { useSelector,useDispatch } from "react-redux";
 import { addReels } from "../slices/videoslice";
 import Modal from 'react-modal'
 import ReactPlayer from "react-player";
 import InputEmoji from "react-input-emoji";
-import { useParams } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
 import AliceCarousel from "react-alice-carousel";
 
 const Reels=()=>{
-    const {userID} = useParams()
     const dispatch = useDispatch()
     const [file,setFile] = useState()
     const [selected,setSelected] = useState(false)
@@ -32,7 +29,7 @@ const Reels=()=>{
             const fileObject = { name: selectedFile };
                 setFile(fileObject.name.name); 
                 dispatch(addReels(fileObject))
-                console.log(fileObject)
+                console.log(file)
                 setSelected(true)
         }
     };
@@ -166,9 +163,10 @@ return(
              {users.map((user)=>user.id === reel.userId?     
       <div className="absolute left-8 top-4">
         <div className="flex items-center text-white font-semibold gap-2">
-        <img className="w-8 h-8 rounded-full" src={`http://localhost:8086${reel.profileImagePath}`} />
+        <img className="w-8 h-8 rounded-full" src={`http://localhost:8086${reel.profileImagePath}`} alt='' />
           <p key={user.id} className=' '><span>{user.UserName}</span></p>
     </div>
+
       </div> : '' )}
                         </div>
                 </div></NavLink>
