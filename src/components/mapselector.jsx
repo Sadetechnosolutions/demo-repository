@@ -21,6 +21,7 @@ const LocationMarker = ({ userLocation, selectedLocation, onSelectLocation }) =>
     }
   }, [userLocation, map]);
 
+  
   useMapEvents({
     click(event) {
       const { lat, lng } = event.latlng;

@@ -8,6 +8,7 @@ const Chat = () => {
     const [messageInput, setMessageInput] = useState('');
     const [recipientId, setRecipientId] = useState(2); // Example recipient ID
 
+
     useEffect(() => {
         const socket = new SockJS('http://localhost:8091/ws');
         const client = new Client({
@@ -36,8 +37,8 @@ const Chat = () => {
 
     const sendMessage = () => {
         const senderId = 1; // Replace with the actual sender ID from your user context or state
-    
         if (messageInput && stompClientRef.current && stompClientRef.current.connected) {
+            setRecipientId(2)
             const message = {
                 senderId,        // Sender's ID
                 recipientId,     // Recipient's ID

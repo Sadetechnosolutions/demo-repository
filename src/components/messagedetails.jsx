@@ -168,6 +168,7 @@ const MessageDetails = ({ data }) => {
         <div key={friend.id}>
          {friend.id === message.id && 
          <div>
+          
           <div className="flex flex-col items-center justify-center gap-2 w-full h-56">
          <img className="w-24 h-24 rounded-full" src={`/${friend.img}`} alt="" />
          <p className="text-lg font-semibold text-highlight">{friend.name}</p> 

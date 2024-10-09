@@ -18,6 +18,7 @@ const Forgotpassword = () => {
   navigate("/");
   }
 
+  
 function isValidMobileNumber(input) {
   const mobileRegex = /^[0-9]{10}$/;
   return mobileRegex.test(input);

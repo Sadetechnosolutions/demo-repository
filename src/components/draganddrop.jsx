@@ -16,6 +16,7 @@ function DragDrop() {
       return;
     }
 
+    
     const firstFile = droppedFiles[0];
     if (!firstFile) {
       alert("Invalid file format. Please drop a valid ZIP file.");

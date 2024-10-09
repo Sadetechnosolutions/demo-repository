@@ -15,6 +15,7 @@ const Events = () => {
         color:'ctao'
       },]
    
+      
   return (
     <div className='w-full flex bg-white rounded-md flex-col gap-3 shadow-lg py-3 px-4'>
       <div className='flex items-center justify-between'><span className=' font-semibold'>Explore Events</span> <span className='text-sm text-cta'>See all</span></div>

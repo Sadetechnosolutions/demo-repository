@@ -101,7 +101,7 @@ const NotificationSetting = () => {
       </div>
     </div>
   );
-};
+}
 
 
 export default NotificationSetting;

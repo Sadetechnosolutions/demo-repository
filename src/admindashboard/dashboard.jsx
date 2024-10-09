@@ -40,12 +40,6 @@ const Dashboard = () => {
         closeMessage()
     }
 
-    const handleMessage = ()=>{
-        closeuserlist();
-        closeMail()
-        setMessage(true);
-    }
-
     return (
         <div className="relative flex flex-col h-screen">
       

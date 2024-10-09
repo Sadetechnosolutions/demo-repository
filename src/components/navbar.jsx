@@ -390,6 +390,7 @@ const fetchNotification = useCallback(async () => {
                           <Icon className='hover:text-cta text-gray-500' icon="mdi:people-tick" width="1.4em" height="1.4em" /></button>                
                            <button onClick={()=>{cancelRequest(item.senderId)}} className='text-sm hover:text-red'><Icon icon="material-symbols-light:delete" width="1.2em" height="1.2em" /></button>
                           </div>
+                          
                           <div className=' text-gray-400 text-time'>{item.time}</div>
                           </div>
                           </div>

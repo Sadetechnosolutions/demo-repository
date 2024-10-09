@@ -17,6 +17,7 @@ const Friendscomp = ({userID}) => {
     const seeallFriends = ()=>{
     navigate('/friends',window.scrollTo(0,0))
     }
+    
     const userId = useSelector((state) => state.auth.userId);
     const renderNextButton = ({ isDisabled, onClick }) => (
         <button

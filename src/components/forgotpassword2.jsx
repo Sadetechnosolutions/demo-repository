@@ -33,6 +33,7 @@ const Forgotpassword2 = () => {
           document.getElementById(`otp-${index - 1}`).focus();
       }
   };
+  
     // const reset = ()=>{
     //   const otpCode = otp.join('');
     //     if(otpCode.length ===6){

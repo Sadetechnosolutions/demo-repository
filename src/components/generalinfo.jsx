@@ -24,6 +24,7 @@ const Generalinfo = ({general,social}) => {
             </div>
           </div>
         </div>
+        
         <div className='flex flex-col w-full gap-2'>
           <div className='flex font-semibold items-center gap-1.5'>
           <Icon icon="fluent:calendar-work-week-28-filled" width="1.2em" height="1.2em"/> <span>Interests</span>

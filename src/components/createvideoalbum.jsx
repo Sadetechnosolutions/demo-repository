@@ -15,6 +15,7 @@ const Createvideoalbum = ({close}) => {
       <div className='w-full h-full flex items-center justify-center border border-cta border-dashed'>
       <div className=''>
       <label>
+        
     <span className='w-min h-auto border border-cta  p-2 rounded-md text-cta hover:bg-cta hover:text-white cursor-pointer'>Browse Files</span>
     <input type='file' className='flex items-center absolute opacity-0 rounded-md'/>
       </label>

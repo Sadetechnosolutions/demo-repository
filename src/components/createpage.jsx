@@ -15,6 +15,7 @@ const DisplayPage = ()=>{
         </div>
         </div>
     )
+    
 }
 
 export default DisplayPage;

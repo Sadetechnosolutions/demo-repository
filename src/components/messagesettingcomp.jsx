@@ -19,6 +19,7 @@ const MessageSetting = () => {
         ShowCountries(!countries);
     }
     
+    
     const handleSetCountry = (country)=>{
         SetCountry(country.name)
         SetActive(false);
@@ -26,7 +27,7 @@ const MessageSetting = () => {
     }
     const Othernotifications = [{
 
-        
+
 id:1,
 name:'Messages from activity on my page or channel.'
     },

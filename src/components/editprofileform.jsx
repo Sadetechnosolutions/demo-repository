@@ -72,6 +72,7 @@ const Editformprofile = ()=>{
     </div>
     </form>
     )
+    
 }
 
 export default Editformprofile;

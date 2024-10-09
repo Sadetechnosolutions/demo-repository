@@ -20,6 +20,7 @@ const Languages = ({selectLanguage}) => {
       </div>
     </>
   )
+  
 }
 
 export default Languages;

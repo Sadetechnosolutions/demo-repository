@@ -7,6 +7,7 @@ const Loader = () => {
       <div className="spinner"></div>
     </div>
   );
+  
 };
 
 

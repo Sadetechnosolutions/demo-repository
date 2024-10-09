@@ -29,6 +29,7 @@ return(
                 <span className="text-sm text-gray-500">{job.company}</span>
             </div>
         </div>
+        
         <button className="border-2 border-cta h-9 w-16 rounded-md text-cta hover:bg-cta hover:text-white font-semibold">Apply</button>
     </div>
     </div>

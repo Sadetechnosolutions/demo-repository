@@ -7,6 +7,7 @@ return(
     <div className="w-1/2 flex flex-col gap-4 items-center justify-center text-center">
         <div>
         </div>
+        
         <div className="w-11 h-11 flex items-center justify-center rounded-full bg-white"><Icon className="text-cta w-8 h-8" icon="fluent:briefcase-search-20-regular" /></div>
         <div className="text-2xl font-semibold text-white">Post Job Openings</div>
         <span className="text-xs text-white">Create a new job post for hire a new talented from the pitnik</span>

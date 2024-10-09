@@ -18,6 +18,7 @@ const Invite = () => {
             onClick={onClick}
             disabled={isDisabled}
         >
+          
     <Icon icon="grommet-icons:next" />    
     </button>
     );

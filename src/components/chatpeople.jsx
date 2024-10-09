@@ -31,6 +31,10 @@ const Messagelist = ({handleSelectMessage})=>{
                     <input className="w-full px-2 rounded-md h-11 border-none outline-none bg-gray-100" type="text" placeholder="Search Friend" />
                     <div className="w-9 h-11 flex items-center justify-center bg-gray-100"><Icon icon="ooui:search" /></div>
                 </div>
+
+
+                
+
                 <div className="flex w-auto  flex-col">
                 {users?.map((message)=>(
                 <Link to={`/messages/${message.id}`}>

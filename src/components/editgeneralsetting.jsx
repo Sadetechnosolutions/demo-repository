@@ -53,6 +53,7 @@ const GeneralSetting = ()=>{
         </div>
         </div>
     ))}
+    
 </div>
 <div className="flex items-center gap-4 px-4 bg-black text-yellow">
 
