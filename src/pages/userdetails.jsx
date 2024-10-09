@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Editprofile from './editprofile';
 import Personalinfo from './Personal info';
 import Modal from 'react-modal';
@@ -6,19 +6,14 @@ import {Tooltip } from 'react-tooltip';
 import Videocomp from '../components/videocomp';
 import Photoscomp from '../components/photoscomp';
 import Friendscomp from '../components/friendscomp';
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Link from 'antd/es/typography/Link';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import { useNavigate } from 'react-router-dom';
-import { IoClose } from 'react-icons/io5';
-import { NavLink } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { updatePhoto,changecoverPhoto,updateCover,changePhoto } from '../slices/photoslice';
 
 const UserDetails = () => {
-  const dispatch = useDispatch()
   const [editprofile, showEditprofile] = useState(false);
   const [editPersonal,showEditpersonal] = useState(false);
 
@@ -33,116 +28,24 @@ const UserDetails = () => {
   const userId = useSelector((state) => state.auth.userId);
   const { userID } = useParams(); // Get userId from URL params
   const [user, setUser] = useState(null);
-  const [imageForm,setImageForm] = useState(false);
-  const [coverForm,setCoverForm] = useState(false);
-  const [file, setFile] = useState(null);
-  const {selectedprofilepic} = useSelector((state)=>state.photo)
-  const {profilepic} = useSelector((state)=>state.photo)
-  const {selectedcoverpic} = useSelector((state)=>state.photo)
-  const {coverpic} = useSelector((state)=>state.photo)
-  const location = useLocation();
 
-  const openImageForm = ()=>{
-    setImageForm(true);
-  }
 
-  const openCoverForm = ()=>{
-    setCoverForm(true);
-  }
 
-  const closeImageForm =()=>{
-    setImageForm(false)
-  }
 
-  const closeCoverForm =()=>{
-    setCoverForm(false)
-  }
-  
-  const handleImageChange = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        dispatch(changePhoto(reader.result)); // Dispatch action to update profile picture
-        setFile(selectedFile); // Store the file object
-      };
-      
-      reader.readAsDataURL(selectedFile); // Read the file as a data URL
-    }
-  };
-  const cancelImage = () => {
-    dispatch(changePhoto(profilepic));
-    closeImageForm();
-  };
-
-  const cancelCover = ()=>{
-    dispatch(changecoverPhoto(coverpic));
-    closeCoverForm();
-  }
-  const handleButtonClick = () => {
-   dispatch(updatePhoto(selectedprofilepic));
-  };
-
-  const handleupdateCover = ()=>{
-    dispatch(updateCover(selectedcoverpic));
-    console.log(coverpic)
-  }
-
-    const isActive = (path) => {
-      return location.pathname === path;
-    };
-    const personal = {
-        profile: [
-          { id: 1,name:'Peter Parker',img:'profile.jpg',posts:64,following:44,followers:51,photos:4,videos:3,aboutme:`Hi, I’m Peter Parker, I’m 36 and I work as a Professional Cinematographer from Ontario, Canada, my proclaimed works are “dewwater” and "Sunbeast"`,birthday:'December 17, 1985', phno: '+1-989-232435234', bloodgroup: 'B+',gender:'Male',country:'San Francisco, US',occupation:'Cinematographer',joined:'December 20,2021', email:'peterparker07@design.com' },
-        ]
-      }
-
-    const menu = [
-        {id:1,
-        name:'Profile',
-        path:'/profile'},
-        {id:2,
-        name:'Timeline',
-        path:'/timeline'},
-        {id:3,
-        name:'Friends',
-        path:'/friends'},
-        {id:4,
-        name:'Photos',
-        path:`/photosview/${userID}`},
-        {id:5,
-        name:'Videos',
-        path:'/videos'},
-        ]
-        
-        const handlechangeCover = (event)=>{
-          const selectedFile = event.target.files[0];
-          if (selectedFile) {
-            const reader = new FileReader();
-            reader.onload = () => {
-              dispatch(changecoverPhoto(reader.result)); // Dispatch action to update profile picture
-              setFile(selectedFile); // Store the file object
-            };
-            reader.readAsDataURL(selectedFile); // Read the file as a data URL
-          }
-        }
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = useCallback(async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/users/${userID}`, {
         method: 'GET',
-        headers: {
-    
-        },
       });
       setUser(response.data);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
-  };
+  },[userID]);
 
   useEffect(() => {
     fetchUserDetails();
-  }, [userId]);
+  }, [fetchUserDetails]);
 
   if (!user) {
     return <p>Loading...</p>; // Show loading state while fetching

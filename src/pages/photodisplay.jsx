@@ -55,6 +55,7 @@ const Photodisplay = () => {
   const handleEditComment = (imageId, commentId, newComment) => {
     console.log(dispatch(editComment({ imageId, commentId, newComment })));
     setEdit(false); // Exit edit mode after submitting edit
+    console.log(localPostComments)
   };
 
   const hideMenu = ()=>{

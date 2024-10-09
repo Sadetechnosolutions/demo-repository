@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from 'react'
+import React,{useState,useEffect, useCallback} from 'react';
 import { Icon } from '@iconify/react';
 import { removeNotification } from '../slices/notificationslice';
 import { useDispatch } from 'react-redux';
 import {useSelector} from 'react-redux'
-
 
 const Notifications = () => {
   const dispatch = useDispatch();
   const userId = useSelector((state)=>state.auth.userId)
   const [notification,setNotifications] = useState();
 
-  
 
-  const fetchnotifications = async()=>{
+  const fetchnotifications = useCallback(async()=>{
     const token = localStorage.getItem('token')
     try{
       const response = await fetch(`http://localhost:8080/follows/notifications/${userId}`,{
@@ -32,12 +30,12 @@ const Notifications = () => {
     catch(error){
       console.error('error fetching data', error)
     }
-  }
-
-  useEffect = (() => {
+  },[userId])
+  
+  useEffect(() => {
     fetchnotifications()
-  },[])
-
+  },[fetchnotifications])
+  
   return (
     <>
     <div className='flex flex-col items-center justify-center'>

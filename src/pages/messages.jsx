@@ -1,7 +1,5 @@
-import React,{useState,Suspense} from "react";
+import React from "react";
 import Messagelist from "../components/chatpeople";
-import MessageDetails from "../components/messagedetails";
-import { useSelector } from "react-redux";
 import Navbar from "../components/navbar";
 import data from '../message.json'
 

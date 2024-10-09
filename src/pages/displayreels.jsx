@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import ReactPlayer from "react-player";
 import { useParams } from "react-router";
 import axios from "axios";
@@ -11,7 +11,6 @@ const DisplayReels = () => {
   const { userID } = useParams();
   const [option,setOption] = useState(false);
   const userId = useSelector((state)=>state.auth.userId)
-  const [reels, setReels] = useState([]);
   const [selectedReel, setSelectedReel] = useState(null);
   const [users,setUsers] = useState();
 
@@ -19,7 +18,7 @@ const handleOption = ()=>{
   setOption(!option)
 }
 
-  const fetchReels = async () => {
+  const fetchReels = useCallback(async () => {
     const token = localStorage.getItem('token');
     try {
       const response = await fetch('http://localhost:8080/reels/getAll/reel', {
@@ -32,9 +31,8 @@ const handleOption = ()=>{
       if (response.ok) {
         const data = await response.json();
         if (data) {
-          setReels(data);
           // Find the selected reel based on userID
-          const reel = data.find(r => r.id == userID);
+          const reel = data.find(r => r.id === userID);
           setSelectedReel(reel);
         } else {
           console.error("Expected an array but got:", data);
@@ -45,11 +43,11 @@ const handleOption = ()=>{
     } catch (error) {
       console.error('Error fetching reels:', error);
     }
-  };
+  },[userID]);
 
   useEffect(() => {
     fetchReels();
-  }, []);
+  }, [fetchReels]);
 
   
   const fetchUsers = async () => {
@@ -102,7 +100,7 @@ const handleOption = ()=>{
             />
           </div>
           <div className="w-1/2 flex flex-col gap-2 min-screen p-2">
-          {users?.map((user)=>user.id == selectedReel.userId ?
+          {users?.map((user)=>user.id === selectedReel.userId ?
           <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                     <img className="border w-9 h-9 rounded-full bg-gray-400" src={`http://localhost:8086${selectedReel.profileImagePath}`} alt="" />

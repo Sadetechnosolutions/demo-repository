@@ -15,7 +15,6 @@ const StoryPage = () => {
   const [loading, setLoading] = useState(true);
   const userId = useSelector((state)=>state.auth.userId)
   const [options,setOptions] = useState(false);
-  const [storyReply,setStoryReply] = useState('');
 
   const handleOptions = ()=>{
     setOptions(!options)
@@ -27,9 +26,6 @@ const StoryPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleSlideChange = () => {
-    setLoading(false); // Hide loader when slide changes
-  };
   const selectedStory = useSelector((state) => state.story.selectedStory);
   const [story, setStory] = useState([]);
   const [users,setUsers] = useState()
@@ -206,14 +202,14 @@ const timeDifference = calculateTimeDifference();
         height='1.2em'
       />
     </div>
-    <InputEmoji onChange={(text)=>setStoryReply(text)} />
+    <InputEmoji placeholder='Reply to the story..' />
     </div>
 ) : null}
 
 
 
 {users?.map(user=>user.id === item.userId ? 
-                <div className='top-4 flex items-center gap-2 p-2 absolute'><img className='w-11 h-11 rounded-full border-2 border-cta' src={`http://localhost:8086${item.profileImagePath}`}/><div className='flex flex-col'><span className='text-white font-semibold  text-sm'>{user.UserName}</span><span className='text-white text-sm font-semibold'>{timeDifference}</span></div></div>
+                <div className='top-4 flex items-center gap-2 p-2 absolute'><img className='w-11 h-11 rounded-full border-2 border-cta' src={`http://localhost:8086${item.profileImagePath}`} alt=''/><div className='flex flex-col'><span className='text-white font-semibold  text-sm'>{user.UserName}</span><span className='text-white text-sm font-semibold'>{timeDifference}</span></div></div>
                 :null
     )}
           {loading && <Loader />}

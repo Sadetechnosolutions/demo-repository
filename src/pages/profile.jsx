@@ -1,4 +1,4 @@
-import React ,{useState, useEffect} from 'react'
+import React ,{useState, useEffect, useCallback} from 'react'
 import { Icon } from '@iconify/react';
 import Editprofile from './editprofile';
 import Personalinfo from './Personal info';
@@ -26,7 +26,7 @@ const Profile = () => {
   };
   
 
-  const fetchUserName = async () => {
+  const fetchUserName = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
 
@@ -52,13 +52,12 @@ const Profile = () => {
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-  };
+  },[userId]);
 
   useEffect(() => {
-    if (userId) {
       fetchUserName();
-    }
-  }, [userId]);
+
+  }, [fetchUserName]);
 
   if (!user) {
     return <p>Loading...</p>; // Show loading state while fetching

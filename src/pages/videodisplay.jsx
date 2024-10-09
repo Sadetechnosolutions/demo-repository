@@ -69,6 +69,7 @@ const Videodisplay = () => {
 
     const addVideoComment = (videoId,commentInfo)=>{
       console.log(dispatch(addComment({videoId,commentInfo})))
+      console.log(localVideoComments)
     }
 
     const commentInfo = {

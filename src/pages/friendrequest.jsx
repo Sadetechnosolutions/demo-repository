@@ -1,20 +1,14 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react/dist/iconify.js';
-import {useSelector,useDispatch} from 'react-redux'
-import { removeRequest } from '../slices/friendrequestslice';
-import { addFriend } from '../slices/friendlistslice';
+import {useSelector} from 'react-redux'
 
 const Friendrequest = () => {
   const [request,setRequest] = useState()
   const userId = useSelector((state)=>state.auth.userId)
-  const handleAddfriend = (friend)=>{
-    console.log(dispatch(addFriend(friend)));
-    console.log(friendrequests)
-  }
-  const dispatch = useDispatch();
-    const {friendrequests} = useSelector(state=>state.friendrequest)
 
-    const fetchRequest = async () => {
+
+
+    const fetchRequest =  useCallback(async () => {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -39,7 +33,7 @@ const Friendrequest = () => {
       } catch (error) {
         console.error('Error fetching user data:', error);
       }
-      };
+      },[userId]);
   
       const acceptRequest = async (acceptID)=>{
         const token = localStorage.getItem('token')
@@ -95,11 +89,8 @@ const Friendrequest = () => {
         }
       }
       useEffect(() => {
-        if (userId) {
-
           fetchRequest()
-        }
-      }, [userId]);
+      }, [fetchRequest]);
   return (
 <div className='w-full flex items-center justify-center'>
       <div className='w-5/6 px-6 drop bg-white shadow-lg  rounded-md h-auto w-3/5 flex-col '>
@@ -138,8 +129,12 @@ const Friendrequest = () => {
                 <span className='text-sm text-gray'>{friend.mutual}</span>
             </div>
             </div>
-
-            <div className=' gap-4   flex justify-center rounded-md cursor-pointer border-cta'><button onClick={()=>{handleAddfriend(friend);dispatch(removeRequest(friend.id))}} className='text-cta border hover:bg-cta p-1 rounded-md flex border-cta justify-center hover:text-white w-1/2'>Confirm</button><button onClick={()=>{dispatch(removeRequest(friend.id))}} className='text-red border hover:bg-red p-1 border-red rounded-md flex justify-center hover:text-white w-1/2'>Delete</button></div>
+           
+            <div className='flex gap-5'>
+                          <button onClick={()=>{acceptRequest(friend.senderId)}} className=" text-sm hover:text-cta">
+                          Confirm</button>                
+                           <button onClick={()=>{cancelRequest(friend.senderId)}} className='text-sm hover:text-red'>Delete</button>
+                          </div>
          </div>
          </div>
             ))}

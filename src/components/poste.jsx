@@ -11,11 +11,9 @@ import { NavLink } from 'react-router-dom';
 
 const Post = () => {
   const [comment, setComment] = useState(null);
-
   const [saved, setSaved] = useState({});
   const [postComment, setPostComment] = useState('');
   const [liked, setLiked] = useState(false);
-
   const [commentdropdown,setCommentDropdown] = useState(null);
   const dispatch = useDispatch();
   const [userData, setUserData] = useState([]);
@@ -32,7 +30,6 @@ const Post = () => {
   const [nestedVisibleReplies, setNestedVisibleReplies] = useState({});
   const [like,setLike] = useState(false);
   const [likeCount,setLikeCount] = useState({});
-  const [postsWithUsernames, setPostsWithUsernames] = useState([]);
   const [users,setUsers] = useState()
   const [animationPostId, setAnimationPostId] = useState(null);
   const [isTooltipVisible, setTooltipVisible] = useState(null);
@@ -42,7 +39,6 @@ const Post = () => {
   const [file,setFile] = useState()
   const {selectedphotocomment} = useSelector((state)=>state.photo)
 
-
   const showLikedBy = (id)=>{
     setLikedBy(id)
     setTooltipVisible(null)
@@ -50,13 +46,14 @@ const Post = () => {
 
   const closeLikedBy = ()=>{
     setLikedBy(false)
+    console.log(liked)
   }
 
   const handleHoverlike = useCallback((id)=>{
     setTooltipVisible(id)
     fetchLikedBy(id)
   },[])
-  
+
   const closeDelete = ()=>{
     setDeletePopup(false)
   }
@@ -222,22 +219,7 @@ const Post = () => {
     }
   }, [userId]);
 
-  useEffect(() => {
-    if (userData.length && user.length) {
-        const userMap = {};
-        user.forEach(user => {
-            userMap[user.userid] = user.name;
-        });
 
-        const updatedPosts = userData.map(post => ({
-            ...post,
-            userName: userMap[post.userId] || 'Unknown User' // Fallback if userId not found
-        }));
-
-        setPostsWithUsernames(updatedPosts);
-        console.log(postsWithUsernames)
-    }
-}, [userData, user,postsWithUsernames]);
 
   // Handle saved posts
   useEffect(() => {
@@ -251,11 +233,8 @@ const Post = () => {
     localStorage.setItem('savedPosts', JSON.stringify(saved));
   }, [saved]);
 
-  // Handle dropdown menu actions
-
   const toggleCommentDropdown = (commentId)=>{
     setCommentDropdown(prev => (prev === commentId? null : commentId))
-    
   }
 
 
@@ -288,20 +267,18 @@ const Post = () => {
       if (response.ok) {
         const data = await response.json();
         // Check if the logged-in user is in the list of users who liked the post
-
         const userHasLiked = data.some(like => like.userId === userId);
         setLike(prev => ({
           ...prev,
           [postId]: userHasLiked
         }));
-        console.log(like)
       } else {
         console.error('Failed to fetch likes:', response.status);
       }
     } catch (error) {
       console.error('Error fetching likes:', error);
     }
-  },[like,userId]);
+  },[userId]);
 
   
 
@@ -381,14 +358,13 @@ const Post = () => {
     }
   };
 
-  const handleImageChange = (event,type) => {
+  const handleImageChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) { 
         const fileObject = { name: selectedFile };
             setFile(fileObject.name.name); 
             dispatch(selectPhotoComment(fileObject))
             console.log(file)
-            
     }
 };
 
@@ -417,7 +393,6 @@ const Post = () => {
         toggleReplies(replyId); 
         fetchComments() // Close the reply input
         dispatch(selectPhotoComment(null))
-
       } else {
         console.log('An error occurred. Please try again later.');
         setPostComment('');
@@ -562,7 +537,6 @@ const Post = () => {
     }
   }, [userData]);
 
-  
   return (
     <form onSubmit={handleSubmit} className="rounded-md flex flex-col bg-white gap-6 shadow-lg w-full py-2 px-4">
       {userData?.map((post) =>{ 
@@ -634,8 +608,8 @@ const Post = () => {
           <div className='relative flex items-center'>
       <Icon
         onClick={() => handleLike(post.postId)}
-        className={`cursor-pointer h-7 w-7 ${liked[post.postId] ? 'text-red' : 'text-gray-700'} ${animationPostId === post.postId ? 'like-animate' : ''}`}
-        icon={liked[post.postId] ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"}
+        className={`cursor-pointer h-7 w-7 ${like[post.postId] ? 'text-red' : 'text-gray-700'} ${animationPostId === post.postId ? 'like-animate' : ''}`}
+        icon={like[post.postId] ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"}
         width='1.2em'
         height='1.2em'
       />
@@ -746,7 +720,7 @@ style={{
 <div className='flex flex-col'>
 <p className='font-semibold'>{commentUser?.UserName}</p>
 <span className='text-sm'>{commenttime}</span>
-{comment.imagePath && <img className='w-52 h-44' src={`http://localhost:8086${comment.imagePath}`} alt='' />}
+{comment.imagePath && <img className='w-52 h-44' src={`http://localhost:8086${comment.imagePath}`} alt={`http://localhost:8086${comment.imagePath}`} />}
 </div>
 </div>
 <div className="flex flex-col items-center relative"> {/* Ensure dropdown menu is positioned correctly */}
@@ -823,4 +797,3 @@ style={{
 };
 
 export default Post;
-

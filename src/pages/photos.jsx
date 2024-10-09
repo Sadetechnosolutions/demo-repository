@@ -157,7 +157,7 @@ const Photos = () => {
           <div key={photo.id} className='inline-block cursor-pointer relative overflow-hidden'>
 <NavLink key={photo.id} to={`/photos/${photo.id}`}>
   <div className='relative cursor-pointer'>
-    <img className='w-80 md:h-64 rounded-lg' src={photo.name} />
+    <img className='w-80 md:h-64 rounded-lg' src={photo.name} alt='' />
     <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 hover:opacity-80 rounded-lg flex items-center justify-center">
     <p className="text-white flex items-center justify-center gap-2 md:w-full i know an assassin when i see one paaka azhaga irukka nu tha mannichu vidren avan varamaatan di yaaru pa athu crowd uh enakku therinjavangala achum yarna maati tholaingalen da ithu mattu enga meera ka ku therinjuthu rocket raja oru thirudan ah whats a crocodile doing in perungalathur ethayachum sollu ya w-40 md:text-lg font-semibold"> <Icon className='text-cta' icon="ph:heart-fill" width="1.4em" height="1.4em" />{photo.likes ? photo.likes : 0} </p>
     </div>

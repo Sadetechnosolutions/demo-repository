@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useCallback } from 'react'
 import { Icon } from '@iconify/react';
 import { useSelector,useDispatch } from 'react-redux';
 import { removeFriend } from '../slices/friendlistslice';
@@ -14,6 +14,7 @@ const Friendlist = () => {
   const [friends,setFriends] = useState()
   const userId = useSelector((state)=>state.auth.userId)
   const userID = useParams()
+
 
   const removefromlist = (id)=>{
     dispatch(removeFriend(id))
@@ -58,7 +59,7 @@ const isCurrentUser = parseInt(userID) === userId;
     setDropdown(false)
   }
 
-  const fetchfriends = async () => {
+  const fetchfriends = useCallback(async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -83,11 +84,11 @@ const isCurrentUser = parseInt(userID) === userId;
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-    };
+    },[userId,userID,isCurrentUser]);
   
     useEffect(()=>{
       fetchfriends()
-    },[])
+    },[fetchfriends])
  return (
     <div className=' flex w-full items-center justify-center'>
       <div className='w-5/6 drop bg-white shadow-lg h-auto px-6 flex-col '>

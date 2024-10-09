@@ -638,8 +638,8 @@ console.log(typeof(comment))
             <div className='flex items-center'>
           <Icon
             onClick={() => handleLike(post.postId)}
-            className={`cursor-pointer h-7 w-7 ${liked[post.postId] ? 'text-pink' : 'text-gray-700'} ${animationPostId === post.postId ? 'like-animate' : ''}`}
-            icon={liked[post.postId] ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"}
+            className={`cursor-pointer h-7 w-7 ${like[post.postId] ? 'text-pink' : 'text-gray-700'} ${animationPostId === post.postId ? 'like-animate' : ''}`}
+            icon={like[post.postId] ? "material-symbols-light:favorite" : "material-symbols-light:favorite-outline"}
             width='1.2em'
             height='1.2em'
           /> {likeCount[post.postId] || 0}</div>
