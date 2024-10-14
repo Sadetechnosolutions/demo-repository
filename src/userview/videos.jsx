@@ -197,12 +197,12 @@ const handleImageChange = (event) => {
           <div className='flex flex-wrap gap-8 p-2'>
             { parseInt(userID)=== userId && <div onClick={openuploadVideo} className='w-80 h-64 flex bg-gray-50 cursor-pointer items-center justify-center'>
             <label className='cursor-pointer'>
-              <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em"   />Upload</span>
+              <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em" />Upload</span>
             </label>
           </div> }
            {videos?.slice().reverse().map((video)=>(
             <div key={video.postId}>
-                <Link to={`/videos/${video.postId}`}>
+                <Link to={`/post/${userID}/${video.postId}`}>
             <div className='w-52 rounded-md'>
             <Player controls>
                 <source src={video.videoUrl} />

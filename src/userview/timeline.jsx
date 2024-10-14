@@ -559,7 +559,7 @@ console.log(typeof(comment))
           {post.postType === 'IMAGE' ? (
             <img className='w-full h-[40rem]' src={`http://localhost:8086${post.imageUrl}`} alt={`http://localhost:8086${post.imageUrl}`} />
           ) : post.postType === 'VIDEO' ? (
-            <video className='w-full h-[40rem]' controls>
+            <video className='w-full h-[40rem] bg-black' controls>
               <source src={`http://localhost:8080/posts${post.videoUrl}`} type="video/mp4" />
               Your browser does not support the video tag.
             </video>

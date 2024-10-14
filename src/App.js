@@ -51,6 +51,7 @@ import Sliper from './pages/uploadreels.';
 import DisplayReels from './pages/displayreels';
 import OneSignal from 'react-onesignal';
 import Shortcut from './components/shortcut';
+import Displayphoto from './pages/displayposts';
 
 Modal.setAppElement('#root');
 
@@ -122,11 +123,11 @@ function App() {
         <Route path='/videosview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><DefaultShortcut><VideosUser /></DefaultShortcut></DefaultWithHeaderUser></DefaultWithNavbar>} />
         <Route path='/profileview' element={<DefaultWithNavbar><DefaultWithHeaderUser><ProfileView /></DefaultWithHeaderUser></DefaultWithNavbar>}/>
         <Route path='/friendsview/:userID' element={<DefaultWithNavbar><DefaultWithHeaderUser><DefaultShortcut><Friendview /></DefaultShortcut></DefaultWithHeaderUser></DefaultWithNavbar>} />
-       
         <Route path='*' element={<ErrorPage />} />
         <Route path='test' element={ <Sliper />} />
         <Route path='/Reels/:userID' element={<DefaultWithNavbar><DisplayReels /></DefaultWithNavbar>} />
         <Route path='/chat' element={<Chat />} />
+        <Route path='/post/:userID/:postID' element={<DefaultWithNavbar><Displayphoto /></DefaultWithNavbar>} />
       </Routes>
     </Router>
     </>

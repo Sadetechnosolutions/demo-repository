@@ -135,8 +135,16 @@ const fetchNotification = useCallback(async () => {
           },
       });
 
+      const likeApi = await fetch(`http://localhost:8080/likes/notification/${userId}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    });
+
       const followData = await followApi.json();
       const requestData = await requestApi.json();
+      const likeData = await likeApi.json();
 
       // Log the responses to check their structure
       console.log('Follow Notifications:', followData);
@@ -144,7 +152,8 @@ const fetchNotification = useCallback(async () => {
 
       const combinedNotifications = [
           ...(Array.isArray(followData.notification) ? followData.notification : []),
-          ...(Array.isArray(requestData.notification) ? requestData.notification : [])
+          ...(Array.isArray(requestData.notification) ? requestData.notification : []),
+          ...(Array.isArray(likeData.notification) ? likeData.notification : [])
       ];
 
       setNotifications(combinedNotifications);
@@ -152,8 +161,6 @@ const fetchNotification = useCallback(async () => {
       console.error('Error fetching notifications:', error);
   }
 },[userId]);
-
-
 
   
 // const fetchReqNotification = async () => {
@@ -364,7 +371,6 @@ const fetchNotification = useCallback(async () => {
                     })}
                              <span className={`absolute top-0 right-0 w-4 h-4 text-xs rounded-full ${header.count > 0 ?'bg-red' : ''} text-white flex items-center justify-center`}> {header.count > 0 ? header.count : ''}</span>
                   </span>
-                
 
                 </button></NavLink>
                 {activeSection === header.id && header.title==='Friend Request' && (
@@ -380,7 +386,7 @@ const fetchNotification = useCallback(async () => {
                         <div key={item.id} className=" text-sm notification-item text-gray-800 flex flex-col hover:bg-gray-50 justify-between cursor-pointer">
                           <div className='flex flex-col px-4 h-20 border:gray-300 py-4  border-b text-sm '>
                           <div className='flex justify-between items-center justify-center'>
-                            <div className='flex gap-2 items-center'>
+                          <div className='flex gap-2 items-center'>
                           <img className='rounded-full w-8 h-8' alt='alt' src='profile.jpg' />
                           <div className='flex flex-col '><div className='hover:text-cta'>{item.senderName}</div> <div className='text-gray-400 text-[12px]'>{}</div></div>
                           </div>
@@ -390,7 +396,6 @@ const fetchNotification = useCallback(async () => {
                           <Icon className='hover:text-cta text-gray-500' icon="mdi:people-tick" width="1.4em" height="1.4em" /></button>                
                            <button onClick={()=>{cancelRequest(item.senderId)}} className='text-sm hover:text-red'><Icon icon="material-symbols-light:delete" width="1.2em" height="1.2em" /></button>
                           </div>
-                          
                           <div className=' text-gray-400 text-time'>{item.time}</div>
                           </div>
                           </div>
@@ -422,7 +427,7 @@ const fetchNotification = useCallback(async () => {
                               <div>
                           <img className='rounded-full w-8 h-8' alt='alt' src={`http://localhost:8086${item.profileImagePath}`} />
                           </div>
-                          <div className='flex flex-col'>
+                          <div className='flex gap-1'>
                             <div className='hover:text-cta'>{item.name}</div> 
                             <div className='text-gray-600 font-semibold text-md'>{item.message}</div>
                             {item.message.includes('birthday')&&(<p className='text-xs text-cta'> Wish him a Happy birthday!</p>)}

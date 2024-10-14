@@ -10,7 +10,6 @@ import { NavLink } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { selectPost } from '../slices/postslice';
 
-
 const PhotosUser = () => {
   const [uploadPhoto, showuploadPhoto] = useState(false);
   const [postPhoto,showPost] = useState(false);
@@ -179,7 +178,7 @@ const PhotosUser = () => {
         },}}
   isOpen={uploadPhoto} onRequestClose={closeuploadPhoto}>
         <div className='flex  w-full items-center justify-center'>
-      <div className='w-1/2 h-96 flex flex-col p-4 gap-4 shadow-lg rounded-md bg-white'>
+      <div className=' h-96 flex flex-col p-4 gap-4 shadow-lg rounded-md bg-white'>
         <div className='flex justify-between p-2 items-center justify-center'><span className='font-semibold text-lg'>Upload</span><div onClick={closeuploadPhoto} className='cursor-pointer bg-gray-200 p-1 hover:bg-red hover:text-white rounded-full'><IoClose className='h-5 w-5 cursor-pointer'/></div></div>
         <div className='w-full h-full flex flex-col items-center gap-6 justify-center'>
         <div className='p-2 cursor-pointer border flex items-center justify-center gap-1 w-1/2 rounded-md border-cta text-cta hover:bg-cta hover:text-white'>
@@ -249,7 +248,7 @@ const PhotosUser = () => {
         <div className='flex flex-col w-5/6 px-5 h-auto py-2 shadow-lg drop'>
         <div className='font-semibold text-lg p-4'>Photos ({images?.length})</div>
         <div className='flex flex-wrap p-2 gap-8'>
-          {parseInt(userID) === userId && <div onClick={openuploadPhoto} className='w-80 h-64 flex bg-gray-50 cursor-pointer items-center justify-center'>
+          {parseInt(userID) === userId && <div onClick={openuploadPhoto} className='w-48 h-48 flex bg-gray-50 cursor-pointer items-center justify-center'>
           <label className='cursor-pointer'>
           <span className='flex flex-col items-center gap-2'><Icon className='text-cta' icon="zondicons:add-solid" width="1.2em" height="1.2em"   />Upload</span>
           </label>
@@ -257,7 +256,7 @@ const PhotosUser = () => {
         {images?.map((photo)=>{
           return(
           <div key={photo.postId} className='inline-block cursor-pointer relative overflow-hidden'>
-<NavLink key={photo.postId} to={`/photos/${photo.id}`}>
+  <NavLink to={`/post/${userID}/${photo.postId}`}>
   <div className='relative cursor-pointer'>
   <img className='w-80 md:h-64 rounded-lg' src={`http://localhost:8086${photo.imageUrl}`} alt={`http://localhost:8086${photo.imageUrl}`} />
     <div className="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 hover:opacity-80 rounded-lg flex items-center justify-center">

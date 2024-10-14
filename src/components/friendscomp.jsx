@@ -95,7 +95,6 @@ const fetchfriends = useCallback( async () => {
   useEffect(()=>{
     fetchfriends()
   },[fetchfriends])
-
   return (
 <div className='flex py-4 px-6 drop bg-white shadow-lg gap-3 rounded-md h-auto flex-col'>
   <div className='flex justify-between font-semibold items-center'>

@@ -144,7 +144,6 @@ const ProfileheaderUser = () => {
           // Assuming data has a list of followers
           setIsFollowed(data.users.some((follower) => follower.id === userId));
         },[userId]);
-        
 
         const fetchFollowers = useCallback(async () => {
           try {
@@ -173,7 +172,6 @@ const ProfileheaderUser = () => {
             console.error('Error fetching user data:', error);
           }
         },[handleFollowStatus,isFollowed,userID]);
-
 
 const fetchFollowing = useCallback(async () => {
 try {

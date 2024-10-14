@@ -97,7 +97,7 @@ const isCurrentUser = parseInt(userID) === userId;
         setFriends(data);
         // Check if the user is followed
         setIsFriends(
-          myFriends.friends.some(friend => friend.id === friends.friends.some((follower)=>follower.id))
+          myFriends.friends.some(friend => friend.id === friends?.friends.some((follower)=>follower.id))
         );
         
       } else {
@@ -106,7 +106,7 @@ const isCurrentUser = parseInt(userID) === userId;
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
-    },[friends.friends,isCurrentUser,myFriends.friends,userID,userId]);
+    },[friends?.friends,isCurrentUser,myFriends?.friends,userID,userId]);
   
     useEffect(()=>{
       fetchfriends()

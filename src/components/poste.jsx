@@ -8,7 +8,6 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import { NavLink } from 'react-router-dom';
 
-
 const Post = () => {
   const [comment, setComment] = useState(null);
   const [saved, setSaved] = useState({});
@@ -568,10 +567,10 @@ const Post = () => {
         <div className='w-5/3 flex flex-col gap-4 shadow-lg py-4 px-4 relative' key={post.postId}>
           <div className="flex justify-between items-center">
             <div className="flex gap-2 items-center">
-              <img className="rounded-full w-11 h-11" src={`http://localhost:8086${post?.profileImagePath}`} alt="Profile" />
+            <NavLink to={`/user/${post.userId}`}><img className="rounded-full w-11 h-11" src={`http://localhost:8086${post?.profileImagePath}`} alt="Profile" /></NavLink>
               <div className="flex flex-col">
                 <span className="font-semibold">
-            <span key={user.id} className="font-semibold">{post.name}</span>
+            <NavLink to={`/user/${post.userId}`}><span key={user.id} className="font-semibold">{post.name}</span></NavLink>
          
        </span>
                 <span className="text-sm text-gray-600">{timeDifference}</span>
@@ -597,9 +596,9 @@ const Post = () => {
           </div>
           <span>{post.description}</span>
           {post.postType === 'IMAGE' ? (
-            <img className='w-full h-[40rem]' src={`http://localhost:8086${post.imageUrl}`} alt='' />
+            <img className='w-full h-[35rem]' src={`http://localhost:8086${post.imageUrl}`} alt='' />
           ) : post.postType === 'VIDEO' ? (
-            <video className='w-full h-[40rem]' controls>
+            <video className='w-full bg-black h-[35rem]' controls>
               <source src={`http://localhost:8086${post.videoUrl}`} type="video/mp4" />
               Your browser does not support the video tag.
             </video>

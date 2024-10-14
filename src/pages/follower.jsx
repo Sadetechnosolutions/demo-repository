@@ -38,7 +38,6 @@ fetchFollowers()
 },[fetchFollowers])
 
     useEffect(() => {
-      // Simulate loading delay
       const timer = setTimeout(() => {
         setLoaded(true);
       }, 500); // Adjust the delay time as needed (in milliseconds)
@@ -68,6 +67,9 @@ fetchFollowers()
           {followers.id !== userId ?  <button className="p-2 flex ga hover:bg-cta hover:text-white items-center border rounded-md border-cta text-cta font-semibold"><Icon icon="ic:baseline-add" />Follow</button> : null}
             </div>
                 ))}
+                <div>
+                  <span><p></p></span>
+                </div>
             </div>
             </div>
         </div>  

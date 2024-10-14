@@ -8,7 +8,6 @@ const Chat = () => {
     const [messageInput, setMessageInput] = useState('');
     const [recipientId, setRecipientId] = useState(2); // Example recipient ID
 
-
     useEffect(() => {
         const socket = new SockJS('http://localhost:8091/ws');
         const client = new Client({
