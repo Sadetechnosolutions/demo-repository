@@ -4,8 +4,11 @@ import com.Sadetechno.like_module.Repository.PostNotificationRepository;
 import com.Sadetechno.like_module.Repository.StatusNotificationRepository;
 import com.Sadetechno.like_module.model.PostNotification;
 import com.Sadetechno.like_module.model.StatusNotification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PostNotificationService {
@@ -26,6 +29,16 @@ public class PostNotificationService {
         postNotificationRepository.save(notification);
     }
     // Additional methods to retrieve notifications can be added here
+
+    @Transactional
+    public void deleteNotificationForPost(Long id,String type){
+        Optional<PostNotification> deletePostNotification = postNotificationRepository.findById(id);
+        if(deletePostNotification.isPresent()){
+            postNotificationRepository.deleteByIdAndType(id,type);
+        }else {
+            throw new IllegalArgumentException("No id found for Post notification");
+        }
+    }
 }
 
 

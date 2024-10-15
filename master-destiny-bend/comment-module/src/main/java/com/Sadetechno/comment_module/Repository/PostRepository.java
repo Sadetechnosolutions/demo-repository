@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostNotification,Long> {
+    void deleteByIdAndType(Long id, String type);
 }

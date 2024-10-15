@@ -43,7 +43,6 @@ public class LikeService {
             Like like = new Like();
             like.setPostId(postId);
             like.setUserId(userId);
-
             UserDTO userDetail = userFeignClient.getUserById(userId);
             String profileImagePath = userDetail.getProfileImagePath();
             String userEmail = userDetail.getEmail();  // Get the email
@@ -52,12 +51,12 @@ public class LikeService {
             Long postOwnerId = postFeignClient.getPostWithUserDetails(postId).getUserId();
             logger.info("Has found post owner id {} of post id {}",postOwnerId,postId);
 
-
-            // Create a notification after saving the new request
-            String notificationMessage = "liked your post.";
-            postNotificationService.createNotification(userId, notificationMessage, userEmail,"POST-LIKE" ,like.getPostId(),userName,profileImagePath,postOwnerId);
-
-            return likeRepository.save(like);
+            Like savedLike = likeRepository.save(like);
+           if(!userId.equals(postOwnerId)){
+               String notificationMessage = "liked your post.";
+               postNotificationService.createNotification(userId, notificationMessage, userEmail, "POST-LIKE", postId, userName, profileImagePath, postOwnerId);
+           }
+           return savedLike;
         }
     }
 
@@ -75,5 +74,7 @@ public class LikeService {
         Optional<Like> existingLike = likeRepository.findByPostIdAndUserId(postId, userId);
         return existingLike.isPresent();
     }
+
+
 
 }

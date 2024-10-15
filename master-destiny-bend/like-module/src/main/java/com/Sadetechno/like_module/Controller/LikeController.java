@@ -5,16 +5,16 @@ import com.Sadetechno.like_module.DTO.StatusNotificationDTO;
 import com.Sadetechno.like_module.Repository.PostNotificationRepository;
 import com.Sadetechno.like_module.Repository.ReelsNotificationRepository;
 import com.Sadetechno.like_module.Repository.StatusNotificationRepository;
-import com.Sadetechno.like_module.Service.LikeReelsService;
-import com.Sadetechno.like_module.Service.LikeService;
-import com.Sadetechno.like_module.Service.LikeStatusService;
+import com.Sadetechno.like_module.Service.*;
 import com.Sadetechno.like_module.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,6 +29,15 @@ public class LikeController {
 
     @Autowired
     private LikeReelsService likeReelsService;
+
+    @Autowired
+    private PostNotificationService postNotificationService;
+
+    @Autowired
+    private ReelsNotificationService reelsNotificationService;
+
+    @Autowired
+    private StatusNotificationService statusNotificationService;
 
     @Autowired
     private PostNotificationRepository postNotificationRepository;
@@ -108,6 +117,7 @@ public class LikeController {
     public PostNotificationDTO getNotificationsForUser(@PathVariable Long postOwnerId) {
         List<PostNotification> notifications = postNotificationRepository.findAll().stream()
                 .filter(notification -> notification.getPostOwnerId().equals(postOwnerId))
+                .sorted(Comparator.comparing(PostNotification::getCreatedAt).reversed())
                 .collect(Collectors.toList());
 
         int count = notifications.size();
@@ -118,6 +128,7 @@ public class LikeController {
     public StatusNotificationDTO getNotificationForStatusUser(@PathVariable Long statusOwnerId){
         List<StatusNotification> statusNotifications = statusNotificationRepository.findAll().stream()
                 .filter(statusNotification -> statusNotification.getStatusOwnerId().equals(statusOwnerId))
+                .sorted(Comparator.comparing(StatusNotification::getCreatedAt).reversed())
                 .collect(Collectors.toList());
 
         int count = statusNotifications.size();
@@ -128,9 +139,36 @@ public class LikeController {
     public ReelsNotificationDTO getNotificationForReelUser(@PathVariable Long reelsOwnerId){
         List<ReelsNotification> reelsNotifications = reelsNotificationRepository.findAll().stream()
                 .filter(reelsNotification -> reelsNotification.getReelsOwnerId().equals(reelsOwnerId))
+                .sorted(Comparator.comparing(ReelsNotification::getCreatedAt).reversed())
                 .collect(Collectors.toList());
 
         int count = reelsNotifications.size();
         return new ReelsNotificationDTO(reelsNotifications,count);
+    }
+    @DeleteMapping("notification/{id}/{type}")
+    public ResponseEntity<String> deleteNotification(@PathVariable Long id,@PathVariable String type){
+        switch (type) {
+            case "POST-LIKE" -> postNotificationService.deleteNotificationForPost(id, type);
+            case "REEL-LIKE" -> reelsNotificationService.deleteNotificationForReels(id, type);
+            case "STATUS-LIKE" -> statusNotificationService.deleteNotificationForStatus(id, type);
+            default -> throw new IllegalArgumentException("No id found or type mismatch.");
+        }
+        return ResponseEntity.ok("Notification deleted");
+    }
+
+    @DeleteMapping("/notification/delete-all")
+    public ResponseEntity<String> deleteAll(){
+        List<PostNotification> notifications = postNotificationRepository.findAll();
+        List<ReelsNotification> notifications1 = reelsNotificationRepository.findAll();
+        List<StatusNotification> notifications2 = statusNotificationRepository.findAll();
+
+        if(!notifications.isEmpty() && !notifications1.isEmpty() && !notifications2.isEmpty()){
+            postNotificationRepository.deleteAll();
+            reelsNotificationRepository.deleteAll();
+            statusNotificationRepository.deleteAll();
+        }else {
+            throw new IllegalArgumentException("No notifications to delete.");
+        }
+        return ResponseEntity.ok("Notifications deleted.");
     }
 }

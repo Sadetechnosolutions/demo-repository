@@ -6,6 +6,7 @@ import com.Sadetechno.comment_module.FeignClient.PostFeignClient;
 import com.Sadetechno.comment_module.FeignClient.UserFeignClient;
 import com.Sadetechno.comment_module.Repository.CommentRepository;
 import com.Sadetechno.comment_module.model.Comment;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,26 +39,22 @@ public class CommentService {
     private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
 
     public CommentResponse createComment(CommentRequest request, MultipartFile file) throws IOException {
+        String filePath = null;
 
-        String filePath = null;  // Initialize filePath as null
-
-        // Check if the file is provided and not empty
+        // Handle file upload logic
         if (file != null && !file.isEmpty()) {
-            // Upload the file and set the file path
             filePath = fileUploadService.uploadFile(file);
-
-            // Check if the uploaded file is an image, otherwise throw an exception
             String contentType = file.getContentType();
             if (contentType != null && contentType.startsWith("image")) {
-                logger.info("Image uploaded.");
+                logger.info("Image uploaded successfully.");
             } else {
-                throw new IllegalArgumentException("Video content is not allowed.");
+                throw new IllegalArgumentException("Only image uploads are allowed. Video content is not permitted.");
             }
         } else {
-            // If no file is uploaded, log that no image is attached
-            logger.info("No file uploaded, skipping image path.");
+            logger.info("No file uploaded, proceeding without an image.");
         }
 
+        // Create Comment entity
         Comment comment = new Comment();
         comment.setImagePath(filePath);
         comment.setPostId(request.getPostId());
@@ -65,42 +62,80 @@ public class CommentService {
         comment.setRepliedToUserId(request.getRepliedToUserId());
         comment.setTextContent(request.getTextContent());
         comment.setCreatedAt(LocalDateTime.now());
-        comment.setParentIdName(userFeignClient.getUserById(request.getParentId()).getName());
 
-        UserDTO userDTO = userFeignClient.getUserById(comment.getUserId());
+        // Fetch user information for comment userId
+        UserDTO userDTO = fetchUserById(request.getUserId());
         String name = userDTO.getName();
-        String email = userDTO.getEmail();
         String profileImagePath = userDTO.getProfileImagePath();
 
+        // Check if the comment is a reply to another comment (parentId exists)
         if (request.getParentId() != null) {
+            // Fetch parent comment
             Comment parentComment = commentRepository.findById(request.getParentId())
                     .orElseThrow(() -> new IllegalArgumentException("Parent comment not found"));
+
             comment.setParentComment(parentComment);
 
-            UserDTO repliedToUserDTO = userFeignClient.getUserById(parentComment.getUserId());
+            // Set parent ID's user name
+            UserDTO parentUserDTO = fetchUserById(parentComment.getUserId());
+            comment.setParentIdName(parentUserDTO.getName());
+
+            // Create a reply notification
             String replyMessage = name + " replied to your comment.";
-            logger.info("Notification sent successfully to user id {}",parentComment.getUserId());
-
             Long postOwnerId = postFeignClient.getPostWithUserDetails(comment.getPostId()).getUserId();
-
-            postNotificationService.createNotification(comment.getUserId(), replyMessage, repliedToUserDTO.getEmail(),
-                    "COMMENT-REPLY", comment.getPostId(), name, profileImagePath, parentComment.getUserId(),postOwnerId);
-        }else{
-            // Notify post owner (for new comments)
-            // Assuming that the Post service provides the post owner's user ID
-            Long userId = comment.getUserId();
-            UserDTO postOwnerDTO = userFeignClient.getUserById(userId);
+            postNotificationService.createNotification(
+                    comment.getUserId(),
+                    replyMessage,
+                    parentUserDTO.getEmail(),
+                    "COMMENT-REPLY",
+                    comment.getPostId(),
+                    name,
+                    profileImagePath,
+                    parentComment.getUserId(),
+                    postOwnerId
+            );
+            logger.info("Reply notification sent to userId: {}", parentComment.getUserId());
+        } else {
+            // New comment on a post, notify the post owner
+            Long postOwnerId = postFeignClient.getPostWithUserDetails(comment.getPostId()).getUserId();
             String commentMessage = name + " commented on your post.";
-
-            Long postOwnerId = postFeignClient.getPostWithUserDetails(comment.getPostId()).getUserId();
-
-            postNotificationService.createNotification(userId, commentMessage, postOwnerDTO.getEmail(),
-                    "POST-COMMENT", comment.getPostId(), name, profileImagePath, null,postOwnerId);
+            postNotificationService.createNotification(
+                    comment.getUserId(),
+                    commentMessage,
+                    userDTO.getEmail(),
+                    "POST-COMMENT",
+                    comment.getPostId(),
+                    name,
+                    profileImagePath,
+                    null,
+                    postOwnerId
+            );
+            logger.info("Comment notification sent to post owner.");
         }
 
+        // Save the comment and return the response
         Comment savedComment = commentRepository.save(comment);
         return mapToCommentResponse(savedComment);
     }
+
+    /**
+     * Fetches the user details using Feign Client and handles possible errors.
+     *
+     * @param userId The ID of the user to be fetched
+     * @return UserDTO The user details
+     */
+    private UserDTO fetchUserById(Long userId) {
+        try {
+            return userFeignClient.getUserById(userId);
+        } catch (FeignException.NotFound e) {
+            logger.error("User not found with ID: {}", userId);
+            throw new IllegalArgumentException("User with ID " + userId + " not found.");
+        } catch (Exception e) {
+            logger.error("Error while fetching user with ID: {}", userId, e);
+            throw new RuntimeException("Error fetching user information.");
+        }
+    }
+
 
     public List<CommentResponse> getCommentsByPostId(Long postId) {
         List<Comment> comments = commentRepository.findByPostIdAndParentCommentIsNull(postId);

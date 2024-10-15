@@ -4,9 +4,7 @@ import com.Sadetechno.comment_module.Repository.CommentStatusRepository;
 import com.Sadetechno.comment_module.Repository.PostRepository;
 import com.Sadetechno.comment_module.Repository.ReelsRepository;
 import com.Sadetechno.comment_module.Repository.StatusRepository;
-import com.Sadetechno.comment_module.Service.CommentReelsService;
-import com.Sadetechno.comment_module.Service.CommentService;
-import com.Sadetechno.comment_module.Service.CommentStatusService;
+import com.Sadetechno.comment_module.Service.*;
 import com.Sadetechno.comment_module.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.management.Notification;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -48,6 +47,15 @@ public class CommentController {
 
     @Autowired
     private StatusRepository statusRepository;
+
+    @Autowired
+    private PostNotificationService postNotificationService;
+
+    @Autowired
+    private ReelsNotificationService reelsNotificationService;
+
+    @Autowired
+    private StatusNotificationService statusNotificationService;
 
     @PostMapping
     public ResponseEntity<CommentResponse> createComment(
@@ -162,5 +170,32 @@ public class CommentController {
         } else {
             return "application/octet-stream";
         }
+    }
+
+    @DeleteMapping("/notification/{id}/{type}")
+    public ResponseEntity<String> deleteNotification(@PathVariable Long id,@PathVariable String type){
+        switch (type){
+            case "POST-COMMENT", "COMMENT-REPLY" -> postNotificationService.deleteNotificationForPost(id, type);
+            case "REELS-COMMENT" -> reelsNotificationService.deleteNotificationForReels(id, type);
+            case "STATUS-COMMENT" -> statusNotificationService.deleteNotificationForStatus(id, type);
+            default -> throw new IllegalArgumentException("No id found or type mismatch.");
+        }
+        return ResponseEntity.ok("Notification deleted.");
+    }
+
+    @DeleteMapping("/notification/delete-all")
+    public ResponseEntity<String> deleteAll(){
+        List<PostNotification> notifications = postRepository.findAll();
+        List<ReelsNotification> notifications1 = reelsRepository.findAll();
+        List<StatusNotification> notifications2 = statusRepository.findAll();
+
+        if(!notifications.isEmpty() && !notifications1.isEmpty() && !notifications2.isEmpty()){
+            postRepository.deleteAll();
+            reelsRepository.deleteAll();
+            statusRepository.deleteAll();
+        }else {
+            throw new IllegalArgumentException("No notifications to delete.");
+        }
+        return ResponseEntity.ok("Notifications deleted.");
     }
 }

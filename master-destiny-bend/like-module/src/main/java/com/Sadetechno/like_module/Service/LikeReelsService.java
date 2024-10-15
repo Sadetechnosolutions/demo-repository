@@ -45,12 +45,14 @@ public class LikeReelsService {
 
             Long reelsOwnerId = reelsFeignClient.getUserDetailsByReelsId(reelsId).getUserId();
 
+            LikeReels savedLikeReels = likeReelsRepository.save(likeReels);
+
             // Create a notification after saving the new request
-            String notificationMessage = "liked your reels.";
-            reelsNotificationService.createNotificationForReels(userId, notificationMessage, userEmail,"REEL-LIKE" , likeReels.getReelsId(), userName,profileImagePath,reelsOwnerId);
-
-
-            return likeReelsRepository.save(likeReels);
+            if (!userId.equals(reelsOwnerId)) {
+                String notificationMessage = "liked your reels.";
+                reelsNotificationService.createNotificationForReels(userId, notificationMessage, userEmail,"REEL-LIKE" , likeReels.getReelsId(), userName,profileImagePath,reelsOwnerId);
+            }
+           return savedLikeReels;
         }
     }
 }

@@ -48,7 +48,7 @@ public class FollowService {
         String notificationMessage = follower.getName() + " started following you.";
         String profileImagePath = follower.getProfileImagePath();
 
-        notificationService.createNotification(followingId, notificationMessage, following.getEmail(),profileImagePath);
+        notificationService.createNotification(followingId, notificationMessage, following.getEmail(),profileImagePath,"FOLLOW");
 
         followRepository.save(follow);
     }

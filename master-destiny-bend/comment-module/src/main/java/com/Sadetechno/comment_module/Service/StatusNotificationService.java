@@ -1,9 +1,13 @@
 package com.Sadetechno.comment_module.Service;
 
 import com.Sadetechno.comment_module.Repository.StatusRepository;
+import com.Sadetechno.comment_module.model.ReelsNotification;
 import com.Sadetechno.comment_module.model.StatusNotification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class StatusNotificationService {
@@ -24,5 +28,16 @@ public class StatusNotificationService {
 
         statusRepository.save(notification);
 
+    }
+
+    @Transactional
+    public void deleteNotificationForStatus(Long id, String type) {
+        Optional<StatusNotification> deleteStatusNotification = statusRepository.findById(id);
+
+        if(deleteStatusNotification.isPresent()){
+            statusRepository.deleteByIdAndType(id,type);
+        }else {
+            throw new IllegalArgumentException("No id found for Reels notification");
+        }
     }
 }
