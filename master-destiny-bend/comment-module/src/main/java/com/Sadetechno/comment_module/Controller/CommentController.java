@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/comments")
-@CrossOrigin(origins = "http://localhost:3000")
 public class CommentController {
 
     @Autowired
