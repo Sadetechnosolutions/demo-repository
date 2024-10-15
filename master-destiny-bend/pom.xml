@@ -63,6 +63,6 @@
         <module>reels-module</module>
         <module>friend-request-module</module>
         <module>websocket-messaging</module>
-
+        <module>notification-module</module>
     </modules>
 </project>
