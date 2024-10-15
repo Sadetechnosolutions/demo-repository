@@ -21,8 +21,6 @@ public class Comment {
 
     private Long postId;
     private Long userId;
-
-    @Column(nullable = false)
     private Long repliedToUserId;
 
     @Column(length = 1000)

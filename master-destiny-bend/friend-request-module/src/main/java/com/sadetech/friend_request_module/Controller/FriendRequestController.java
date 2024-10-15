@@ -6,6 +6,7 @@ import com.sadetech.friend_request_module.Model.FriendRequest;
 import com.sadetech.friend_request_module.Model.Notification;
 import com.sadetech.friend_request_module.Repository.NotificationRepository;
 import com.sadetech.friend_request_module.Service.FriendRequestService;
+import com.sadetech.friend_request_module.Service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,9 @@ public class FriendRequestController {
 
     @Autowired
     private FriendRequestService friendRequestService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private NotificationRepository notificationRepository;
@@ -88,5 +92,21 @@ public class FriendRequestController {
         return new NotificationDTO(notifications,count);
     }
 
+    @DeleteMapping("/notification/{id}/{type}")
+    public ResponseEntity<String> deleteNotification(@PathVariable Long id, @PathVariable String type){
+       notificationService.deleteNotificationForFriendRequest(id,type);
+        return ResponseEntity.ok("Notification Deleted");
+    }
+
+    @DeleteMapping("/notification/delete-all")
+    public ResponseEntity<String> deleteAllNotification(){
+        List<Notification> notifications = notificationRepository.findAll();
+        if(!notifications.isEmpty()){
+            notificationRepository.deleteAll();
+        }else {
+            throw new IllegalArgumentException("No notification found.");
+        }
+        return ResponseEntity.ok("Notification deleted.");
+    }
 
 }

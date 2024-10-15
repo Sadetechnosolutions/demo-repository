@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReelsRepository extends JpaRepository<ReelsNotification,Long> {
+    void deleteByIdAndType(Long id, String type);
 }

@@ -2,8 +2,11 @@ package com.Sadetechno.comment_module.Service;
 
 import com.Sadetechno.comment_module.Repository.PostRepository;
 import com.Sadetechno.comment_module.model.PostNotification;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PostNotificationService {
@@ -28,6 +31,19 @@ public class PostNotificationService {
         // Trigger real-time notification logic (e.g., through OneSignal, WebSocket)
         // Example (OneSignal trigger):
         // oneSignalService.sendNotification(userId, message, postId, type);
+
+
+    }
+
+    @Transactional
+    public void deleteNotificationForPost(Long id, String type) {
+        Optional<PostNotification> deletePostNotification = postRepository.findById(id);
+
+        if(deletePostNotification.isPresent()){
+            postRepository.deleteByIdAndType(id,type);
+        }else {
+            throw new IllegalArgumentException("No id found for Post notification");
+        }
     }
 }
 

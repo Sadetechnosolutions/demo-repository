@@ -26,6 +26,7 @@ public class Notification {
     private String email;
     private String message;
     private String profileImagePath;
+    private String type;
 
     @CreationTimestamp
     private LocalDateTime createdAt;

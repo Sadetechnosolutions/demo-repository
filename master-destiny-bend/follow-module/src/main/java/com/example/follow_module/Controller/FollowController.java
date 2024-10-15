@@ -5,6 +5,7 @@ import com.example.follow_module.DTO.NotificationDTO;
 import com.example.follow_module.Model.Notification;
 import com.example.follow_module.Repository.NotificationRepository;
 import com.example.follow_module.Service.FollowService;
+import com.example.follow_module.Service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,9 @@ public class FollowController {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Autowired
     private NotificationRepository notificationRepository;
@@ -61,6 +65,23 @@ public class FollowController {
 
         int count =  notifications.size();
         return new NotificationDTO(notifications,count);
+    }
+
+    @DeleteMapping("/notification/{id}/{type}")
+    public ResponseEntity<String> deleteNotification(@PathVariable Long id, @PathVariable String type){
+        notificationService.deleteNotificationByIdAndType(id, type);
+        return ResponseEntity.ok("Notification Deleted");
+    }
+
+    @DeleteMapping("/notification/delete-all")
+    public ResponseEntity<String> deleteAllNotification(){
+        List<Notification> notifications = notificationRepository.findAll();
+        if(!notifications.isEmpty()){
+            notificationRepository.deleteAll();
+        }else {
+            throw new IllegalArgumentException("No notification found.");
+        }
+        return ResponseEntity.ok("Notification deleted.");
     }
 }
 
