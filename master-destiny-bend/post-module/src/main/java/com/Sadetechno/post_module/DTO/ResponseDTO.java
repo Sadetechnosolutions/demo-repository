@@ -20,10 +20,10 @@ public class ResponseDTO {
     private String name;
     private Long postId;
     private String description;
-    private String textContent;
     private String imageUrl;
     private String videoUrl;
     private String privacySetting;
     private Date createdAt;
     private PostType postType;
+    private String postVisibility;
 }

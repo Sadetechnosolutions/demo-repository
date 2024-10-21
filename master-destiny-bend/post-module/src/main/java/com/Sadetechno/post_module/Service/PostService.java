@@ -4,12 +4,14 @@ import com.Sadetechno.post_module.FeignClient.UserFeignClient;
 import com.Sadetechno.post_module.Repository.PostRepository;
 import com.Sadetechno.post_module.model.Post;
 import com.Sadetechno.post_module.model.PostType;
+import com.Sadetechno.post_module.model.PostVisibility;
 import com.Sadetechno.post_module.model.PrivacySetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,20 +26,20 @@ public class PostService {
     @Autowired
     private FileUploadService fileUploadService; // Injecting FileUploadService
 
-    public Post createPost(Long userId, String postType, String textContent, MultipartFile imageFile, MultipartFile videoFile, String description, String privacySetting) throws IOException {
+    public Post createPost(Long userId, String postType, MultipartFile imageFile, MultipartFile videoFile, String description, String privacySetting,String postVisibility) throws IOException {
         Post post = new Post();
         PostType type = PostType.valueOf(postType);
         post.setPostType(type);
-        post.setDescription(description);
         post.setUserId(userId);
+        post.setDescription(description);
 
         PrivacySetting privacy = PrivacySetting.valueOf(privacySetting.toUpperCase());
         post.setPrivacySetting(privacy);  // Set privacy setting
 
+        PostVisibility postVisibility1 = PostVisibility.valueOf(postVisibility.toUpperCase());
+        post.setPostVisibility(postVisibility1);
+
         switch (type) {
-            case TEXT:
-                post.setTextContent(textContent);
-                break;
             case IMAGE:
                 if (imageFile != null && !imageFile.isEmpty()) {
                     String imageUrl = fileUploadService.uploadFile(imageFile);
@@ -81,12 +83,12 @@ public class PostService {
                     name,
                     post.getPostId(),        // Post ID
                     post.getDescription(),   // Post description
-                    post.getTextContent(),   // Post text content
                     post.getImageUrl(),      // Image URL
                     post.getVideoUrl(),      // Video URL
                     post.getPrivacySetting().name(), // Privacy setting as a string
                     post.getCreatedAt(),      // Creation timestamp
-                    post.getPostType()
+                    post.getPostType(),
+                    post.getPostVisibility().name()
             );
         } else {
             throw new IllegalArgumentException("Post ID not found.");
@@ -110,12 +112,12 @@ public class PostService {
                     name,
                     post.getPostId(),
                     post.getDescription(),
-                    post.getTextContent(),
                     post.getImageUrl(),
                     post.getVideoUrl(),
                     post.getPrivacySetting().name(),
                     post.getCreatedAt(),
-                    post.getPostType()
+                    post.getPostType(),
+                    post.getPostVisibility().name()
             );
         }).collect(Collectors.toList());
     }
@@ -133,12 +135,12 @@ public class PostService {
                 name,
                 post.getPostId(),
                 post.getDescription(),
-                post.getTextContent(),
                 post.getImageUrl(),
                 post.getVideoUrl(),
                 post.getPrivacySetting().name(),
                 post.getCreatedAt(),
-                post.getPostType()
+                post.getPostType(),
+                post.getPostVisibility().name()
         )).collect(Collectors.toList());
     }
 
@@ -155,12 +157,12 @@ public class PostService {
                 name,
                 post.getPostId(),
                 post.getDescription(),
-                post.getTextContent(),
                 post.getImageUrl(),
                 post.getVideoUrl(),
                 post.getPrivacySetting().name(),
                 post.getCreatedAt(),
-                post.getPostType()
+                post.getPostType(),
+                post.getPostVisibility().name()
         )).collect(Collectors.toList());
     }
 
@@ -177,12 +179,12 @@ public class PostService {
                 name,
                 post.getPostId(),
                 post.getDescription(),
-                post.getTextContent(),
                 post.getImageUrl(),
                 post.getVideoUrl(),
                 post.getPrivacySetting().name(),
                 post.getCreatedAt(),
-                post.getPostType()
+                post.getPostType(),
+                post.getPostVisibility().name()
         )).collect(Collectors.toList());
     }
 
@@ -198,5 +200,38 @@ public class PostService {
             }
             postRepository.delete(post);
         }
+    }
+
+    public Post changeVisibilityType(Long userId,PostVisibility postVisibility){
+        Optional<Post> postUserId = postRepository.findByUserId(userId);
+        if(postUserId.isPresent()){
+          Post existingPostVisibility =   postUserId.get();
+            existingPostVisibility.setPostVisibility(postVisibility);
+           return postRepository.save(existingPostVisibility);
+        }else {
+            throw new IllegalArgumentException("No user id found");
+        }
+    }
+
+    public List<ResponseDTO> getPostByUserIdAndPostVisibility(Long userId, PostVisibility postVisibility){
+        List<Post> posts = postRepository.findByUserIdAndPostVisibility(userId,postVisibility);
+        String profileImagePath = userFeignClient.getUserById(userId).getProfileImagePath();
+
+        String name = userFeignClient.getUserById(userId).getName();
+
+
+        return posts.stream().map(post -> new ResponseDTO(
+                String.valueOf(userId),
+                profileImagePath,
+                name,
+                post.getPostId(),
+                post.getDescription(),
+                post.getImageUrl(),
+                post.getVideoUrl(),
+                post.getPrivacySetting().name(),
+                post.getCreatedAt(),
+                post.getPostType(),
+                post.getPostVisibility().name()
+        )).collect(Collectors.toList());
     }
 }

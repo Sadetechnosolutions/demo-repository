@@ -3,6 +3,9 @@ package com.Sadetechno.post_module.Controller;
 import com.Sadetechno.post_module.DTO.ResponseDTO;
 import com.Sadetechno.post_module.Service.PostService;
 import com.Sadetechno.post_module.model.Post;
+import com.Sadetechno.post_module.model.PostVisibility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,22 +31,27 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+
     @PostMapping
     public ResponseEntity<Post> createPost(
             @RequestParam("userId") Long userId,
             @RequestParam("postType") String postType,
             @RequestParam(value = "description", required = false) String description,
-            @RequestParam(value = "textContent", required = false) String textContent,
             @RequestParam(value = "imageFile", required = false) MultipartFile imageFile,
             @RequestParam(value = "videoFile", required = false) MultipartFile videoFile,
-            @RequestParam(value = "privacySetting", required = false, defaultValue = "PUBLIC") String privacySetting) {
+            @RequestParam(value = "privacySetting", required = false, defaultValue = "PUBLIC") String privacySetting,
+            @RequestParam(value = "postVisibility",required = false,defaultValue = "PERSONAL")String postVisibility) {
 
         try {
-            Post post = postService.createPost(userId, postType, textContent, imageFile, videoFile, description, privacySetting);
+            Post post = postService.createPost(userId, postType, imageFile, videoFile, description, privacySetting,postVisibility);
             return new ResponseEntity<>(post, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
+            logger.error("Got 400 error because of {}",e.getMessage());
+            e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (IOException e) {
+            logger.error("Got 500 error because of {}",e.getMessage() );
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -120,6 +128,16 @@ public class PostController {
     public ResponseEntity<List<ResponseDTO>> getVideoPostsByUserId(@PathVariable Long userId) {
         List<ResponseDTO> posts = postService.getVideoPostsByUserId(userId);
         return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    @PatchMapping("/visibility/{userId}/{postVisibility}")
+    public Post changeVisibilityType(@PathVariable Long userId, @PathVariable PostVisibility postVisibility){
+        return postService.changeVisibilityType(userId,postVisibility);
+    }
+
+    @GetMapping("getPost-visibility/{userId}/{postVisibility}")
+    public List<ResponseDTO> getPostByVisibility(@PathVariable Long userId, @PathVariable PostVisibility postVisibility){
+        return postService.getPostByUserIdAndPostVisibility(userId,postVisibility);
     }
 
 }

@@ -26,70 +26,65 @@ public class ConversationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConversationService.class);
 
+    @Transactional(readOnly = true)
+    public Optional<Conversation> getConversationByParticipants(Long participantOneId, Long participantTwoId) {
+        return conversationRepository.findByParticipants(participantOneId, participantTwoId);
+    }
+
+    public Optional<Message> getMessageById(Long id){
+        Optional<Message> message = messageRepository.findById(id);
+        if(message.isPresent()){
+            return message;
+        }else {
+            throw new IllegalArgumentException("No messages found");
+    }
+    }
+
+    public List<Conversation> getAllConversation(){
+        List<Conversation> conversations = conversationRepository.findAll();
+        if(!conversations.isEmpty()){
+            return conversations;
+        }else {
+            throw new IllegalArgumentException("No conversation found");
+    }
+    }
+
     @Transactional
-    public void createConversation(Conversation conversation) {
-        if (conversation.getMessages() == null || conversation.getMessages().isEmpty()) {
-            throw new IllegalArgumentException("Conversation must contain at least one message.");
-        }
+    public void deleteMessageForSelf(Long id, Long userId) {
+        Optional<Message> optionalMessage = messageRepository.findById(id);
 
-        // Extract the participants from the first message
-        Message firstMessage = conversation.getMessages().get(0);
-        Long senderId = firstMessage.getSenderId();
-        Long recipientId = firstMessage.getRecipientId();
-
-        // Set participant IDs in the conversation
-        conversation.setParticipantOneId(senderId);
-        conversation.setParticipantTwoId(recipientId);
-
-        logger.info("Checking for an existing conversation between senderId: {} and recipientId: {}", senderId, recipientId);
-
-        // Find if there's an existing conversation with the same participants
-        Optional<Conversation> existingConversation = findConversationByParticipants(senderId, recipientId);
-
-        if (existingConversation.isPresent()) {
-            // If conversation exists, add new messages to it
-            Conversation conversationToUpdate = existingConversation.get();
-            List<Message> existingMessages = conversationToUpdate.getMessages();
-
-            for (Message newMessage : conversation.getMessages()) {
-                newMessage.setConversation(conversationToUpdate);  // Associate the new message with the conversation
-                existingMessages.add(newMessage);  // Add the new message to the existing messages
+        if (optionalMessage.isPresent()) {
+            Message message = optionalMessage.get();
+            if (message.getSenderId().equals(userId)) {
+                message.setDeletedBySender(true);  // Mark as deleted by sender
+            } else if (message.getRecipientId().equals(userId)) {
+                message.setDeletedByRecipient(true);  // Mark as deleted by recipient
             }
 
-            conversationRepository.save(conversationToUpdate);
-            logger.info("Added new message(s) to the existing conversation between senderId: {} and recipientId: {}",
-                    senderId, recipientId);
+            // Save changes
+            messageRepository.save(message);
+
+            // Check if the message should be deleted from the database if both deleted
+            if (message.isDeletedBySender() && message.isDeletedByRecipient()) {
+                messageRepository.delete(message);
+            }
         } else {
-            // If no conversation exists, create a new one
-            Conversation newConversation = new Conversation();
-            for (Message message : conversation.getMessages()) {
-                message.setConversation(newConversation);  // Associate message with the new conversation
-            }
-
-            newConversation.setMessages(conversation.getMessages());  // Set the messages for the new conversation
-            conversationRepository.save(newConversation);
-
-            logger.info("Created a new conversation and added message(s) between senderId: {} and recipientId: {}",
-                    senderId, recipientId);
+            throw new IllegalArgumentException("Message not found");
         }
     }
 
-    private Optional<Conversation> findConversationByParticipants(Long senderId, Long recipientId) {
-        List<Conversation> allConversations = conversationRepository.findAll();  // Load all conversations
+    // Delete message for everyone
+    @Transactional
+    public void deleteMessageForEveryone(Long id) {
+        Optional<Message> optionalMessage = messageRepository.findById(id);
 
-        // Look for a conversation where participants match the sender and recipient
-        for (Conversation conversation : allConversations) {
-            for (Message message : conversation.getMessages()) {
-                boolean hasSenderAndRecipient = (message.getSenderId().equals(senderId) && message.getRecipientId().equals(recipientId)) ||
-                        (message.getSenderId().equals(recipientId) && message.getRecipientId().equals(senderId));
-                if (hasSenderAndRecipient) {
-                    return Optional.of(conversation);
-                }
-            }
+        if (optionalMessage.isPresent()) {
+            Message message = optionalMessage.get();
+            // Delete the message for both parties by removing it from the database
+            messageRepository.delete(message);
+        } else {
+            throw new IllegalArgumentException("Message not found");
         }
-        return Optional.empty();  // No matching conversation found
-    }
     }
 
-
-
+}
