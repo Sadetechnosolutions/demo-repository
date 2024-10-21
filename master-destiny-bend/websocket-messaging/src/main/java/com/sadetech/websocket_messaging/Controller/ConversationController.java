@@ -1,12 +1,14 @@
 package com.sadetech.websocket_messaging.Controller;
 
 import com.sadetech.websocket_messaging.Model.Conversation;
+import com.sadetech.websocket_messaging.Model.Message;
 import com.sadetech.websocket_messaging.Service.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/web-socket")
@@ -15,11 +17,46 @@ public class ConversationController {
     @Autowired
     private ConversationService conversationService;
 
-    // Endpoint to create or update a conversation
-    @PostMapping("/create")
-    public ResponseEntity<String> createConversation(@RequestBody Conversation conversation) {
-        conversationService.createConversation(conversation);
-        return ResponseEntity.ok("Conversation created/updated successfully!");
+    @GetMapping("/conversation")
+    public ResponseEntity<Conversation> getConversationByParticipants(
+            @RequestParam Long participantOneId, @RequestParam Long participantTwoId) {
+
+        Optional<Conversation> conversation = conversationService.getConversationByParticipants(participantOneId, participantTwoId);
+
+        return conversation.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/message/{id}")
+    public ResponseEntity<Optional<Message>> getMessage(@PathVariable Long id){
+        Optional<Message> message = conversationService.getMessageById(id);
+        return ResponseEntity.ok(message);
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Conversation>> getAllConversation(){
+        List<Conversation> conversations = conversationService.getAllConversation();
+        return ResponseEntity.ok(conversations);
+    }
+
+    @DeleteMapping("/delete-for-self/{messageId}")
+    public ResponseEntity<?> deleteMessageForSelf(@PathVariable Long messageId, @RequestParam Long userId) {
+        try {
+            conversationService.deleteMessageForSelf(messageId, userId);
+            return ResponseEntity.ok("Message deleted for yourself");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Delete message for everyone
+    @DeleteMapping("/delete-for-everyone/{messageId}")
+    public ResponseEntity<?> deleteMessageForEveryone(@PathVariable Long messageId) {
+        try {
+            conversationService.deleteMessageForEveryone(messageId);
+            return ResponseEntity.ok("Message deleted for everyone");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

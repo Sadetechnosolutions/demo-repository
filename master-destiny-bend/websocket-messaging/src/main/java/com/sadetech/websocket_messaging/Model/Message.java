@@ -31,9 +31,12 @@ public class Message {
 
     private LocalDateTime readAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "conversation_Id",referencedColumnName = "id")
     @JsonIgnore
     private Conversation conversation;
+
+    private boolean deletedBySender = false;
+    private boolean deletedByRecipient = false;
 
 }

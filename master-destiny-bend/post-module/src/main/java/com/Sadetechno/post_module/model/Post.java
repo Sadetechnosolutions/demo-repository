@@ -17,10 +17,13 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     private PostType postType;
+
     private  String description;
-    private String textContent;
     private String imageUrl;
     private String videoUrl;
+
+    @Enumerated(EnumType.STRING)
+    private PostVisibility postVisibility;
 
     @Enumerated(EnumType.STRING)
     private PrivacySetting privacySetting;  // New field for privacy settings

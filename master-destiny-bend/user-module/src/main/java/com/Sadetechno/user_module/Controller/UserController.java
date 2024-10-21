@@ -44,7 +44,7 @@ public class UserController {
         if (imagePath == null || imagePath.isEmpty()) {
             return null;
         }
-        return "http://localhost:8080/" + imagePath;
+        return "http://localhost:8080/api/users" + imagePath;
     }
 
     @GetMapping("/uploads/{fileName:.+}")

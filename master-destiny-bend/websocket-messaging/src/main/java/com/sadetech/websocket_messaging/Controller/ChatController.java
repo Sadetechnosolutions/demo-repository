@@ -30,4 +30,13 @@ public class  ChatController {
     public void broadcastToConversation(Long conversationId, Message message) {
         messagingTemplate.convertAndSend("/topic/conversation/" + conversationId, message);
     }
+
+    public void notifyMessageDeletion(Long conversationId, Long messageId, Long userId) {
+        messagingTemplate.convertAndSend("/topic/conversation/" + conversationId, "Message " + messageId + " was deleted by user " + userId);
+    }
+
+    // Notify all participants about message deletion for everyone
+    public void notifyMessageDeletedForEveryone(Long conversationId, Long messageId) {
+        messagingTemplate.convertAndSend("/topic/conversation/" + conversationId, "Message " + messageId + " was deleted for everyone.");
+    }
 }

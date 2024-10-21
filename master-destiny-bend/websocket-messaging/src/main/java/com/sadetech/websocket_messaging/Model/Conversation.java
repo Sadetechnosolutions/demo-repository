@@ -22,7 +22,6 @@ public class Conversation {
     private Long participantTwoId;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "conversation")
-    @JsonIgnore
     private List<Message> messages = new ArrayList<>(); // Initialize the list
 }
 
