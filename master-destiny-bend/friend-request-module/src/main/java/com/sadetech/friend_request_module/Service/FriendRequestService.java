@@ -38,8 +38,7 @@ public class FriendRequestService {
         }
 
         // Check if a friend request already exists between the two users
-        Optional<FriendRequest> existingRequest = friendRequestRepository.findBySenderIdAndRecipientId(senderId, recipientId);
-
+        Optional<FriendRequest> existingRequest = friendRequestRepository.findBySenderIdAndRecipientId(senderId,recipientId);
         // If the request already exists
         if (existingRequest.isPresent()) {
             FriendRequest request = existingRequest.get();
@@ -179,19 +178,30 @@ public class FriendRequestService {
         List<FriendRequest> friendRequestsAsRecipient = friendRequestRepository.findAllByRecipientIdAndStatus(userId, Status.ACCEPTED);
 
         List<UserDTO> friends = new ArrayList<>();
+        Set<Long> uniqueUserIds = new HashSet<>();  // Set to track unique user IDs
 
         // Get friends where the user is the sender
         for (FriendRequest request : friendRequestsAsSender) {
-            UserDTO recipient = getUserById(request.getRecipientId(), "Friend not found.");
-            recipient.setRequestTime(request.getRequestTime());
-            friends.add(recipient);
+            Long recipientId = request.getRecipientId();
+            if (!uniqueUserIds.contains(recipientId)) {
+                UserDTO recipient = getUserById(recipientId, "Friend not found.");
+                logger.info("The user DTO contains id {} for recipient",recipient.getId() );
+                recipient.setRequestTime(request.getRequestTime());
+                friends.add(recipient);
+                uniqueUserIds.add(recipientId);  // Add the user ID to the set
+            }
         }
 
         // Get friends where the user is the recipient
         for (FriendRequest request : friendRequestsAsRecipient) {
-            UserDTO sender = getUserById(request.getSenderId(), "Friend not found.");
-            sender.setRequestTime(request.getRequestTime());
-            friends.add(sender);
+            Long senderId = request.getSenderId();
+            if (!uniqueUserIds.contains(senderId)) {
+                UserDTO sender = getUserById(senderId, "Friend not found.");
+                logger.info("The user DTO contains id {} for sender",sender.getId());
+                sender.setRequestTime(request.getRequestTime());
+                friends.add(sender);
+                uniqueUserIds.add(senderId);  // Add the user ID to the set
+            }
         }
 
         // Create a Map to hold the response data
@@ -307,5 +317,46 @@ public class FriendRequestService {
             return user;
     }
 
-}
+    public Map<String, Object> getFriendListByVisibility(Long userId, Long requestedUserId) {
+        UserDTO userDTO = getUserById(userId, "User not found");
 
+        // Get the visibility setting
+        String visibility = userDTO.getVisibility();
+
+        // Handle PRIVATE visibility: Only the owner can see their friend list
+        if (visibility.equals("PRIVATE") && !userId.equals(requestedUserId)) {
+            logger.error("Friend list is private. User ID {} does not match requested user ID {}.", userId, requestedUserId);
+            throw new IllegalArgumentException("Friend list is private and cannot be accessed by other users.");
+        }
+
+        // Handle FRIENDS_ONLY visibility: Only the owner and their friends can see the friend list
+        if (visibility.equals("FRIENDS_ONLY")) {
+            // If the requested user is the owner, allow access
+            if (userId.equals(requestedUserId)) {
+                logger.info("Owner is accessing his own friend list.");
+            } else {
+                // Check if requestedUserId is a friend of userId
+                if (!isFriend(userId, requestedUserId)) {
+                    logger.error("Friend list is restricted to friends. User ID {} is not a friend of requested user ID {}.", requestedUserId, userId);
+                    throw new IllegalArgumentException("You cannot access the friend list because you are not a friend.");
+                }
+            }
+        }
+
+        // Handle PUBLIC visibility: Anyone can see the friend list
+        if (!visibility.equals("PUBLIC") && !visibility.equals("FRIENDS_ONLY") && !visibility.equals("PRIVATE")) {
+            logger.info("Friend list is visible to everyone as it is set to PUBLIC.");
+        }
+
+        // Fetch and return the friend list if the user passes the visibility checks
+        return getFriendListAndCount(userId);
+    }
+
+    private boolean isFriend(Long userId, Long friendId) {
+        // Logic to check friendship in your database
+        // This could be a repository call or a service method that verifies the friendship status
+        Optional<FriendRequest> friendRequest = friendRequestRepository.findBySenderIdAndRecipientId(userId, friendId);
+        return friendRequest.isPresent() && friendRequest.get().getStatus() == Status.ACCEPTED;
+    }
+
+}

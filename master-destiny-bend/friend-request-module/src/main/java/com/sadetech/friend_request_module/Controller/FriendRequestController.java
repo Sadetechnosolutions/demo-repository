@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -53,14 +54,6 @@ public class FriendRequestController {
             friendRequestService.deleteFriend(senderId, recipientId);
             return ResponseEntity.ok("User has been removed from friend list.");
     }
-
-
-    @GetMapping("/{userId}/friends")
-    public ResponseEntity<Map<String, Object>> getFriendListAndCount(@PathVariable Long userId) {
-        Map<String, Object> response = friendRequestService.getFriendListAndCount(userId);
-        return ResponseEntity.ok(response);
-    }
-
 
     // Endpoint to get the list of pending friend requests (requests sent to the user)
     @GetMapping("/{userId}/pending-requests")
@@ -107,6 +100,30 @@ public class FriendRequestController {
             throw new IllegalArgumentException("No notification found.");
         }
         return ResponseEntity.ok("Notification deleted.");
+    }
+
+    @GetMapping("/{userId}/friends")
+    public ResponseEntity<Map<String, Object>> getFriendListAndCount(@PathVariable Long userId) {
+        Map<String, Object> response = friendRequestService.getFriendListAndCount(userId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/friend-list/{requestedUserId}")
+    public ResponseEntity<?> getFriendListByVisibility(
+            @RequestParam Long userId,
+            @PathVariable("requestedUserId") Long requestedUserId) {
+        try {
+            // Fetch the friend list based on visibility rules
+            Map<String, Object> friendList = friendRequestService.getFriendListByVisibility(userId, requestedUserId);
+
+            return ResponseEntity.ok(friendList);
+        } catch (IllegalArgumentException e) {
+            // If access is denied due to privacy settings, return a 403 (Forbidden) response
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            // Handle other exceptions and return a 500 (Internal Server Error)
+            return ResponseEntity.status(500).body("An error occurred while fetching the friend list.");
+        }
     }
 
 }

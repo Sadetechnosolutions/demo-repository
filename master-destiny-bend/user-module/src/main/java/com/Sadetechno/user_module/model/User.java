@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -20,8 +22,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(unique = true,nullable = false)
     private Long userid;
+
     private String name;
 
     private String aboutMe;
@@ -31,7 +35,8 @@ public class User {
     private String gender;
     private String country;
     private String occupation;
-    private Date joined;
+    @CreationTimestamp
+    private LocalDateTime joined;
     private String email;
     private String hobbies;
     private String education;
@@ -49,4 +54,8 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "social_media_links_id")
     private SocialMediaLinks socialMediaLinks;
+
+    @Enumerated(EnumType.STRING)
+    private Visibility visibility;
+
 }

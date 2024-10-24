@@ -140,4 +140,13 @@ public class PostController {
         return postService.getPostByUserIdAndPostVisibility(userId,postVisibility);
     }
 
+    @GetMapping("/posts/{postId}/visibility/{userId}")
+    public ResponseEntity<ResponseDTO> getPostByIdAndPrivacySetting(
+            @PathVariable Long postId,
+            @PathVariable Long userId) {
+            // Call the service method to get the post based on privacy settings
+            ResponseDTO postResponse = postService.getPostByIdAndPrivacySetting(postId, userId);
+            return ResponseEntity.ok(postResponse);
+    }
+
 }

@@ -8,4 +8,5 @@ public class UserCreationDTO {
     private String userJson; // Change this from User to String
     private MultipartFile profileImage;
     private MultipartFile bannerImage;
+    private Visibility visibility;
 }

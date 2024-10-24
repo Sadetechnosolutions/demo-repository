@@ -1,4 +1,4 @@
-package com.sadetech.friend_request_module.Dto;
+package com.Sadetechno.post_module.DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,3 +20,4 @@ public class UserDTO {
     private String visibility;
     // Constructors, Getters, Setters
 }
+

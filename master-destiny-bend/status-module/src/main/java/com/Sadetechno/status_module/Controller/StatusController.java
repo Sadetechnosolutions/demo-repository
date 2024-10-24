@@ -28,7 +28,7 @@ public class StatusController {
             @RequestParam(value = "file",required = false) MultipartFile file,
             @RequestParam(value = "type",required = false,defaultValue = "Image") String type,
             @RequestParam("duration") int duration,
-            @RequestParam("privacy") Privacy privacy,
+            @RequestParam(value = "privacy",required = false,defaultValue = "PUBLIC") Privacy privacy,
             @RequestParam("userId") Long userId) throws IOException {
 
         Status status = statusService.saveStatus(file, type, duration, privacy, userId);
@@ -55,6 +55,15 @@ public class StatusController {
         statusService.deleteStatus(userId, id);
         // Return HTTP status OK when the deletion is successful
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/status/{id}/visibility/{userId}")
+    public ResponseEntity<StatusResponseDTO> getStatusByIdAndPrivacySetting(
+            @PathVariable Long id,
+            @PathVariable Long userId) {
+        // Call the service method to get the post based on privacy settings
+        StatusResponseDTO statusResponseDTO = statusService.getStatusByPrivacy(id, userId);
+        return ResponseEntity.ok(statusResponseDTO);
     }
 }
 

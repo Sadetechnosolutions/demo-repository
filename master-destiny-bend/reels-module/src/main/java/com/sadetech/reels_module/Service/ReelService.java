@@ -2,7 +2,9 @@ package com.sadetech.reels_module.Service;
 
 import com.sadetech.reels_module.Dto.ReelResponseDTO;
 import com.sadetech.reels_module.Dto.UserDTO;
+import com.sadetech.reels_module.FeignClient.FriendRequestFeignClient;
 import com.sadetech.reels_module.FeignClient.UserFeignClient;
+import com.sadetech.reels_module.Model.Privacy;
 import com.sadetech.reels_module.Model.Reel;
 import com.sadetech.reels_module.Repository.ReelRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,9 +33,12 @@ public class ReelService {
     @Autowired
     private UserFeignClient userFeignClient;
 
+    @Autowired
+    private FriendRequestFeignClient friendRequestFeignClient;
+
     private static final int MAX_VIDEO_LENGTH = 30;
 
-    public Reel saveReels(MultipartFile file, String caption, int duration, Long userId) throws IOException {
+    public Reel saveReels(MultipartFile file, String caption, int duration, Long userId, Privacy privacy) throws IOException {
         String filePath = fileUploadService.uploadFile(file);
 
         String contentType = file.getContentType();
@@ -54,6 +60,7 @@ public class ReelService {
         reel.setCreatedAt(LocalDateTime.now());
         reel.setDuration(duration);
         reel.setUserId(userId);
+        reel.setPrivacy(privacy);
         return reelRepository.save(reel);
     }
 
@@ -74,7 +81,8 @@ public class ReelService {
                         reel.getDuration(),
                         reel.getCreatedAt(),
                         reel.getUserId(),
-                        profileImagePath  // Add the profile image path to the response
+                        profileImagePath,
+                        reel.getPrivacy()// Add the profile image path to the response
                 ))
                 .collect(Collectors.toList());
 
@@ -100,7 +108,8 @@ public class ReelService {
                             reel.getDuration(),
                             reel.getCreatedAt(),
                             reel.getUserId(),
-                            profileImagePath  // Add the profile image path to the response
+                            profileImagePath,  // Add the profile image path to the response
+                            reel.getPrivacy()
                     );
                 })
                 .collect(Collectors.toList());
@@ -122,6 +131,69 @@ public class ReelService {
 
     public Optional<Reel> getUserDetailsByReelsId(Long id) {
         return reelRepository.findById(id);
+    }
+
+    public ReelResponseDTO getReelsByPrivacy(Long id, Long userId){
+        Optional<Reel> reel = reelRepository.findById(id);
+        if (reel.isEmpty()){
+            throw new IllegalArgumentException("No reel id found");
+        }
+        Privacy privacy = reel.get().getPrivacy();
+        switch (privacy){
+            case PUBLIC:
+                return createResponse(reel.get());
+
+            case PRIVATE:
+                if(reel.get().getUserId().equals(userId)){
+                    return createResponse(reel.get());
+                }else {
+                    throw new IllegalArgumentException("You don't have access to view the reel. Because, it is in private.");
+                }
+
+            case FRIENDS:
+                if(reel.get().getUserId().equals(userId)){
+                    return createResponse(reel.get());
+                }else {
+                    Map<String, Object> friendListResponse = friendRequestFeignClient.getFriendListAndCount(reel.get().getUserId());
+                    List<?> friends = (List<?>) friendListResponse.get("friends");
+
+                    // Convert LinkedHashMap in friends list to UserDTO and get the user IDs
+                    List<Long> friendIds = friends.stream()
+                            .map(friend -> {
+                                Map<String, Object> friendMap = (Map<String, Object>) friend;  // Cast to Map
+                                return Long.parseLong(friendMap.get("id").toString());  // Extract userId
+                            })
+                            .collect(Collectors.toList());
+
+                    if (friendIds.contains(userId)) {
+                        return createResponse(reel.get()); // Friend can view the status
+                    } else {
+                        throw new IllegalArgumentException("You do not have permission to view this status, because you are not friends with the owner of the status.");
+                    }
+                }
+
+            default:
+                throw new IllegalArgumentException("Invalid privacy setting.");
+
+        }
+
+    }
+
+    private ReelResponseDTO createResponse(Reel reel){
+
+        UserDTO userDTO = userFeignClient.getUserById(reel.getUserId());
+        String profileImagePath = userDTO.getProfileImagePath();
+
+        return new ReelResponseDTO(
+                reel.getId(),
+                reel.getContent(),
+                reel.getCaption(),
+                reel.getDuration(),
+                reel.getCreatedAt(),
+                reel.getUserId(),
+                profileImagePath,
+                reel.getPrivacy()
+        );
     }
 }
 

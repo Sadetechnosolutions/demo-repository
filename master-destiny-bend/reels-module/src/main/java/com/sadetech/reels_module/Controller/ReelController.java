@@ -1,6 +1,7 @@
 package com.sadetech.reels_module.Controller;
 
 import com.sadetech.reels_module.Dto.ReelResponseDTO;
+import com.sadetech.reels_module.Model.Privacy;
 import com.sadetech.reels_module.Model.Reel;
 import com.sadetech.reels_module.Service.FileUploadService;
 import com.sadetech.reels_module.Service.ReelService;
@@ -28,9 +29,10 @@ public class ReelController {
             @RequestParam(value = "file") MultipartFile file,
             @RequestParam(value = "caption",required = false) String caption,
             @RequestParam("duration") int duration,
+            @RequestParam(value = "privacy" ,required = false,defaultValue = "PUBLIC") Privacy privacy,
             @RequestParam("userId") Long userId) throws IOException {
 
-        Reel reel = reelService.saveReels(file, caption, duration, userId);
+        Reel reel = reelService.saveReels(file, caption, duration, userId, privacy);
         return ResponseEntity.ok(reel);
     }
 
@@ -69,6 +71,12 @@ public class ReelController {
         return ResponseEntity.status(HttpStatus.OK).body(reel);
     }
 
-
-
+    @GetMapping("/reel/{id}/visibility/{userId}")
+    public ResponseEntity<ReelResponseDTO> getReelByIdAndPrivacySetting(
+            @PathVariable Long id,
+            @PathVariable Long userId) {
+        // Call the service method to get the post based on privacy settings
+        ReelResponseDTO responseDTO = reelService.getReelsByPrivacy(id, userId);
+        return ResponseEntity.ok(responseDTO);
+    }
 }
