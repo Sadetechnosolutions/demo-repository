@@ -65,6 +65,18 @@ public class StatusController {
         StatusResponseDTO statusResponseDTO = statusService.getStatusByPrivacy(id, userId);
         return ResponseEntity.ok(statusResponseDTO);
     }
+
+    @PatchMapping("/update-privacy/{id}")
+    public ResponseEntity<Status> updateStatusPrivacy(@PathVariable Long id, @RequestParam Privacy privacy){
+        try {
+            Status status = statusService.updateStatusPrivacy(id,privacy);
+            return ResponseEntity.ok(status);
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }
 
 

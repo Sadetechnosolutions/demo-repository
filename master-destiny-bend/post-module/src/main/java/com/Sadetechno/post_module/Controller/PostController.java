@@ -4,6 +4,7 @@ import com.Sadetechno.post_module.DTO.ResponseDTO;
 import com.Sadetechno.post_module.Service.PostService;
 import com.Sadetechno.post_module.model.Post;
 import com.Sadetechno.post_module.model.PostVisibility;
+import com.Sadetechno.post_module.model.PrivacySetting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +148,18 @@ public class PostController {
             // Call the service method to get the post based on privacy settings
             ResponseDTO postResponse = postService.getPostByIdAndPrivacySetting(postId, userId);
             return ResponseEntity.ok(postResponse);
+    }
+
+    @PatchMapping("/update-privacy/{postId}")
+    public ResponseEntity<Post> updatePrivacy(@PathVariable Long postId, @RequestParam PrivacySetting privacy){
+        try {
+            Post post = postService.updatePrivacy(postId,privacy);
+            return ResponseEntity.ok(post);
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
 }

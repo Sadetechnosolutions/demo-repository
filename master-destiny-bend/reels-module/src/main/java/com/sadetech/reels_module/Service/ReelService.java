@@ -195,5 +195,17 @@ public class ReelService {
                 reel.getPrivacy()
         );
     }
+
+    public Reel updateReelPrivacy(Long id, Privacy privacy){
+        Optional<Reel> getReel = reelRepository.findById(id);
+
+        if(getReel.isPresent()){
+            Reel reel = getReel.get();
+            reel.setPrivacy(privacy);
+            return reelRepository.save(reel);
+        }else {
+            throw new IllegalArgumentException("Reel id not found");
+        }
+    }
 }
 

@@ -18,14 +18,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/auth")
-@CrossOrigin(origins = "http://localhost:3000")
 public class UserManagementController {
 
     @Autowired
     private UsersManagementService usersManagementService;
 
     @PostMapping("/register")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<ReqRes> register(@RequestBody ReqRes reg) {
         return ResponseEntity.ok(usersManagementService.register(reg));
     }
@@ -54,7 +52,6 @@ public class UserManagementController {
 
 
     @PostMapping("/login")
-    @CrossOrigin("http://localhost:3000")
     public ResponseEntity<ReqRes> login(@RequestBody ReqRes req) {
         ReqRes response = usersManagementService.login(req);
         if (response.getStatusCode() == HttpStatus.UNAUTHORIZED.value()) {
@@ -104,7 +101,6 @@ public class UserManagementController {
         return ResponseEntity.status(response.getStatusCode()).body(response);
     }
     @PostMapping("/login-with-otp")
-    @CrossOrigin("http://localhost:3000")
     public ResponseEntity<ReqRes> loginWithOtp(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String otp = request.get("otp");
