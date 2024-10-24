@@ -31,12 +31,14 @@ public class  ChatController {
         messagingTemplate.convertAndSend("/topic/conversation/" + conversationId, message);
     }
 
-    public void notifyMessageDeletion(Long conversationId, Long messageId, Long userId) {
-        messagingTemplate.convertAndSend("/topic/conversation/" + conversationId, "Message " + messageId + " was deleted by user " + userId);
+    public void notifyMessageDeletion(Long conversationId, Long id, Long userId) {
+        messagingTemplate.convertAndSend("/topic/conversation/" + conversationId,
+                "Message " + id + " was deleted by user " + userId);
     }
 
-    // Notify all participants about message deletion for everyone
-    public void notifyMessageDeletedForEveryone(Long conversationId, Long messageId) {
-        messagingTemplate.convertAndSend("/topic/conversation/" + conversationId, "Message " + messageId + " was deleted for everyone.");
+    public void notifyMessageDeletedForEveryone(Long conversationId, Long id) {
+        messagingTemplate.convertAndSend("/topic/conversation/" + conversationId,
+                "Message " + id + " was deleted for everyone.");
     }
+
 }

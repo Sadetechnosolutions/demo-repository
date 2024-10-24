@@ -39,24 +39,4 @@ public class ConversationController {
         return ResponseEntity.ok(conversations);
     }
 
-    @DeleteMapping("/delete-for-self/{messageId}")
-    public ResponseEntity<?> deleteMessageForSelf(@PathVariable Long id, @RequestParam Long userId) {
-        try {
-            conversationService.deleteMessageForSelf(id, userId);
-            return ResponseEntity.ok("Message deleted for yourself");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    // Delete message for everyone
-    @DeleteMapping("/delete-for-everyone/{messageId}")
-    public ResponseEntity<?> deleteMessageForEveryone(@PathVariable Long id) {
-        try {
-            conversationService.deleteMessageForEveryone(id);
-            return ResponseEntity.ok("Message deleted for everyone");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 }
