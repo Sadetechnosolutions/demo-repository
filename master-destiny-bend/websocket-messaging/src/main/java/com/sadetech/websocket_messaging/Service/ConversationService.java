@@ -49,42 +49,6 @@ public class ConversationService {
     }
     }
 
-    @Transactional
-    public void deleteMessageForSelf(Long id, Long userId) {
-        Optional<Message> optionalMessage = messageRepository.findById(id);
 
-        if (optionalMessage.isPresent()) {
-            Message message = optionalMessage.get();
-            if (message.getSenderId().equals(userId)) {
-                message.setDeletedBySender(true);  // Mark as deleted by sender
-            } else if (message.getRecipientId().equals(userId)) {
-                message.setDeletedByRecipient(true);  // Mark as deleted by recipient
-            }
-
-            // Save changes
-            messageRepository.save(message);
-
-            // Check if the message should be deleted from the database if both deleted
-            if (message.isDeletedBySender() && message.isDeletedByRecipient()) {
-                messageRepository.delete(message);
-            }
-        } else {
-            throw new IllegalArgumentException("Message not found");
-        }
-    }
-
-    // Delete message for everyone
-    @Transactional
-    public void deleteMessageForEveryone(Long id) {
-        Optional<Message> optionalMessage = messageRepository.findById(id);
-
-        if (optionalMessage.isPresent()) {
-            Message message = optionalMessage.get();
-            // Delete the message for both parties by removing it from the database
-            messageRepository.delete(message);
-        } else {
-            throw new IllegalArgumentException("Message not found");
-        }
-    }
 
 }
