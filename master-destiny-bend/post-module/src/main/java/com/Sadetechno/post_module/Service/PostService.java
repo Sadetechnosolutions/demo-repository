@@ -1,5 +1,7 @@
 package com.Sadetechno.post_module.Service;
 import com.Sadetechno.post_module.DTO.ResponseDTO;
+import com.Sadetechno.post_module.DTO.UserDTO;
+import com.Sadetechno.post_module.FeignClient.FriendRequestFeignClient;
 import com.Sadetechno.post_module.FeignClient.UserFeignClient;
 import com.Sadetechno.post_module.Repository.PostRepository;
 import com.Sadetechno.post_module.model.Post;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,9 @@ public class PostService {
 
     @Autowired
     private UserFeignClient userFeignClient;
+
+    @Autowired
+    private FriendRequestFeignClient friendRequestFeignClient;
 
     @Autowired
     private FileUploadService fileUploadService; // Injecting FileUploadService
@@ -234,4 +241,68 @@ public class PostService {
                 post.getPostVisibility().name()
         )).collect(Collectors.toList());
     }
+
+    public ResponseDTO getPostByIdAndPrivacySetting(Long postId, Long userId){
+       Post post = postRepository.findById(postId).orElse(null);
+       if(post == null){
+           throw new IllegalArgumentException("Post id not found");
+       }
+
+       PrivacySetting privacySetting = post.getPrivacySetting();
+       switch (privacySetting){
+           case PUBLIC :
+               return createResponseDTO(post);
+           case PRIVATE :
+               if (post.getUserId().equals(userId)){
+                   return createResponseDTO(post);
+               }else {
+                   throw new IllegalArgumentException("You do not have permission to access the post, because it is private.");
+               }
+           case FRIENDS:
+               if(post.getUserId().equals(userId)){
+                   return createResponseDTO(post);
+               }else {
+                   Map<String, Object> friendListResponse = friendRequestFeignClient.getFriendListAndCount(post.getUserId());
+                   List<?> friends = (List<?>) friendListResponse.get("friends");
+
+                   // Convert each LinkedHashMap in the friends list to UserDTO
+                   List<Long> friendIds = friends.stream()
+                           .map(friend -> {
+                               Map<String, Object> friendMap = (Map<String, Object>) friend;  // Cast to Map
+                               return Long.parseLong(friendMap.get("id").toString());  // Extract userId
+                           })
+                           .collect(Collectors.toList());
+
+                   if (friendIds.contains(userId)) {
+                       return createResponseDTO(post); // Friend can see the post
+                   } else {
+                       throw new IllegalArgumentException("You do not have permission to view this post, because you are not friends with the owner of the post.");
+                   }
+               }
+           default:
+               throw new IllegalArgumentException("Invalid privacy setting.");
+       }
+
+    }
+
+    private ResponseDTO createResponseDTO(Post post) {
+        String userId = String.valueOf(post.getUserId());
+        String profileImagePath = userFeignClient.getUserById(post.getUserId()).getProfileImagePath();
+        String name = userFeignClient.getUserById(post.getUserId()).getName();
+
+        return new ResponseDTO(
+                userId,
+                profileImagePath,
+                name,
+                post.getPostId(),
+                post.getDescription(),
+                post.getImageUrl(),
+                post.getVideoUrl(),
+                post.getPrivacySetting().name(),
+                post.getCreatedAt(),
+                post.getPostType(),
+                post.getPostVisibility().name()
+        );
+    }
+
 }

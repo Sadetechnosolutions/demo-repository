@@ -2,6 +2,7 @@ package com.Sadetechno.status_module.Service;
 
 import com.Sadetechno.status_module.Dto.StatusResponseDTO;
 import com.Sadetechno.status_module.Dto.UserDTO;
+import com.Sadetechno.status_module.FeignClient.FriendRequestFeignClient;
 import com.Sadetechno.status_module.FeignClient.UserFeignClient;
 import com.Sadetechno.status_module.Repository.StatusRepository;
 import com.Sadetechno.status_module.model.Privacy;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,9 @@ public class StatusService {
 
     @Autowired
     private UserFeignClient userFeignClient;
+
+    @Autowired
+    private FriendRequestFeignClient friendRequestFeignClient;
 
     private static final Logger logger = LoggerFactory.getLogger(StatusService.class);
 
@@ -133,5 +138,59 @@ public class StatusService {
         logger.info("Got the user");
         logger.error("Status id found {}",id);
         return statusRepository.findById(id);
+    }
+
+    public StatusResponseDTO getStatusByPrivacy(Long id, Long userId) {
+        Optional<Status> status = statusRepository.findById(id);
+        if (status.isEmpty()) {
+            throw new IllegalArgumentException("Status not found");
+        }
+
+        Privacy privacy = status.get().getPrivacy();
+        switch (privacy) {
+            case PUBLIC:
+                return createResponse(status.get());
+
+            case FRIENDS:
+                if (status.get().getUserId().equals(userId)) {
+                    return createResponse(status.get());
+                } else {
+                    Map<String, Object> friendListResponse = friendRequestFeignClient.getFriendListAndCount(status.get().getUserId());
+                    List<?> friends = (List<?>) friendListResponse.get("friends");
+
+                    // Convert LinkedHashMap in friends list to UserDTO and get the user IDs
+                    List<Long> friendIds = friends.stream()
+                            .map(friend -> {
+                                Map<String, Object> friendMap = (Map<String, Object>) friend;  // Cast to Map
+                                return Long.parseLong(friendMap.get("id").toString());  // Extract userId
+                            })
+                            .collect(Collectors.toList());
+
+                    if (friendIds.contains(userId)) {
+                        return createResponse(status.get()); // Friend can view the status
+                    } else {
+                        throw new IllegalArgumentException("You do not have permission to view this status, because you are not friends with the owner of the status.");
+                    }
+                }
+
+            default:
+                throw new IllegalArgumentException("Invalid privacy setting.");
+        }
+    }
+
+
+    private StatusResponseDTO createResponse(Status status){
+        String profileImagePath = userFeignClient.getUserById(status.getUserId()).getProfileImagePath();
+
+        return new StatusResponseDTO(
+                status.getId(),
+                status.getContent(),
+                status.getType(),
+                status.getCreatedAt(),
+                status.getDuration(),
+                status.getPrivacy(),
+                status.getUserId(),
+                profileImagePath
+        );
     }
 }

@@ -5,9 +5,12 @@ import com.Sadetechno.user_module.DTO.ProfileDTO;
 import com.Sadetechno.user_module.Service.UserService;
 import com.Sadetechno.user_module.model.User;
 import com.Sadetechno.user_module.model.UserCreationDTO;
+import com.Sadetechno.user_module.model.Visibility;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +33,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -89,6 +94,7 @@ public class UserController {
 
     @PostMapping("/createUserWithImages")
     public ResponseEntity<?> createUserWithImages(@RequestParam("userJson") String userJson,
+                                                  @RequestParam(value = "visibility",required = false, defaultValue = "PUBLIC")Visibility visibility,
                                                   @RequestParam("profileImage") MultipartFile profileImage,
                                                   @RequestParam("bannerImage") MultipartFile bannerImage) {
         try {
@@ -96,6 +102,7 @@ public class UserController {
             userCreationDTO.setUserJson(userJson);
             userCreationDTO.setProfileImage(profileImage);
             userCreationDTO.setBannerImage(bannerImage);
+            userCreationDTO.setVisibility(visibility);
             User createdUser = userService.createUserWithImages(userCreationDTO);
             return ResponseEntity.status(HttpStatus.OK).body("User created successfully with ID: " + createdUser.getId());
         } catch (Exception e) {
@@ -117,6 +124,8 @@ public class UserController {
             User updatedUser = userService.updateUser(id, userUpdateDTO);
             return ResponseEntity.ok(updatedUser);
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            logger.error("The error is {}",e.getMessage());
             return ResponseEntity.notFound().build();
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -139,7 +148,21 @@ public class UserController {
             User updatedUser = userService.updateBannerImage(id,bannerDTO);
             return new ResponseEntity<>(updatedUser,HttpStatus.OK);
         } catch (Exception e) {
+            logger.error("Can't set profile image path {}",e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PatchMapping("/{id}/visibility")
+    public ResponseEntity<?> updateUserVisibility(@PathVariable Long id, @RequestParam("visibility") Visibility visibility) {
+        try {
+            User updatedUser = userService.updateUserVisibility(id, visibility);
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            logger.error("Can't set banner image path {}",e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }

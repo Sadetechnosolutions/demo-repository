@@ -5,11 +5,12 @@ import com.Sadetechno.user_module.DTO.ProfileDTO;
 import com.Sadetechno.user_module.Repository.UserRepository;
 import com.Sadetechno.user_module.model.User;
 import com.Sadetechno.user_module.model.UserCreationDTO;
+import com.Sadetechno.user_module.model.Visibility;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +58,9 @@ public class UserService {
             log.error("Error deserializing userJson", e);
             throw new IOException("Error deserializing userJson: " + e.getMessage(), e);
         }
+
+        // Set the visibility
+        user.setVisibility(userCreationDTO.getVisibility());
 
         // Process profile image
         if (userCreationDTO.getProfileImage() != null && !userCreationDTO.getProfileImage().isEmpty()) {
@@ -125,6 +129,10 @@ public class UserService {
                 if (updatedUserData.getWorkExperience() != null) existingUser.setWorkExperience(updatedUserData.getWorkExperience());
                 if (updatedUserData.getSocialMediaLinks() != null) existingUser.setSocialMediaLinks(updatedUserData.getSocialMediaLinks());
 
+                // Update visibility if provided
+                if (userUpdateDTO.getVisibility() != null) {
+                    existingUser.setVisibility(userUpdateDTO.getVisibility());
+                }
             } catch (IOException e) {
                 log.error("Error deserializing userJson", e);
                 throw new IOException("Error deserializing userJson: " + e.getMessage(), e);
@@ -192,6 +200,24 @@ public class UserService {
             throw new RuntimeException("User not found with id: " + id);
         }
     }
+
+    public User updateUserVisibility(Long id, Visibility visibility) {
+        Optional<User> existingUserOptional = userRepository.findByUserid(id);
+        if (!existingUserOptional.isPresent()) {
+            throw new IllegalArgumentException("User with id " + id + " not found");
+        }
+
+        User existingUser = existingUserOptional.get();
+        existingUser.setVisibility(visibility);
+
+        try {
+            User savedUser = userRepository.save(existingUser);
+            return savedUser;
+        } catch (Exception e) {
+            throw new RuntimeException("Error updating visibility: " + e.getMessage(), e);
+        }
+    }
+
 
 
 }

@@ -23,7 +23,6 @@ public class Status {
     private int duration;
     @Enumerated(EnumType.STRING)
     private Privacy privacy;
-
     private Long userId;
 }
 

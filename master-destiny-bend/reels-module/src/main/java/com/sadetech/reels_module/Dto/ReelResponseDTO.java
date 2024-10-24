@@ -1,5 +1,6 @@
 package com.sadetech.reels_module.Dto;
 
+import com.sadetech.reels_module.Model.Privacy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,6 @@ public class ReelResponseDTO {
     private LocalDateTime createdAt;
     private Long userId;
     private String profileImagePath;  // New field for profile image path
+    private Privacy privacy;
 }
 

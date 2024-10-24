@@ -1,9 +1,6 @@
 package com.sadetech.reels_module.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +19,6 @@ public class Reel {
     private Long id;
 
     private String content; // Path to the reel file
-    private String type; // E.g., "video"
     private int duration; // In seconds
     private String caption;
 
@@ -31,5 +27,7 @@ public class Reel {
 
     private Long userId; // ID of the user who uploaded the reel
 
+    @Enumerated(EnumType.STRING)
+    private Privacy privacy;
 }
 
