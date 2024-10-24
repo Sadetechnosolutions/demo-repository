@@ -64,5 +64,7 @@
         <module>friend-request-module</module>
         <module>websocket-messaging</module>
         <module>notification-module</module>
+        <module>home_api_module</module>
+        <module>permission-module</module>
     </modules>
 </project>

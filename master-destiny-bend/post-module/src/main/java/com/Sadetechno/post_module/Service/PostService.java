@@ -305,4 +305,15 @@ public class PostService {
         );
     }
 
+    public Post updatePrivacy(Long postId, PrivacySetting privacy){
+        Optional<Post> post = postRepository.findById(postId);
+        if(post.isPresent()){
+            Post post1 = post.get();
+            post1.setPrivacySetting(privacy);
+            return postRepository.save(post1);
+        }else {
+            throw new IllegalArgumentException("Post Id not found");
+        }
+    }
+
 }

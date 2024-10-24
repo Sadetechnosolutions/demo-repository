@@ -193,4 +193,16 @@ public class StatusService {
                 profileImagePath
         );
     }
+
+    public Status updateStatusPrivacy(Long id, Privacy privacy){
+        Optional<Status> getStatus = statusRepository.findById(id);
+
+        if(getStatus.isPresent()){
+            Status status = getStatus.get();
+            status.setPrivacy(privacy);
+            return statusRepository.save(status);
+        }else {
+            throw new IllegalArgumentException("Status Id not found");
+        }
+    }
 }

@@ -79,4 +79,16 @@ public class ReelController {
         ReelResponseDTO responseDTO = reelService.getReelsByPrivacy(id, userId);
         return ResponseEntity.ok(responseDTO);
     }
+
+    @PatchMapping("/update-privacy/{id}")
+    public ResponseEntity<Reel> updateReelPrivacy(@PathVariable Long id,@RequestParam Privacy privacy){
+        try {
+            Reel reel = reelService.updateReelPrivacy(id,privacy);
+            return ResponseEntity.ok(reel);
+        }catch (IllegalArgumentException e){
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+    }
 }
